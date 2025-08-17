@@ -57,6 +57,14 @@ Carl takes the opposite approach: small, final, immutable objects, strict SRP, a
 If you prefer Uncle Bob’s Clean Code — Carl follows it rigorously.  
 If you prefer a pragmatic toolbox — Guzzle might be enough.
 
+## фвв
+
+- **SRP (Single Responsibility Principle):** Each class has one reason to change. Decorators like `WithHeaders`, `WithUserAgent`, `WithTimeout` do one thing; `CurlClient` handles transport; `Outcome` encapsulates result handling.
+- **OCP (Open/Closed Principle):** Behavior is extended via composition and decorators without modifying existing classes. Add new `Request`/`Response` decorators, `Client` wrappers (e.g., `ChunkedClient`, `ThrottledClient`), or `Reaction` implementations.
+- **LSP (Liskov Substitution Principle):** Implementations are replaceable through small, stable interfaces (`Request`, `Response`, `Client`, `Outcome`, `Reaction`). Fakes and real objects are interchangeable.
+- **ISP (Interface Segregation Principle):** Interfaces are minimal and focused; there is no “god” interface. High-level code depends only on the methods it uses.
+- **DIP (Dependency Inversion Principle):** High-level code depends on abstractions, not concretions. Production uses `CurlClient`, tests use `FakeClient`—both behind the `Client` interface.
+
 ## ⚠️ Limitations & Plans
 
 **Limitations:**
@@ -215,15 +223,26 @@ $outcomes = $client->outcomes($requests, new MyReaction());
 
 ---
 
-## 🧪 Testing
-
-Carl provides a set of fake classes for convenient, isolated unit testing without making real HTTP requests.
+Carl provides a set of fake classes for convenient, isolated unit testing without making real HTTP requests. You can also swap the real client with `FakeClient` to drive predefined outcomes.
 
 **Fake Outcomes** (in `Carl\Outcome\Fake`):
 
-- `AlwaysSuccessful`,
-- `AlwaysFails`,
+- `AlwaysSuccessful`
+- `AlwaysFails`
 - `Cycle`
+
+```php
+$alwaysSuccess = new AlwaysSuccessful(new SuccessResponse("OK"));
+```
+
+```php
+$client = new FakeClient(new Cycle([
+    new AlwaysSuccessful(new SuccessResponse("OK")),
+    new AlwaysFails("network error"),
+]));
+
+$client->outcomes([$request1, $request2], new OnSuccessResponse(fn($res) => echo $res->body()));
+```
 
 **Fake Responses** (in `Carl\Response\Fake`):
 
