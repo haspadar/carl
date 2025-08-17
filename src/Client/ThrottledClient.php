@@ -24,7 +24,7 @@ final readonly class ThrottledClient implements Client
      */
     public function __construct(
         private Client $origin,
-        private float $delaySeconds
+        private float $delaySeconds,
     ) {
         if ($delaySeconds < 0.0) {
             throw new InvalidArgumentException('delaySeconds must be >= 0.0');
@@ -44,7 +44,8 @@ final readonly class ThrottledClient implements Client
         foreach ($requests as $request) {
             $result[] = $this->origin->outcome($request, $reaction);
             if ($this->delaySeconds > 0.0) {
-                usleep((int)round($this->delaySeconds * 1_000_000));
+                $microseconds = (int)round($this->delaySeconds * 1_000_000.0);
+                usleep($microseconds);
             }
         }
 

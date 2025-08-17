@@ -8,6 +8,22 @@ declare(strict_types=1);
 
 namespace Carl\Request;
 
-final readonly class WithSslVerificationOff
+use Override;
+
+/**
+ * WARNING: Disabling verification weakens security; limit to trusted environments.
+ */
+final readonly class WithSslVerificationOff implements Request
 {
+    public function __construct(private Request $origin) {}
+
+    #[Override]
+    public function options(): array
+    {
+        $options = $this->origin->options();
+        $options[CURLOPT_SSL_VERIFYPEER] = false;
+        $options[CURLOPT_SSL_VERIFYHOST] = 0;
+
+        return $options;
+    }
 }
