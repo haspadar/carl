@@ -11,6 +11,7 @@
 [![Psalm](https://img.shields.io/badge/psalm-level%208-brightgreen)](https://psalm.dev)
 [![Psalm Type Coverage](https://shepherd.dev/github/haspadar/carl/coverage.svg)](https://shepherd.dev/github/haspadar/carl)
 [![Mutation MSI](https://img.shields.io/badge/Mutation%20MSI-100%25-brightgreen)](https://infection.github.io/)
+[![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/haspadar/carl?utm_source=oss&utm_medium=github&utm_campaign=haspadar%2Fcarl&labelColor=171717&color=FF570A&label=CodeRabbit+Reviews)](https://coderabbit.ai)
 
 ---
 
@@ -250,7 +251,7 @@ network calls.
 composer require haspadar/carl
 ```
 
-Requires PHP 8.4
+Requires PHP 8.4.
 ---
 
 ## 📄 License
