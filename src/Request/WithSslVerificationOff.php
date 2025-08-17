@@ -15,7 +15,9 @@ use Override;
  */
 final readonly class WithSslVerificationOff implements Request
 {
-    public function __construct(private Request $origin) {}
+    public function __construct(private Request $origin)
+    {
+    }
 
     #[Override]
     public function options(): array
