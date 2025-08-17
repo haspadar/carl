@@ -21,8 +21,8 @@ final readonly class WithHttpVersion implements Request
     #[Override]
     public function options(): array
     {
-        return $this->origin->options() + [
-                CURLOPT_HTTP_VERSION => $this->version,
-            ];
+        $options = $this->origin->options();
+        $options[CURLOPT_HTTP_VERSION] = $this->version;
+        return $options;
     }
 }

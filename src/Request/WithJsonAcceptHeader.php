@@ -21,13 +21,16 @@ final readonly class WithJsonAcceptHeader implements Request
     {
         $options = $this->origin->options();
         /** @var list<string> $headers */
-        $headers = array_key_exists(CURLOPT_HTTPHEADER, $options)
+        $headers = array_key_exists(CURLOPT_HTTPHEADER, $options) && is_array($options[CURLOPT_HTTPHEADER])
             ? $options[CURLOPT_HTTPHEADER]
             : [];
-        $headers[] = 'Accept: application/json';
 
-        return $options + [
-            CURLOPT_HTTPHEADER => $headers,
-        ];
+        if (!in_array('Accept: application/json', $headers, true)) {
+            $headers[] = 'Accept: application/json';
+        }
+
+        $options[CURLOPT_HTTPHEADER] = $headers;
+
+        return $options;
     }
 }

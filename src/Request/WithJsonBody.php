@@ -17,15 +17,14 @@ final readonly class WithJsonBody implements Request
      */
     public function __construct(
         private Request $origin,
-        private array $data
-    ) {
-    }
+        private array $data,
+    ) {}
 
     #[Override]
     public function options(): array
     {
-        return $this->origin->options() + [
-                CURLOPT_POSTFIELDS => json_encode($this->data, JSON_THROW_ON_ERROR),
-            ];
+        $options = $this->origin->options();
+        $options[CURLOPT_POSTFIELDS] = json_encode($this->data, JSON_THROW_ON_ERROR);
+        return $options;
     }
 }

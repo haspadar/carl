@@ -57,7 +57,7 @@ Carl takes the opposite approach: small, final, immutable objects, strict SRP, a
 If you prefer Uncle Bob’s Clean Code — Carl follows it rigorously.  
 If you prefer a pragmatic toolbox — Guzzle might be enough.
 
-## фвв
+## SOLID principles
 
 - **SRP (Single Responsibility Principle):** Each class has one reason to change. Decorators like `WithHeaders`, `WithUserAgent`, `WithTimeout` do one thing; `CurlClient` handles transport; `Outcome` encapsulates result handling.
 - **OCP (Open/Closed Principle):** Behavior is extended via composition and decorators without modifying existing classes. Add new `Request`/`Response` decorators, `Client` wrappers (e.g., `ChunkedClient`, `ThrottledClient`), or `Reaction` implementations.
@@ -108,7 +108,7 @@ new WithCookies($origin, 'sessionid=abc123; theme=dark')
 new WithEncoding($origin, '')
 new WithFollowRedirects($origin, 5)
 new WithHeaderIncluded($origin)
-new WithHeaders($origin, ['Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9'])
+new WithHeaders($origin, ['Authorization: Bearer YOUR_TOKEN_HERE'])
 new WithHttpVersion($origin, CURL_HTTP_VERSION_2_0)
 new WithJsonAcceptHeader($origin)
 new WithJsonBody($origin, ['name' => 'Alice', 'email' => 'alice@example.com'])
@@ -223,6 +223,7 @@ $outcomes = $client->outcomes($requests, new MyReaction());
 
 ---
 
+## 🧪 Testing with Fakes
 Carl provides a set of fake classes for convenient, isolated unit testing without making real HTTP requests. You can also swap the real client with `FakeClient` to drive predefined outcomes.
 
 **Fake Outcomes** (in `Carl\Outcome\Fake`):
@@ -231,6 +232,18 @@ Carl provides a set of fake classes for convenient, isolated unit testing withou
 - `AlwaysFails`
 - `Cycle`
 
+> **Note on `Cycle`:**  
+> `Cycle` iterates through the provided outcomes in order and then repeats indefinitely.  
+> For example:
+>
+> ```php
+> $client = new FakeClient(new Cycle([
+>     new AlwaysSuccessful(new SuccessResponse("A")),
+>     new AlwaysFails("B"),
+> ]));
+> // Requests will see outcomes A, B, A, B, ...
+> ```
+  
 ```php
 $alwaysSuccess = new AlwaysSuccessful(new SuccessResponse("OK"));
 ```
@@ -241,7 +254,7 @@ $client = new FakeClient(new Cycle([
     new AlwaysFails("network error"),
 ]));
 
-$client->outcomes([$request1, $request2], new OnSuccessResponse(fn($res) => echo $res->body()));
+$client->outcomes([$request1, $request2], new OnSuccessResponse(fn (Response $res) => echo $res->body()));
 ```
 
 **Fake Responses** (in `Carl\Response\Fake`):
