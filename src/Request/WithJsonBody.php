@@ -18,7 +18,8 @@ final readonly class WithJsonBody implements Request
     public function __construct(
         private Request $origin,
         private array $data,
-    ) {}
+    ) {
+    }
 
     #[Override]
     public function options(): array
