@@ -13,7 +13,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 
-final class CurlVersionOfTest  extends TestCase
+final class CurlVersionOfTest extends TestCase
 {
     #[Test]
     #[TestWith([['version' => '8.5.0'], '8.5.0'])]
