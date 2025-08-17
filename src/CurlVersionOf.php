@@ -14,13 +14,14 @@ use function is_string;
 final readonly class CurlVersionOf
 {
     /** @param array<string,mixed>|false $version */
-    public function __construct(private array|false $version)
-    {
-    }
+    public function __construct(private array|false $version) {}
 
     public function value(): string
     {
-        if (is_array($this->version) && isset($this->version['version']) && is_string($this->version['version'])) {
+        if (is_array($this->version)
+            && isset($this->version['version'])
+            && is_string($this->version['version'])
+        ) {
             return $this->version['version'];
         }
         return 'unknown';
