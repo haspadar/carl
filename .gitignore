@@ -1,0 +1,38 @@
+# Composer dependencies
+/vendor/
+
+# Tool caches
+.phpunit.result.cache
+.php-cs-fixer.cache
+/phpstan.cache
+/phpcs.cache
+
+# IDE settings
+/.idea/
+/.vscode/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Coverage reports
+coverage.txt
+coverage.xml
+coverage/
+/coverage-report/
+/coverage_report.txt
+
+# PhpUnit cache
+/phpunit.xml.bak
+/.phpunit.cache/
+
+# Php metrics
+/build/
