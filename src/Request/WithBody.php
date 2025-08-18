@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace Carl\Request;
 
+use const CURLOPT_POSTFIELDS;
+
 use Override;
 
 final readonly class WithBody implements Request
@@ -22,7 +24,7 @@ final readonly class WithBody implements Request
     public function options(): array
     {
         $options = $this->origin->options();
-        $options[\CURLOPT_POSTFIELDS] = $this->body;
+        $options[CURLOPT_POSTFIELDS] = $this->body;
         return $options;
     }
 }

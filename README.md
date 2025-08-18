@@ -21,7 +21,7 @@
 - ✅ One object = one responsibility
 - ✅ Final classes, immutability by default
 - ✅ Composition over inheritance
-- ✅ Lazy evaluation — heavy work is deferred until you explicitly call outcome() / body()
+- ✅ Lazy evaluation — heavy work is deferred until you explicitly call `outcome()` / `body()`
 - ✅ Behavior and data live together
 - ✅ Following SOLID principles where applicable
 
@@ -121,8 +121,9 @@ new WithProxy($origin, 'http://proxy.local:8080')
 
 ### 🧰 Utility
 ```php
-new WithBody($origin, 'name=John&age=30', 'application/x-www-form-urlencoded')
+new WithBody($origin, 'name=John&age=30')
 new WithJsonBody($origin, ['id' => 123, 'name' => 'Alice'])
+new WithContentType($origin, 'application/x-www-form-urlencoded')
 new WithCookies($origin, 'sessionid=abc123; theme=dark')
 new WithFollowRedirects($origin, 5)
 new WithDefaultUserAgent($origin)
