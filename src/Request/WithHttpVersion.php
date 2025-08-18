@@ -28,7 +28,8 @@ final readonly class WithHttpVersion implements Request
     public function __construct(
         private Request $origin,
         private int $version,
-    ) {}
+    ) {
+    }
 
     #[Override]
     public function options(): array
