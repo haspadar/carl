@@ -12,6 +12,8 @@ use Carl\Outcome\Outcome;
 use Carl\Reaction\Reaction;
 use Carl\Reaction\VoidReaction;
 use Carl\Request\Request;
+use Carl\Time\Delay;
+use Carl\Time\NativeDelay;
 use InvalidArgumentException;
 use Override;
 
@@ -24,10 +26,11 @@ final readonly class ThrottledClient implements Client
      */
     public function __construct(
         private Client $origin,
-        private float $delaySeconds
+        private float $delaySeconds,
+        private Delay $delay = new NativeDelay(),
     ) {
-        if ($delaySeconds < 0.0) {
-            throw new InvalidArgumentException('delaySeconds must be >= 0.0');
+        if ($delaySeconds < 0.0 || !is_finite($delaySeconds)) {
+            throw new InvalidArgumentException('delaySeconds must be finite and >= 0.0');
         }
     }
 
@@ -41,10 +44,12 @@ final readonly class ThrottledClient implements Client
     public function outcomes(array $requests, Reaction $reaction = new VoidReaction()): array
     {
         $result = [];
-        foreach ($requests as $request) {
+        $lastKey = array_key_last($requests);
+        $microseconds = $this->delaySeconds > 0.0 ? (int) round($this->delaySeconds * 1_000_000.0) : 0;
+        foreach ($requests as $key => $request) {
             $result[] = $this->origin->outcome($request, $reaction);
-            if ($this->delaySeconds > 0.0) {
-                usleep((int)round($this->delaySeconds * 1_000_000));
+            if ($microseconds > 0 && $key !== $lastKey) {
+                $this->delay->sleep($microseconds);
             }
         }
 

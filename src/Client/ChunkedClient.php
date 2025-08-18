@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace Carl\Client;
 
+use Carl\Exception;
 use Carl\Outcome\Outcome;
 use Carl\Reaction\Reaction;
 use Carl\Reaction\VoidReaction;
@@ -30,11 +31,11 @@ use Override;
 final readonly class ChunkedClient implements Client
 {
     /**
-     * @param int<1, max> $chunkSize Chunk size, must be a positive integer (>=1)
+     * @param int<1, max> $size Chunk size, must be a positive integer (>=1)
      */
     public function __construct(
         private Client $origin,
-        private int $chunkSize
+        private int $size,
     ) {
     }
 
@@ -44,12 +45,15 @@ final readonly class ChunkedClient implements Client
         return $this->origin->outcome($request, $reaction);
     }
 
+    /**
+     * @throws Exception
+     */
     #[Override]
     public function outcomes(array $requests, Reaction $reaction = new VoidReaction()): array
     {
         $result = [];
-        foreach (array_chunk($requests, $this->chunkSize) as $chunk) {
-            $result = [...$result, ...$this->origin->outcomes($chunk, $reaction)];
+        foreach (array_chunk($requests, $this->size) as $chunk) {
+            array_push($result, ...$this->origin->outcomes($chunk, $reaction));
         }
         return $result;
     }
