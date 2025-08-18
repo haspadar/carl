@@ -13,6 +13,15 @@ use Carl\Request\Request;
 use Exception;
 use Override;
 
+/**
+ * Cycles through a predefined list of outcomes.
+ *
+ * Useful in tests when you want predictable,
+ * repeatable sequences of outcomes.
+ *
+ * Example:
+ * new Cycle([$ok, $fail])->at(2, $req); // returns $ok
+ */
 final readonly class Cycle implements FakeOutcomes
 {
     /**

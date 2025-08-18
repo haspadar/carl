@@ -15,6 +15,16 @@ use const CURLINFO_RESPONSE_CODE;
 
 use Override;
 
+/**
+ * Fake HTTP response that always represents a server error (500).
+ *
+ * Useful in tests to simulate failing HTTP calls
+ * without requiring a real server-side failure.
+ *
+ * Example:
+ * $response = new ServerErrorResponse("Something went wrong");
+ * echo $response->info()->get(CURLINFO_RESPONSE_CODE); // 500
+ */
 final readonly class ServerErrorResponse implements Response
 {
     public function __construct(private string $message = 'Internal Server Error')

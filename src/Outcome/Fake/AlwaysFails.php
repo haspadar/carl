@@ -13,6 +13,11 @@ use Carl\Outcome\Outcome;
 use Carl\Request\Request;
 use Override;
 
+/**
+ * Always returns a failed outcome.
+ *
+ * Useful for simulating errors in tests.
+ */
 final readonly class AlwaysFails implements FakeOutcomes
 {
     #[Override]

@@ -16,6 +16,16 @@ use const CURLINFO_RESPONSE_CODE;
 
 use Override;
 
+/**
+ * Fake HTTP response that always represents a redirect (302).
+ *
+ * Useful in tests for simulating redirect behavior,
+ * including `Location` header and cURL redirect info.
+ *
+ * Example:
+ * $response = new RedirectResponse("https://example.com/next");
+ * echo $response->headers()['Location']; // https://example.com/next
+ */
 final readonly class RedirectResponse implements Response
 {
     public function __construct(

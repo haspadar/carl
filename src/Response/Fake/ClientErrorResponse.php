@@ -10,24 +10,17 @@ namespace Carl\Response\Fake;
 
 use Carl\Response\CurlInfo;
 use Carl\Response\Response;
-
-use const CURLINFO_RESPONSE_CODE;
-
 use Override;
 
 /**
- * Fake HTTP response that always represents success.
+ * Fake HTTP response representing a client error (HTTP 400).
  *
- * Useful in tests where a simple successful response
- * is required without making a real HTTP call.
- *
- * Example:
- * $response = new SuccessResponse("Hello");
- * echo $response->body(); // "Hello"
+ * Useful in tests to simulate scenarios where
+ * the request is invalid or rejected by the server.
  */
-final readonly class SuccessResponse implements Response
+final readonly class ClientErrorResponse implements Response
 {
-    public function __construct(private string $message = 'OK')
+    public function __construct(private string $message = 'Bad Request')
     {
     }
 
@@ -47,7 +40,7 @@ final readonly class SuccessResponse implements Response
     public function info(): CurlInfo
     {
         return new CurlInfo([
-            CURLINFO_RESPONSE_CODE => 200,
+            CURLINFO_RESPONSE_CODE => 400,
         ]);
     }
 }

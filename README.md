@@ -57,13 +57,20 @@ Carl takes the opposite approach: small, final, immutable objects, strict SRP, a
 
 Carl aligns more with Clean Code principles, while Guzzle is more of a pragmatic toolbox.
 
-## SOLID principles
+## SOLID Principles in Carl
 
-- **SRP (Single Responsibility Principle):** Each class has one reason to change. Decorators like `WithHeaders`, `WithUserAgent`, `WithTimeout` do one thing; `CurlClient` handles transport; `Outcome` objects encapsulate result handling.
-- **OCP (Open/Closed Principle):** Behavior is extended via composition and decorators without modifying existing classes. Add new `Request`/`Response` decorators, `Client` wrappers (e.g., `ChunkedClient`, `ThrottledClient`), or `Reaction` implementations.
-- **LSP (Liskov Substitution Principle):** Implementations are replaceable through small, stable interfaces (`Request`, `Response`, `Client`, `Outcome`, `Reaction`). Fakes and real objects are interchangeable.
-- **ISP (Interface Segregation Principle):** Interfaces are minimal and focused; there is no “god” interface. High-level code depends only on the methods it uses.
-- **DIP (Dependency Inversion Principle):** High-level code depends on abstractions, not concretions. Production uses `CurlClient`, tests use `FakeClient`—both behind the `Client` interface.
+- **SRP (Single Responsibility Principle):** Each class has one reason to change. Decorators like `WithHeaders`,
+  `WithUserAgent`, `WithTimeout` do one thing; `CurlClient` handles transport; `Outcome` objects encapsulate result
+  handling.
+- **OCP (Open/Closed Principle):** Behavior is extended via composition and decorators without modifying existing
+  classes. Add new `Request`/`Response` decorators, `Client` wrappers (e.g., `ChunkedClient`, `ThrottledClient`), or
+  `Reaction` implementations.
+- **LSP (Liskov Substitution Principle):** Implementations are replaceable through small, stable interfaces (`Request`,
+  `Response`, `Client`, `Outcome`, `Reaction`). Fakes and real objects are interchangeable.
+- **ISP (Interface Segregation Principle):** Interfaces are minimal and focused; there is no “god” interface. High-level
+  code depends only on the methods it uses.
+- **DIP (Dependency Inversion Principle):** High-level code depends on abstractions, not concretions. Production uses
+  `CurlClient`, tests use `FakeClient`—both behind the `Client` interface.
 
 ## ⚠️ Limitations & Plans
 
@@ -98,6 +105,7 @@ Every push and pull request is checked via GitHub Actions:
 ## 🧩 Request Decorators
 
 ### 🔑 Common
+
 ```php
 new WithHeaders($origin, ['Authorization: Bearer TOKEN'])
 new WithHeaderOnce($origin, 'Accept', 'application/json')
@@ -111,6 +119,7 @@ new WithReferer($origin, 'https://example.com')
 ```
 
 ### ⏱ Technical
+
 ```php
 new WithTimeout($origin, 30)
 new WithConnectionTimeout($origin, 10)
@@ -120,10 +129,10 @@ new WithProxy($origin, 'http://proxy.local:8080')
 ```
 
 ### 🧰 Utility
+
 ```php
 new WithBody($origin, 'name=John&age=30')
 new WithJsonBody($origin, ['id' => 123, 'name' => 'Alice'])
-new WithContentType($origin, 'application/x-www-form-urlencoded')
 new WithCookies($origin, 'sessionid=abc123; theme=dark')
 new WithFollowRedirects($origin, 5)
 new WithDefaultUserAgent($origin)
@@ -142,6 +151,7 @@ $request = new WithFollowRedirects(
 ```
 
 ## 📦 Built-in Requests
+
 Carl ships with basic HTTP request objects:
 
 ```php
@@ -151,8 +161,8 @@ new PutRequest('https://api.example.com/update/123')
 new PatchRequest('https://api.example.com/modify/123')
 new DeleteRequest('https://api.example.com/delete/123')
 ```
-These are minimal request objects. You extend them with decorators to configure headers, timeouts, and more.
 
+These are minimal request objects. You extend them with decorators to configure headers, timeouts, and more.
 
 ## 🧩 Response Decorators
 
@@ -168,7 +178,8 @@ new WithContentType($response, 'application/json')
 
 ## 🎯 Outcomes
 
-An outcome always exists, even if the request fails — in that case it represents an error. Outcomes represent the result of executing a request and allow reacting to
+An outcome always exists, even if the request fails — in that case it represents an error. Outcomes represent the result
+of executing a request and allow reacting to
 success or failure.
 
 ```php
@@ -236,26 +247,31 @@ $outcomes = $client->outcomes($requests, new MyReaction());
 ---
 
 ## 🧪 Testing with Fakes
-Carl provides a set of fake classes for convenient, isolated unit testing without making real HTTP requests. You can also swap the real client with `FakeClient` to drive predefined outcomes.
+
+Carl provides a set of fake classes for convenient, isolated unit testing without making real HTTP requests. You can
+also swap the real client with `FakeClient` to drive predefined outcomes.
 
 **Fake Outcomes** (in `Carl\Outcome\Fake`):
 
-- `AlwaysSuccessful`
-- `AlwaysFails`
-- `Cycle`
+- `AlwaysSuccessful` — returns an always-successful outcome (HTTP 200)
+- `AlwaysFails` — returns an always-failed outcome with a given error
+- `Cycle` — cycles through a list of outcomes in order
+- `FakeStatus` — returns an outcome with HTTP status code derived from the URI path
+
 ```php
-$client = new FakeClient(new Cycle([
+$response = new NotFoundResponse();
+$this->assertSame(404, $response->info()->get(CURLINFO_RESPONSE_CODE)); 
+``` 
+
+```php
+new FakeClient(new Cycle([
     new AlwaysSuccessful(new SuccessResponse("OK")),
     new AlwaysFails("network error"),
-]));
-
-$requests = [
-    new GetRequest('https://example.com/a'),
-    new GetRequest('https://example.com/b'),
-];
-
-$client->outcomes(
-    $requests, 
+]))->outcomes(
+    [
+        new GetRequest('https://example.com/a'),
+        new GetRequest('https://example.com/b'),
+    ], 
     new OnSuccessResponse(
         fn (Response $response) => echo $response->body()
     )
@@ -265,10 +281,14 @@ $client->outcomes(
 
 **Fake Responses** (in `Carl\Response\Fake`):
 
-- `SuccessResponse`
-- `ServerErrorResponse`
-- `NotFoundResponse`
-- `RedirectResponse`
+| Class                | HTTP Code | Default Body   | Use case                 |
+|----------------------|-----------|----------------|--------------------------|
+| SuccessResponse      | 200       | "OK"           | Successful requests      |
+| RedirectResponse     | 302       | "Found"        | Redirection scenarios    |
+| ClientErrorResponse  | 400       | "Bad Request"  | Invalid input simulation |
+| UnauthorizedResponse | 401       | "Unauthorized" | Auth errors              |
+| NotFoundResponse     | 404       | "Not Found"    | Missing resources        |
+| ServerErrorResponse  | 500       | "Server Error" | Simulated server failure |
 
 These fakes allow you to simulate different scenarios easily in your tests.
 
@@ -286,7 +306,8 @@ network calls.
 ## 💤 Lazy Evaluation
 
 Carl objects never perform heavy work in constructors.
-Objects are lightweight to create, and heavy operations (network I/O, parsing, reacting) are deferred until you explicitly call:
+Objects are lightweight to create, and heavy operations (network I/O, parsing, reacting) are deferred until you
+explicitly call:
 
 - `outcome()` / `outcomes()` — executes the request(s) and produces outcomes
 - `body()` — reads and parses the response body
@@ -304,7 +325,14 @@ This ensures:
 composer require haspadar/carl
 ```
 
+```php
+$client = new CurlClient();
+$response = $client->response(new GetRequest('https://httpbin.org/get'));
+echo $response->body(); 
+```
+
 ### Requirements
+
 - PHP 8.4+
 - ext-curl (enabled by default in most PHP distributions)
 
