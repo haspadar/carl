@@ -30,7 +30,8 @@ interface Response
     /**
      * Response headers as an associative array.
      *
-     * @return array<string,string> key-value pairs of headers
+     * @return array<string,string> HTTP headers.
+     *         Keys are case-insensitive; implementation may or may not preserve original casing
      */
     public function headers(): array;
 }

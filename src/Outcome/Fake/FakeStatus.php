@@ -29,7 +29,7 @@ use Override;
  *     ->outcome(new GetRequest("http://localhost/404"))
  *     ->response()
  *     ->info()
- *     ->value(CURLINFO_HTTP_CODE); // 404
+ *     ->value(CURLINFO_RESPONSE_CODE); // 404
  */
 final readonly class FakeStatus implements FakeOutcomes
 {
@@ -42,15 +42,20 @@ final readonly class FakeStatus implements FakeOutcomes
             $url = $options[CURLOPT_URL];
         }
 
-        $code = (int) parse_url($url, PHP_URL_PATH);
+        $path = (string)parse_url($url, PHP_URL_PATH);
+        $segment = basename($path);
+        $code = filter_var($segment, FILTER_VALIDATE_INT);
+        if ($code === false) {
+            $code = 200;
+        }
 
         return new SuccessfulOutcome(
             $request,
             new BasicResponse(
                 'ok',
                 [],
-                new CurlInfo([CURLINFO_HTTP_CODE => $code])
-            )
+                new CurlInfo([CURLINFO_RESPONSE_CODE => $code]),
+            ),
         );
     }
 }

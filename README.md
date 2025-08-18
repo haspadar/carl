@@ -260,7 +260,7 @@ also swap the real client with `FakeClient` to drive predefined outcomes.
 
 ```php
 $response = new NotFoundResponse();
-$this->assertSame(404, $response->info()->get(CURLINFO_RESPONSE_CODE)); 
+$this->assertSame(404, $response->info()->value(CURLINFO_RESPONSE_CODE)); 
 ``` 
 
 ```php
@@ -281,14 +281,14 @@ new FakeClient(new Cycle([
 
 **Fake Responses** (in `Carl\Response\Fake`):
 
-| Class                | HTTP Code | Default Body   | Use case                 |
-|----------------------|-----------|----------------|--------------------------|
-| SuccessResponse      | 200       | "OK"           | Successful requests      |
-| RedirectResponse     | 302       | "Found"        | Redirection scenarios    |
-| ClientErrorResponse  | 400       | "Bad Request"  | Invalid input simulation |
-| UnauthorizedResponse | 401       | "Unauthorized" | Auth errors              |
-| NotFoundResponse     | 404       | "Not Found"    | Missing resources        |
-| ServerErrorResponse  | 500       | "Server Error" | Simulated server failure |
+| Class                | HTTP Code | Use case                 |
+|----------------------|-----------|--------------------------|
+| SuccessResponse      | 200       | Successful requests      |
+| RedirectResponse     | 302       | Redirection scenarios    |
+| ClientErrorResponse  | 400       | Invalid input simulation |
+| UnauthorizedResponse | 401       | Auth errors              |
+| NotFoundResponse     | 404       | Missing resources        |
+| ServerErrorResponse  | 500       | Simulated server failure |
 
 These fakes allow you to simulate different scenarios easily in your tests.
 
@@ -327,7 +327,7 @@ composer require haspadar/carl
 
 ```php
 $client = new CurlClient();
-$response = $client->response(new GetRequest('https://httpbin.org/get'));
+$response = $client->outcome(new GetRequest('https://httpbin.org/get'))->response();
 echo $response->body(); 
 ```
 

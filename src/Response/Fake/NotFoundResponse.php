@@ -23,7 +23,7 @@ use Override;
  *
  * Example:
  * $response = new NotFoundResponse();
- * echo $response->info()->get(CURLINFO_RESPONSE_CODE); // 404
+ * echo $response->info()->value(CURLINFO_RESPONSE_CODE); // 404
  */
 final readonly class NotFoundResponse implements Response
 {

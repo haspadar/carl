@@ -23,7 +23,7 @@ use Override;
  *
  * Example:
  * $response = new ServerErrorResponse("Something went wrong");
- * echo $response->info()->get(CURLINFO_RESPONSE_CODE); // 500
+ * echo $response->info()->value(CURLINFO_RESPONSE_CODE); // 500
  */
 final readonly class ServerErrorResponse implements Response
 {

@@ -31,9 +31,18 @@ final readonly class Cycle implements FakeOutcomes
     {
     }
 
+    /**
+     * @throws Exception
+     * @param int $index Zero-based (non-negative) index of the request
+     *                   in the batch, as provided by FakeClient.
+     */
     #[Override]
     public function at(int $index, Request $request): Outcome
     {
+        if ($index < 0) {
+            throw new Exception('Index must be non-negative');
+        }
+
         if ($this->outcomes === []) {
             throw new Exception('At least one outcome must be provided');
         }

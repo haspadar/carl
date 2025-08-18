@@ -32,7 +32,7 @@ use Override;
  */
 final readonly class FakeClient implements Client
 {
-    public function __construct(private FakeOutcomes $outcomes)
+    public function __construct(private FakeOutcomes $fakeOutcomes)
     {
     }
 
@@ -48,7 +48,7 @@ final readonly class FakeClient implements Client
         $result = [];
 
         foreach ($requests as $i => $request) {
-            $outcome = $this->outcomes->at($i, $request);
+            $outcome = $this->fakeOutcomes->at($i, $request);
             $outcome->react($reaction);
             $result[] = $outcome;
         }
