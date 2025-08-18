@@ -21,8 +21,6 @@ final readonly class WithReferer implements Request
     #[Override]
     public function options(): array
     {
-        return $this->origin->options() + [
-                CURLOPT_REFERER => $this->referer,
-            ];
+        return new WithHeaderOnce($this->origin, 'Referer', $this->referer)->options();
     }
 }

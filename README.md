@@ -1,6 +1,7 @@
 # 🧊 Carl
 
 [![PHP Version](https://img.shields.io/badge/PHP-8.4-blue)](https://www.php.net/releases/8.4/)
+[![cURL](https://img.shields.io/badge/ext--curl-required-brightgreen)](https://www.php.net/manual/en/book.curl.php)
 [![Code Style](https://img.shields.io/badge/Code%20Style-PSR--12-blue)](https://github.com/FriendsOfPHP/PHP-CS-Fixer)
 [![CI](https://github.com/haspadar/carl/actions/workflows/ci.yml/badge.svg)](https://github.com/haspadar/carl/actions/workflows/ci.yml)
 [![PHP Metrics](https://img.shields.io/badge/Metrics-phpmetrics%203.0-blue)](https://phpmetrics.org/)
@@ -21,6 +22,7 @@
 - ✅ One object = one responsibility
 - ✅ Final classes, immutability by default
 - ✅ Composition over inheritance
+- ✅ Lazy evaluation — heavy work is deferred until you explicitly call outcome() / body()
 - ✅ Behavior and data live together
 - ✅ Following SOLID principles where applicable
 
@@ -54,12 +56,11 @@ Carl takes the opposite approach: small, final, immutable objects, strict SRP, a
 | Dependencies  | Heavy (PSR-7, PSR-18, Symfony, etc.)  | Zero deps (only PHP + cURL)                          |
 | Configuration | One big array of options              | Composed decorators (`WithUserAgent`, `WithHeaders`) |
 
-If you prefer Uncle Bob’s Clean Code — Carl follows it rigorously.  
-If you prefer a pragmatic toolbox — Guzzle might be enough.
+Carl aligns more with Clean Code principles, while Guzzle is more of a pragmatic toolbox.
 
 ## SOLID principles
 
-- **SRP (Single Responsibility Principle):** Each class has one reason to change. Decorators like `WithHeaders`, `WithUserAgent`, `WithTimeout` do one thing; `CurlClient` handles transport; `Outcome` encapsulates result handling.
+- **SRP (Single Responsibility Principle):** Each class has one reason to change. Decorators like `WithHeaders`, `WithUserAgent`, `WithTimeout` do one thing; `CurlClient` handles transport; `Outcome` objects encapsulate result handling.
 - **OCP (Open/Closed Principle):** Behavior is extended via composition and decorators without modifying existing classes. Add new `Request`/`Response` decorators, `Client` wrappers (e.g., `ChunkedClient`, `ThrottledClient`), or `Reaction` implementations.
 - **LSP (Liskov Substitution Principle):** Implementations are replaceable through small, stable interfaces (`Request`, `Response`, `Client`, `Outcome`, `Reaction`). Fakes and real objects are interchangeable.
 - **ISP (Interface Segregation Principle):** Interfaces are minimal and focused; there is no “god” interface. High-level code depends only on the methods it uses.
@@ -97,37 +98,35 @@ Every push and pull request is checked via GitHub Actions:
 
 ## 🧩 Request Decorators
 
-Examples of request decorators with realistic data:
-
+### 🔑 Common
 ```php
-new WithAuth($origin, 'user123', 'secret!')
-new WithAuthProxy($origin, 'http://proxy.example.com:8080', 'proxyUser', 'proxyPass')
-new WithBody($origin, 'name=John&age=30', 'application/x-www-form-urlencoded')
-new WithConnectionTimeout($origin, 10)
-new WithCookies($origin, 'sessionid=abc123; theme=dark')
-new WithEncoding($origin, '')
-new WithFollowRedirects($origin, 5)
-new WithHeaderIncluded($origin)
-new WithHeaders($origin, ['Authorization: Bearer YOUR_TOKEN_HERE'])
-new WithHttpVersion($origin, CURL_HTTP_VERSION_2_0)
-new WithJsonAcceptHeader($origin)
-new WithJsonBody($origin, ['name' => 'Alice', 'email' => 'alice@example.com'])
-new WithProxy($origin, 'http://proxy.example.com:3128')
-new WithReferer($origin, 'https://referrer.example.com/page')
-new WithTimeout($origin, 30)
-new WithUserAgent($origin, 'Mozilla/5.0 (compatible; CarlClient/1.0)')
-new WithCurlOption($origin) 
-new WithSslVerificationOff($origin) 
+new WithHeaders($origin, ['Authorization: Bearer TOKEN'])
+new WithHeaderOnce($origin, 'Accept', 'application/json')
+
+new WithContentType($origin, 'application/xml')
+new WithJsonContentType($origin)
+new WithJsonAccept($origin)
+
+new WithUserAgent($origin, 'Carl/1.0')
+new WithReferer($origin, 'https://example.com')
 ```
 
-Basic requests are also available as follows:
-
+### ⏱ Technical
 ```php
-new GetRequest('https://api.example.com/data')
-new PostRequest('https://api.example.com/submit', '{"name":"John","age":30}')
-new PutRequest('https://api.example.com/update/123')
-new PatchRequest('https://api.example.com/modify/123')
-new DeleteRequest('https://api.example.com/delete/123')
+new WithTimeout($origin, 30)
+new WithConnectionTimeout($origin, 10)
+new WithSslVerificationOff($origin)
+new WithHttpVersion($origin, CURL_HTTP_VERSION_2_0)
+new WithProxy($origin, 'http://proxy.local:8080')
+```
+
+### 🧰 Utility
+```php
+new WithBody($origin, 'name=John&age=30', 'application/x-www-form-urlencoded')
+new WithJsonBody($origin, ['id' => 123, 'name' => 'Alice'])
+new WithCookies($origin, 'sessionid=abc123; theme=dark')
+new WithFollowRedirects($origin, 5)
+new WithDefaultUserAgent($origin)
 ```
 
 Combine decorators via composition, for example:
@@ -141,6 +140,19 @@ $request = new WithFollowRedirects(
     max: 5
 );
 ```
+
+## 📦 Built-in Requests
+Carl ships with basic HTTP request objects:
+
+```php
+new GetRequest('https://api.example.com/data')
+new PostRequest('https://api.example.com/submit', '{"name":"John","age":30}')
+new PutRequest('https://api.example.com/update/123')
+new PatchRequest('https://api.example.com/modify/123')
+new DeleteRequest('https://api.example.com/delete/123')
+```
+These are minimal request objects. You extend them with decorators to configure headers, timeouts, and more.
+
 
 ## 🧩 Response Decorators
 
@@ -156,12 +168,12 @@ new WithContentType($response, 'application/json')
 
 ## 🎯 Outcomes
 
-Not every request guarantees a response. Outcomes represent the result of executing a request and allow reacting to
+An outcome always exists, even if the request fails — in that case it represents an error. Outcomes represent the result of executing a request and allow reacting to
 success or failure.
 
 ```php
 $client = new CurlClient();
-$request = new WithJsonAcceptHeader(
+$request = new WithJsonAccept(
     new GetRequest('https://httpbin.org/get')
 );
 
@@ -231,30 +243,24 @@ Carl provides a set of fake classes for convenient, isolated unit testing withou
 - `AlwaysSuccessful`
 - `AlwaysFails`
 - `Cycle`
-
-> **Note on `Cycle`:**  
-> `Cycle` iterates through the provided outcomes in order and then repeats indefinitely.  
-> For example:
->
-> ```php
-> $client = new FakeClient(new Cycle([
->     new AlwaysSuccessful(new SuccessResponse("A")),
->     new AlwaysFails("B"),
-> ]));
-> // Requests will see outcomes A, B, A, B, ...
-> ```
-  
-```php
-$alwaysSuccess = new AlwaysSuccessful(new SuccessResponse("OK"));
-```
-
 ```php
 $client = new FakeClient(new Cycle([
     new AlwaysSuccessful(new SuccessResponse("OK")),
     new AlwaysFails("network error"),
 ]));
 
-$client->outcomes([$request1, $request2], new OnSuccessResponse(fn (Response $res) => echo $res->body()));
+$requests = [
+    new GetRequest('https://example.com/a'),
+    new GetRequest('https://example.com/b'),
+];
+
+$client->outcomes(
+    $requests, 
+    new OnSuccessResponse(
+        fn (Response $response) => echo $response->body()
+    )
+);
+// Sequence: OK, error, OK, error, ...
 ```
 
 **Fake Responses** (in `Carl\Response\Fake`):
@@ -277,14 +283,30 @@ network calls.
 
 ---
 
+## 💤 Lazy Evaluation
+
+Carl objects never perform heavy work in constructors.
+Objects are lightweight to create, and heavy operations (network I/O, parsing, reacting) are deferred until you explicitly call:
+
+- `outcome()` / `outcomes()` — executes the request(s) and produces outcomes
+- `body()` — reads and parses the response body
+- reaction handlers like `OnSuccessResponse` or `OnFailure`
+
+This ensures:
+
+- predictable and testable behavior (nothing happens “magically” on instantiation)
+- fast object composition
+- testability — objects remain lightweight until you actually need results
+
 ## 📥 Installation
 
 ```bash
 composer require haspadar/carl
 ```
 
-Requires PHP 8.4.
----
+### Requirements
+- PHP 8.4+
+- ext-curl (enabled by default in most PHP distributions)
 
 ## 📄 License
 
