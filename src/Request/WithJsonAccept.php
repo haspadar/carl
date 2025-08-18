@@ -10,15 +10,15 @@ namespace Carl\Request;
 
 use Override;
 
-final readonly class WithUserAgent implements Request
+final readonly class WithJsonAccept implements Request
 {
-    public function __construct(private Request $origin, private string $userAgent)
+    public function __construct(private Request $origin)
     {
     }
 
     #[Override]
     public function options(): array
     {
-        return new WithHeaderOnce($this->origin, 'User-Agent', $this->userAgent)->options();
+        return new WithHeaderOnce($this->origin, 'Accept', 'application/json')->options();
     }
 }

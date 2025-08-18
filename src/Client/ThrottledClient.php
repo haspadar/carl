@@ -41,10 +41,11 @@ final readonly class ThrottledClient implements Client
     public function outcomes(array $requests, Reaction $reaction = new VoidReaction()): array
     {
         $result = [];
-        foreach ($requests as $request) {
+        $lastKey = array_key_last($requests);
+        $microseconds = $this->delaySeconds > 0.0 ? (int) round($this->delaySeconds * 1_000_000.0) : 0;
+        foreach ($requests as $key => $request) {
             $result[] = $this->origin->outcome($request, $reaction);
-            if ($this->delaySeconds > 0.0) {
-                $microseconds = (int)round($this->delaySeconds * 1_000_000.0);
+            if ($microseconds > 0 && $key !== $lastKey) {
                 usleep($microseconds);
             }
         }

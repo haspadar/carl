@@ -8,10 +8,33 @@ declare(strict_types=1);
 
 namespace Carl\Request;
 
+use InvalidArgumentException;
 use Override;
 
+/**
+ * HTTP version override decorator.
+ *
+ * @param int $version One of:
+ *  - CURL_HTTP_VERSION_NONE
+ *  - CURL_HTTP_VERSION_1_0
+ *  - CURL_HTTP_VERSION_1_1
+ *  - CURL_HTTP_VERSION_2_0
+ *  - CURL_HTTP_VERSION_2TLS
+ *  - CURL_HTTP_VERSION_2_PRIOR_KNOWLEDGE
+ *  - CURL_HTTP_VERSION_3
+ */
 final readonly class WithHttpVersion implements Request
 {
+    private const array ALLOWED = [
+        CURL_HTTP_VERSION_NONE,
+        CURL_HTTP_VERSION_1_0,
+        CURL_HTTP_VERSION_1_1,
+        CURL_HTTP_VERSION_2_0,
+        CURL_HTTP_VERSION_2TLS,
+        CURL_HTTP_VERSION_2_PRIOR_KNOWLEDGE,
+        CURL_HTTP_VERSION_3,
+    ];
+
     public function __construct(
         private Request $origin,
         private int $version
@@ -21,6 +44,10 @@ final readonly class WithHttpVersion implements Request
     #[Override]
     public function options(): array
     {
+        if (!in_array($this->version, self::ALLOWED, true)) {
+            throw new InvalidArgumentException('Unsupported HTTP version: ' . $this->version);
+        }
+
         $options = $this->origin->options();
         $options[CURLOPT_HTTP_VERSION] = $this->version;
         return $options;
