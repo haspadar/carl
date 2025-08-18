@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace Carl\Client;
 
+use Carl\Exception;
 use Carl\Outcome\Outcome;
 use Carl\Reaction\Reaction;
 use Carl\Reaction\VoidReaction;
@@ -34,7 +35,7 @@ final readonly class ChunkedClient implements Client
      */
     public function __construct(
         private Client $origin,
-        private int $size
+        private int $size,
     ) {
     }
 
@@ -44,12 +45,15 @@ final readonly class ChunkedClient implements Client
         return $this->origin->outcome($request, $reaction);
     }
 
+    /**
+     * @throws Exception
+     */
     #[Override]
     public function outcomes(array $requests, Reaction $reaction = new VoidReaction()): array
     {
         $result = [];
         foreach (array_chunk($requests, $this->size) as $chunk) {
-            $result = [...$result, ...$this->origin->outcomes($chunk, $reaction)];
+            array_push($result, ...$this->origin->outcomes($chunk, $reaction));
         }
         return $result;
     }

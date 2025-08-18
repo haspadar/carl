@@ -22,20 +22,25 @@ final readonly class WithHeaderOnce implements Request
         $options = $this->origin->options();
 
         /** @var list<string> $headers */
-        $headers = isset($options[CURLOPT_HTTPHEADER]) && is_array($options[CURLOPT_HTTPHEADER])
-            ? array_values($options[CURLOPT_HTTPHEADER])
-            : [];
+        $headers = [];
+        if (isset($options[CURLOPT_HTTPHEADER]) && is_array($options[CURLOPT_HTTPHEADER])) {
+            foreach ($options[CURLOPT_HTTPHEADER] as $h) {
+                if (is_scalar($h)) {
+                    $headers[] = (string) $h;
+                }
+            }
+        }
 
-        $needle = strtolower($this->name);
+        $needle = strtolower(trim($this->name));
         foreach ($headers as $line) {
-            $position = strpos($line, ':');
-            if ($position !== false && strtolower(trim(substr($line, 0, $position))) === $needle) {
+            [$field] = explode(':', $line, 2) + [''];
+            if (strtolower(trim($field)) === $needle) {
                 $options[CURLOPT_HTTPHEADER] = $headers;
                 return $options;
             }
         }
 
-        $headers[] = $this->name . ': ' . $this->value;
+        $headers[] = sprintf('%s: %s', $this->name, $this->value);
         $options[CURLOPT_HTTPHEADER] = $headers;
         return $options;
     }

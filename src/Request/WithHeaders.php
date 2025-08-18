@@ -28,8 +28,8 @@ final readonly class WithHeaders implements Request
         $existing = [];
         if (isset($options[CURLOPT_HTTPHEADER]) && is_array($options[CURLOPT_HTTPHEADER])) {
             foreach ($options[CURLOPT_HTTPHEADER] as $header) {
-                if (is_scalar($header)) {
-                    $existing[] = (string)$header;
+                if (is_string($header)) {
+                    $existing[] = $header;
                 }
             }
         }

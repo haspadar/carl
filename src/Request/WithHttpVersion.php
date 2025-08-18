@@ -25,26 +25,37 @@ use Override;
  */
 final readonly class WithHttpVersion implements Request
 {
-    private const array ALLOWED = [
-        CURL_HTTP_VERSION_NONE,
-        CURL_HTTP_VERSION_1_0,
-        CURL_HTTP_VERSION_1_1,
-        CURL_HTTP_VERSION_2_0,
-        CURL_HTTP_VERSION_2TLS,
-        CURL_HTTP_VERSION_2_PRIOR_KNOWLEDGE,
-        CURL_HTTP_VERSION_3,
-    ];
-
     public function __construct(
         private Request $origin,
-        private int $version
-    ) {
-    }
+        private int $version,
+    ) {}
 
     #[Override]
     public function options(): array
     {
-        if (!in_array($this->version, self::ALLOWED, true)) {
+        /** @var list<int> $allowed */
+        $allowed = [
+            CURL_HTTP_VERSION_NONE,
+            CURL_HTTP_VERSION_1_0,
+            CURL_HTTP_VERSION_1_1,
+        ];
+
+        foreach (
+            [
+                'CURL_HTTP_VERSION_2_0',
+                'CURL_HTTP_VERSION_2TLS',
+                'CURL_HTTP_VERSION_2_PRIOR_KNOWLEDGE',
+                'CURL_HTTP_VERSION_3',
+            ] as $name
+        ) {
+            if (defined($name)) {
+                /** @var int $value */
+                $value = constant($name);
+                $allowed[] = $value;
+            }
+        }
+
+        if (!in_array($this->version, $allowed, true)) {
             throw new InvalidArgumentException('Unsupported HTTP version: ' . $this->version);
         }
 
