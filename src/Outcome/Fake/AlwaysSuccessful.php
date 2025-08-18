@@ -15,6 +15,12 @@ use Carl\Response\BasicResponse;
 use Carl\Response\CurlInfo;
 use Override;
 
+/**
+ * Always returns a successful outcome.
+ *
+ * HTTP code and body can be configured,
+ * defaults to 200 and "OK".
+ */
 final readonly class AlwaysSuccessful implements FakeOutcomes
 {
     public function __construct(

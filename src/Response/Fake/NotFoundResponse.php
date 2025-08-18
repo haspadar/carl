@@ -15,6 +15,16 @@ use const CURLINFO_RESPONSE_CODE;
 
 use Override;
 
+/**
+ * Fake HTTP response representing a "Not Found" error (404).
+ *
+ * Useful in tests when simulating missing resources
+ * without making real HTTP requests.
+ *
+ * Example:
+ * $response = new NotFoundResponse();
+ * echo $response->info()->value(CURLINFO_RESPONSE_CODE); // 404
+ */
 final readonly class NotFoundResponse implements Response
 {
     public function __construct(private string $message = 'Not Found')
