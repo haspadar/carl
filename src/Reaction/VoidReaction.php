@@ -12,17 +12,24 @@ use Carl\Request\Request;
 use Carl\Response\Response;
 use Override;
 
+/**
+ * {@see Reaction} that ignores both success and failure.
+ *
+ * Acts as a "no-op" (null object) when you don't want
+ * to attach any behavior but still need a {@see Reaction}
+ * implementation.
+ */
 final readonly class VoidReaction implements Reaction
 {
     #[Override]
     public function onSuccess(Request $request, Response $response): void
     {
-        // nothing
+        // intentionally left blank
     }
 
     #[Override]
     public function onFailure(Request $request, string $error): void
     {
-        // nothing
+        // intentionally left blank
     }
 }
