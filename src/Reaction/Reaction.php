@@ -25,17 +25,11 @@ interface Reaction
 {
     /**
      * Handle a successful response.
-     *
-     * @param Request $request
-     * @param Response $response
      */
     public function onSuccess(Request $request, Response $response): void;
 
     /**
      * Handle a failure with the given error message.
-     *
-     * @param Request $request
-     * @param string $error
      */
     public function onFailure(Request $request, string $error): void;
 }
