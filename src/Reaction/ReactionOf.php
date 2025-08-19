@@ -22,14 +22,16 @@ use Override;
  * - {@see onFailure()} executes the given $onFailure callback
  *   with {@see Request} and error message.
  *
+ *   Callback signatures expected:
+ *   - onSuccess: Closure(Request, Response): void
+ *   - onFailure: Closure(Request, string $error): void
+ *
  * Useful for quick inline reactions without creating
  * dedicated classes like {@see OnSuccess} or {@see OnFailure}.
  */
 final readonly class ReactionOf implements Reaction
 {
-    public function __construct(private Closure $onSuccess, private Closure $onFailure)
-    {
-    }
+    public function __construct(private Closure $onSuccess, private Closure $onFailure) {}
 
     #[Override]
     public function onSuccess(Request $request, Response $response): void
