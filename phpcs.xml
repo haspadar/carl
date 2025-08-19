@@ -4,6 +4,8 @@
 
     <files>
         <directory>src</directory>
+        <directory>tests</directory>
+
     </files>
 
     <rule ref="PSR12"/>

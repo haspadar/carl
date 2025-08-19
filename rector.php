@@ -12,6 +12,7 @@ use Rector\Set\ValueObject\SetList;
 return static function (RectorConfig $config): void {
     $config->paths([
         __DIR__ . '/src',
+        __DIR__ . '/tests',
     ]);
 
     $config->sets([

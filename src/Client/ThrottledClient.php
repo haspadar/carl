@@ -19,6 +19,18 @@ use Override;
 
 use function round;
 
+/**
+ * Client decorator that throttles request execution.
+ *
+ * Adds a delay between consecutive requests in outcomes().
+ * Delay is specified in seconds (may be fractional).
+ *
+ * - When delaySeconds = 0.0 no pause is applied.
+ * - For N requests, the delay is applied (N-1) times.
+ * - outcome() executes without delay.
+ *
+ * Uses Delay abstraction for sleeping (NativeDelay by default).
+ */
 final readonly class ThrottledClient implements Client
 {
     /**

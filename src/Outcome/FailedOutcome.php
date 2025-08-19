@@ -14,6 +14,13 @@ use Carl\Request\Request;
 use Carl\Response\Response;
 use Override;
 
+/**
+ * Represents a failed outcome of a request.
+ *
+ * Stores the original {@see Request} and the error message.
+ * When reacted upon, it triggers {@see Reaction::onFailure()}.
+ * Calling {@see response()} will always throw an {@see Exception}.
+ */
 final readonly class FailedOutcome implements Outcome
 {
     public function __construct(
