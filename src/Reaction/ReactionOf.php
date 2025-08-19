@@ -13,6 +13,22 @@ use Carl\Response\Response;
 use Closure;
 use Override;
 
+/**
+ * Generic {@see Reaction} based on two closures.
+ *
+ * Both success and failure behavior are provided at construction:
+ * - {@see onSuccess()} executes the given $onSuccess callback
+ *   with {@see Request} and {@see Response};
+ * - {@see onFailure()} executes the given $onFailure callback
+ *   with {@see Request} and error message.
+ *
+ *   Callback signatures expected:
+ *   - onSuccess: Closure(Request, Response): void
+ *   - onFailure: Closure(Request, string $error): void
+ *
+ * Useful for quick inline reactions without creating
+ * dedicated classes like {@see OnSuccess} or {@see OnFailure}.
+ */
 final readonly class ReactionOf implements Reaction
 {
     public function __construct(private Closure $onSuccess, private Closure $onFailure)
