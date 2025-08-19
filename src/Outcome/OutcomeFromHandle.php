@@ -14,6 +14,13 @@ use Carl\Response\CurlInfo;
 use Carl\Response\ParsedResponse;
 use CurlHandle;
 
+/**
+ * Builds an {@see Outcome} from a finished {@see CurlHandle}.
+ *
+ * If cURL reports an error code, produces a {@see FailedOutcome}.
+ * Otherwise, wraps the response content into a {@see SuccessfulOutcome}
+ * with {@see BasicResponse} and {@see CurlInfo}.
+ */
 final readonly class OutcomeFromHandle
 {
     public function __construct(

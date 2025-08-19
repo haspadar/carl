@@ -18,9 +18,21 @@ use CurlHandle;
 use Override;
 use SplObjectStorage;
 
+/**
+ * cURL-based client using curl_multi.
+ *
+ * Builds easy handles for each Request, drives the multi loop,
+ * converts finished handles to Outcomes via {@see OutcomeFromHandle},
+ * and applies the given Reaction to each Outcome.
+ *
+ * @psalm-type MultiOpt = array<int, int|bool>
+ */
 final readonly class CurlClient implements Client
 {
-    /** @param array<int, int|bool> $multiOptions */
+    /**
+     * @param array<int, int|bool> $multiOptions curl_multi options passed to curl_multi_setopt
+     * @psalm-param MultiOpt $multiOptions
+     */
     public function __construct(private array $multiOptions = [])
     {
     }
@@ -32,8 +44,14 @@ final readonly class CurlClient implements Client
     }
 
     /**
-     * @param Request[] $requests
-     * @return Outcome[]
+     * Execute requests concurrently via curl_multi and preserve order of completion.
+     *
+     * For each finished easy handle, an Outcome is produced and the Reaction is invoked.
+     * Returns all produced outcomes (completion order, not submission order).
+     *
+     * @throws Exception When curl_init() fails
+     * @return list<Outcome>
+     * @param list<Request> $requests
      */
     #[Override]
     public function outcomes(array $requests, Reaction $reaction = new VoidReaction()): array

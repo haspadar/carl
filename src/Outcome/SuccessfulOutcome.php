@@ -13,6 +13,12 @@ use Carl\Request\Request;
 use Carl\Response\Response;
 use Override;
 
+/**
+ * Represents a successful outcome of a request.
+ *
+ * Wraps the original {@see Request} and the resulting {@see Response}.
+ * When reacted upon, it triggers {@see Reaction::onSuccess()}.
+ */
 final readonly class SuccessfulOutcome implements Outcome
 {
     public function __construct(

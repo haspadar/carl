@@ -2,6 +2,7 @@ parameters:
     level: max
     paths:
         - src
+        - tests
     errorFormat: table
     reportUnmatchedIgnoredErrors: false
 
