@@ -13,7 +13,7 @@ use Override;
 
 final class FakeDelay implements Delay
 {
-    /** @var int[] */
+    /** @var list<int> */
     private array $calls = [];
 
     #[Override]
@@ -22,7 +22,7 @@ final class FakeDelay implements Delay
         $this->calls[] = $microseconds;
     }
 
-    /** @return int[] */
+    /** @var list<int> */
     public function calls(): array
     {
         return $this->calls;

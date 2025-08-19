@@ -25,7 +25,7 @@ final readonly class FailedOutcome implements Outcome
 {
     public function __construct(
         private Request $request,
-        private string $error
+        private string $error,
     ) {
     }
 
@@ -42,6 +42,9 @@ final readonly class FailedOutcome implements Outcome
     }
 
     #[Override]
+    /**
+     * @throws Exception Always throws because the outcome failed.
+     */
     public function response(): Response
     {
         throw new Exception("Outcome failed: $this->error");

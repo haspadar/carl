@@ -28,8 +28,8 @@ final class ChunkedClientTest extends TestCase
         );
 
         $this->assertSame(
-            '201',
-            $client
+            201,
+            (int) $client
                 ->outcome(new GetRequest('http://example.test/ok'))
                 ->response()
                 ->info()

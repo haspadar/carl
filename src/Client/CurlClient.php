@@ -29,7 +29,10 @@ use SplObjectStorage;
  */
 final readonly class CurlClient implements Client
 {
-    /** @param array<int, int|bool> $multiOptions curl_multi options passed to curl_multi_setopt */
+    /**
+     * @param array<int, int|bool> $multiOptions curl_multi options passed to curl_multi_setopt
+     * @psalm-param MultiOpt $multiOptions
+     */
     public function __construct(private array $multiOptions = [])
     {
     }
@@ -46,10 +49,9 @@ final readonly class CurlClient implements Client
      * For each finished easy handle, an Outcome is produced and the Reaction is invoked.
      * Returns all produced outcomes (completion order, not submission order).
      *
-     * @param list<Request> $requests
-     * @return list<Outcome>
-     *
      * @throws Exception When curl_init() fails
+     * @return list<Outcome>
+     * @param list<Request> $requests
      */
     #[Override]
     public function outcomes(array $requests, Reaction $reaction = new VoidReaction()): array

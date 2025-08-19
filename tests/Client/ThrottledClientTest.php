@@ -10,6 +10,7 @@ namespace Carl\Tests\Client;
 
 use Carl\Client\Fake\FakeClient;
 use Carl\Client\ThrottledClient;
+use Carl\Exception;
 use Carl\Outcome\Fake\AlwaysSuccessful;
 use Carl\Request\GetRequest;
 use Carl\Tests\Fake\Time\FakeDelay;
@@ -39,5 +40,57 @@ final class ThrottledClientTest extends TestCase
             $delay->calls(),
             'Must sleep N-1 times with exact microseconds',
         );
+    }
+
+    #[Test]
+    public function noSleepForEmpty(): void
+    {
+        $delay = new FakeDelay();
+        new ThrottledClient(new FakeClient(new AlwaysSuccessful()), 0.01, $delay)
+            ->outcomes([]);
+
+        $this->assertSame([], $delay->calls(), 'No sleeps expected for empty requests');
+    }
+
+    #[Test]
+    public function noSleepForSingleRequest(): void
+    {
+        $delay = new FakeDelay();
+        new ThrottledClient(
+            new FakeClient(
+                new AlwaysSuccessful()
+            ),
+            0.01,
+            $delay
+        )
+            ->outcomes([new GetRequest('http://localhost/only')]);
+
+        $this->assertSame([], $delay->calls(), 'No sleeps expected for single request');
+    }
+
+    #[Test]
+    public function zeroDelaySkipsSleeping(): void
+    {
+        $delay = new FakeDelay();
+        new ThrottledClient(
+            new FakeClient(
+                new AlwaysSuccessful()
+            ),
+            0.0,
+            $delay
+        )
+            ->outcomes([
+                new GetRequest('http://localhost/1'),
+                new GetRequest('http://localhost/2'),
+            ]);
+
+        $this->assertSame([], $delay->calls(), 'Zero delay must not sleep');
+    }
+
+    #[Test]
+    public function rejectsInvalidDelays(): void
+    {
+        $this->expectException(Exception::class);
+        new ThrottledClient(new FakeClient(new AlwaysSuccessful()), -0.1);
     }
 }
