@@ -31,7 +31,9 @@ use Override;
  */
 final readonly class ReactionOf implements Reaction
 {
-    public function __construct(private Closure $onSuccess, private Closure $onFailure) {}
+    public function __construct(private Closure $onSuccess, private Closure $onFailure)
+    {
+    }
 
     #[Override]
     public function onSuccess(Request $request, Response $response): void
