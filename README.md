@@ -7,7 +7,7 @@
 [![PHP Metrics](https://img.shields.io/badge/Metrics-phpmetrics%203.0-blue)](https://phpmetrics.org/)
 
 [![Tests](https://img.shields.io/badge/Tests-Passing-brightgreen)](https://github.com/haspadar/carl/actions/workflows/ci.yml)
-[![Coverage](https://codecov.io/gh/haspadar/carl/branch/main/graph/badge.svg)](https://codecov.io/gh/haspadar/carl)
+[![codecov](https://codecov.io/gh/haspadar/carl/coverage.svg?branch=main&t=1)](https://app.codecov.io/gh/haspadar/carl)
 [![PHPStan Level](https://img.shields.io/badge/PHPStan-Level%209-brightgreen)](https://phpstan.org/)
 [![Psalm](https://img.shields.io/badge/psalm-level%208-brightgreen)](https://psalm.dev)
 [![Mutation MSI](https://img.shields.io/badge/Mutation%20MSI-100%25-brightgreen)](https://infection.github.io/)
