@@ -16,6 +16,8 @@ use const CURLINFO_RESPONSE_CODE;
 use Override;
 
 /**
+ * @codeCoverageIgnore
+ *
  * Fake HTTP response representing a "Not Found" error (404).
  *
  * Useful in tests when simulating missing resources

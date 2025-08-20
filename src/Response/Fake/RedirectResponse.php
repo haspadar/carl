@@ -17,6 +17,8 @@ use const CURLINFO_RESPONSE_CODE;
 use Override;
 
 /**
+ * @codeCoverageIgnore
+ *
  * Fake HTTP response that always represents a redirect (302).
  *
  * Useful in tests for simulating redirect behavior,

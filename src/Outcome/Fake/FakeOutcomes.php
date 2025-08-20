@@ -21,6 +21,7 @@ use Carl\Request\Request;
  * @param int $index Position of the request in the batch
  * @param Request $request The request being faked
  * @return Outcome Predefined fake outcome
+ * @codeCoverageIgnore
  */
 interface FakeOutcomes
 {

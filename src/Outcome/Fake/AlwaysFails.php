@@ -17,6 +17,8 @@ use Override;
  * Always returns a failed outcome.
  *
  * Useful for simulating errors in tests.
+ *
+ * @codeCoverageIgnore
  */
 final readonly class AlwaysFails implements FakeOutcomes
 {

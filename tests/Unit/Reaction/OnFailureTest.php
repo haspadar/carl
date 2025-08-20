@@ -45,4 +45,5 @@ final class OnFailureTest extends TestCase
 
         $this->assertSame(0, $called, 'Must not call callback on success');
     }
+
 }

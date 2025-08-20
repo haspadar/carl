@@ -78,12 +78,14 @@ Carl aligns more with Clean Code principles, while Guzzle is more of a pragmatic
 
 - Many procedural fragments and scalars remain in the codebase.
 - This results in many @var/@return annotations to describe array and scalar shapes for phpstan.
+- Integration tests currently rely on traits (e.g., AssertsReflectedResponse, WithRunningServer).
 
 **Plans:**
 
-- Gradually remove procedural code.
-- Reduce scalar leakage by introducing value objects.
-- Integrate into [`haspadar/mono`](https://github.com/haspadar/mono) for shared abstractions and consistency.
+- Eliminate procedural fragments and replace them with consistent object composition.
+- Introduce value objects to reduce the need for primitive scalars and improve clarity.
+- Replace trait-based test assertions with [`haspadar/gradus`](https://github.com/haspadar/gradus), a custom matcher/assertion library.
+- Integrate into [`haspadar/mono`](https://github.com/haspadar/mono) to unify shared abstractions across projects.
 
 ---
 

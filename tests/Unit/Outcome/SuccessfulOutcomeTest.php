@@ -46,4 +46,17 @@ final class SuccessfulOutcomeTest extends TestCase
             'Must call onSuccess on given reaction'
         );
     }
+
+    #[Test]
+    public function returnsRequest(): void
+    {
+        $request = new GetRequest('http://localhost/');
+        $outcome = new SuccessfulOutcome($request, new SuccessResponse('ok'));
+
+        $this->assertSame(
+            $request,
+            $outcome->request(),
+            'SuccessfulOutcome::request must return the original request'
+        );
+    }
 }

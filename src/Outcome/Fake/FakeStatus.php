@@ -30,6 +30,8 @@ use Override;
  *     ->response()
  *     ->info()
  *     ->value(CURLINFO_RESPONSE_CODE); // 404
+ *
+ * @codeCoverageIgnore
  */
 final readonly class FakeStatus implements FakeOutcomes
 {

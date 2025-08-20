@@ -21,6 +21,8 @@ use Override;
  *
  * Example:
  * new Cycle([$ok, $fail])->at(2, $req); // returns $ok
+ *
+ * @codeCoverageIgnore
  */
 final readonly class Cycle implements FakeOutcomes
 {

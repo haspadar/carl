@@ -16,6 +16,8 @@ use const CURLINFO_RESPONSE_CODE;
 use Override;
 
 /**
+ * @codeCoverageIgnore
+ *
  * Fake HTTP response that always represents success.
  *
  * Useful in tests where a simple successful response

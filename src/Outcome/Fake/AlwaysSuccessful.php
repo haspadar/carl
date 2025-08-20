@@ -20,6 +20,8 @@ use Override;
  *
  * HTTP code and body can be configured,
  * defaults to 200 and "OK".
+ *
+ * @codeCoverageIgnore
  */
 final readonly class AlwaysSuccessful implements FakeOutcomes
 {

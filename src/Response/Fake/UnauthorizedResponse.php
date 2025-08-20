@@ -13,6 +13,8 @@ use Carl\Response\Response;
 use Override;
 
 /**
+ * @codeCoverageIgnore
+ *
  * Fake HTTP response representing an unauthorized access (HTTP 401).
  *
  * Useful in tests to simulate cases where authentication
