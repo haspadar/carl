@@ -29,6 +29,8 @@ use Override;
  *         new AlwaysFails()
  *     ])
  * ))->outcomes([new GetRequest("http://a"), new GetRequest("http://b")]);
+ *
+ * @codeCoverageIgnore
  */
 final readonly class FakeClient implements Client
 {

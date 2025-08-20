@@ -10,12 +10,11 @@ namespace Carl\Response\Fake;
 
 use Carl\Response\CurlInfo;
 use Carl\Response\Response;
-
-use const CURLINFO_RESPONSE_CODE;
-
 use Override;
 
 /**
+ * @codeCoverageIgnore
+ *
  * Fake HTTP response that always represents a server error (500).
  *
  * Useful in tests to simulate failing HTTP calls

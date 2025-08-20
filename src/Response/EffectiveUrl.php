@@ -8,8 +8,6 @@ declare(strict_types=1);
 
 namespace Carl\Response;
 
-use const CURLINFO_EFFECTIVE_URL;
-
 final readonly class EffectiveUrl
 {
     public function __construct(private Response $response)

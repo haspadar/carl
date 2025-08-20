@@ -8,8 +8,6 @@ declare(strict_types=1);
 
 namespace Carl\Response;
 
-use const CURLINFO_PRIMARY_IP;
-
 final readonly class PrimaryIp
 {
     public function __construct(private Response $response)

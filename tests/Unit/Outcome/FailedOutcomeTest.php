@@ -47,4 +47,17 @@ final class FailedOutcomeTest extends TestCase
 
         $outcome->response();
     }
+
+    #[Test]
+    public function returnsRequest(): void
+    {
+        $request = new GetRequest('http://localhost/');
+        $outcome = new FailedOutcome($request, 'error');
+
+        $this->assertSame(
+            $request,
+            $outcome->request(),
+            'FailedOutcome::request must return the original request'
+        );
+    }
 }

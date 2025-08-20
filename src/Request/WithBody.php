@@ -8,8 +8,6 @@ declare(strict_types=1);
 
 namespace Carl\Request;
 
-use const CURLOPT_POSTFIELDS;
-
 use Override;
 
 final readonly class WithBody implements Request

@@ -93,4 +93,19 @@ final class ThrottledClientTest extends TestCase
         $this->expectException(Exception::class);
         new ThrottledClient(new FakeClient(new AlwaysSuccessful()), -0.1);
     }
+
+    #[Test]
+    public function outcomeDelegatesToOrigin(): void
+    {
+        $fake = new FakeClient(new AlwaysSuccessful(200, 'pong'));
+        $client = new ThrottledClient($fake, 0.01);
+
+        $outcome = $client->outcome(new GetRequest('http://localhost/ping'));
+
+        $this->assertSame(
+            'pong',
+            $outcome->response()->body(),
+            'ThrottledClient must delegate outcome() to origin client'
+        );
+    }
 }

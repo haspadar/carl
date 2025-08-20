@@ -18,6 +18,8 @@ use Override;
  * Acts as a "no-op" (null object) when you don't want
  * to attach any behavior but still need a {@see Reaction}
  * implementation.
+ *
+ * @codeCoverageIgnore
  */
 final readonly class VoidReaction implements Reaction
 {

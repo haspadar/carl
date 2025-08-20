@@ -8,8 +8,6 @@ declare(strict_types=1);
 
 namespace Carl\Response;
 
-use const CURLINFO_RESPONSE_CODE;
-
 use Override;
 
 final readonly class WithStatusCode implements Response

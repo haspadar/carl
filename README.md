@@ -72,18 +72,19 @@ Carl aligns more with Clean Code principles, while Guzzle is more of a pragmatic
 - **DIP (Dependency Inversion Principle):** High-level code depends on abstractions, not concretions. Production uses
   `CurlClient`, tests use `FakeClient`—both behind the `Client` interface.
 
-## ⚠️ Limitations & Plans
+## ⚠️ Current Approach & Plans
 
-**Limitations:**
+**Current approach:**
 
-- Many procedural fragments and scalars remain in the codebase.
-- This results in many @var/@return annotations to describe array and scalar shapes for phpstan.
+- Traits (e.g., `AssertsReflectedResponse`, `WithRunningServer`) are used in tests for quick composition of assertions and setup logic.
+- Procedural fragments and scalars remain in the codebase, requiring `@var` / `@return` annotations for static analysis tools.
 
 **Plans:**
 
-- Gradually remove procedural code.
-- Reduce scalar leakage by introducing value objects.
-- Integrate into [`haspadar/mono`](https://github.com/haspadar/mono) for shared abstractions and consistency.
+- Replace procedural fragments with consistent object composition.
+- Introduce value objects to reduce primitive obsession and improve clarity.
+- Replace trait-based assertions with [`haspadar/gradus`](https://github.com/haspadar/gradus).
+- Integrate into [`haspadar/mono`](https://github.com/haspadar/mono) to unify shared abstractions across projects.
 
 ---
 

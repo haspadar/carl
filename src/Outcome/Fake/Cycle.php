@@ -10,7 +10,7 @@ namespace Carl\Outcome\Fake;
 
 use Carl\Outcome\Outcome;
 use Carl\Request\Request;
-use Exception;
+use InvalidArgumentException;
 use Override;
 
 /**
@@ -21,6 +21,8 @@ use Override;
  *
  * Example:
  * new Cycle([$ok, $fail])->at(2, $req); // returns $ok
+ *
+ * @codeCoverageIgnore
  */
 final readonly class Cycle implements FakeOutcomes
 {
@@ -32,7 +34,7 @@ final readonly class Cycle implements FakeOutcomes
     }
 
     /**
-     * @throws Exception
+     * @throws InvalidArgumentException
      * @param int $index Zero-based (non-negative) index of the request
      *                   in the batch, as provided by FakeClient.
      */
@@ -40,11 +42,11 @@ final readonly class Cycle implements FakeOutcomes
     public function at(int $index, Request $request): Outcome
     {
         if ($index < 0) {
-            throw new Exception('Index must be non-negative');
+            throw new InvalidArgumentException('Index must be non-negative');
         }
 
         if ($this->outcomes === []) {
-            throw new Exception('At least one outcome must be provided');
+            throw new InvalidArgumentException('At least one outcome must be provided');
         }
 
         return $this->outcomes[$index % count($this->outcomes)];

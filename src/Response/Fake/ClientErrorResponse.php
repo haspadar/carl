@@ -13,6 +13,8 @@ use Carl\Response\Response;
 use Override;
 
 /**
+ * @codeCoverageIgnore
+ *
  * Fake HTTP response representing a client error (HTTP 400).
  *
  * Useful in tests to simulate scenarios where

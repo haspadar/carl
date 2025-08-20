@@ -10,12 +10,11 @@ namespace Carl\Response\Fake;
 
 use Carl\Response\CurlInfo;
 use Carl\Response\Response;
-
-use const CURLINFO_RESPONSE_CODE;
-
 use Override;
 
 /**
+ * @codeCoverageIgnore
+ *
  * Fake HTTP response representing a "Not Found" error (404).
  *
  * Useful in tests when simulating missing resources

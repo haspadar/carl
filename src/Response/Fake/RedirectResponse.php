@@ -10,13 +10,11 @@ namespace Carl\Response\Fake;
 
 use Carl\Response\CurlInfo;
 use Carl\Response\Response;
-
-use const CURLINFO_REDIRECT_URL;
-use const CURLINFO_RESPONSE_CODE;
-
 use Override;
 
 /**
+ * @codeCoverageIgnore
+ *
  * Fake HTTP response that always represents a redirect (302).
  *
  * Useful in tests for simulating redirect behavior,
