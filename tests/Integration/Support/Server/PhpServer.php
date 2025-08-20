@@ -8,8 +8,6 @@ declare(strict_types=1);
 
 namespace Carl\Tests\Integration\Support\Server;
 
-use Carl\Exception;
-
 /**
  * Immutable object for starting a PHP built-in server.
  *
@@ -41,16 +39,8 @@ final readonly class PhpServer
             $pipes
         );
 
-        if (!is_resource($proc)) {
-            throw new Exception('Failed to start PHP built-in server');
-        }
-
-        if (is_array($pipes)) {
-            foreach ($pipes as $p) {
-                if (is_resource($p)) {
-                    fclose($p);
-                }
-            }
+        foreach ($pipes as $p) {
+            fclose($p);
         }
 
         return new RunningServer($proc, $this->host, $this->port);

@@ -9,7 +9,6 @@ declare(strict_types=1);
 namespace Carl\Tests\Integration\Request;
 
 use Carl\Client\CurlClient;
-use Carl\Request\PutRequest;
 use Carl\Request\RawOptionsRequest;
 use Carl\Tests\Integration\Support\AssertsReflectedResponse;
 use Carl\Tests\Integration\Support\WithRunningServer;

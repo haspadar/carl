@@ -35,11 +35,11 @@ if ($path === '/reflect') {
     }
 
     if (isset($_SERVER['CONTENT_TYPE'])) {
-        $headers['content-type'] = (string) $_SERVER['CONTENT_TYPE'];
+        $headers['content-type'] = $_SERVER['CONTENT_TYPE'];
     }
 
     if (isset($_SERVER['CONTENT_LENGTH'])) {
-        $headers['content-length'] = (string) $_SERVER['CONTENT_LENGTH'];
+        $headers['content-length'] = $_SERVER['CONTENT_LENGTH'];
     }
 
     $input = file_get_contents('php://input');

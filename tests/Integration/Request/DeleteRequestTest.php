@@ -11,14 +11,10 @@ namespace Carl\Tests\Integration\Request;
 use Carl\Client\CurlClient;
 use Carl\Request\DeleteRequest;
 use Carl\Tests\Integration\Support\AssertsReflectedResponse;
-use Carl\Tests\Integration\Support\Server\PhpServer;
-use Carl\Tests\Integration\Support\Server\RunningServer;
 use Carl\Tests\Integration\Support\WithRunningServer;
 use JsonException;
-use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Random\RandomException;
 
 final class DeleteRequestTest extends TestCase
 {

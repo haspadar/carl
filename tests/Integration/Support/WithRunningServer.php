@@ -16,6 +16,7 @@ use Random\RandomException;
 
 trait WithRunningServer
 {
+    /** @psalm-suppress PropertyNotSetInConstructor */
     private RunningServer $server;
 
     /**

@@ -11,13 +11,10 @@ namespace Carl\Tests\Integration\Client;
 use Carl\Client\CurlClient;
 use Carl\Exception;
 use Carl\Request\GetRequest;
-use Carl\Tests\Integration\Support\Server\PhpServer;
-use Carl\Tests\Integration\Support\Server\RunningServer;
 use Carl\Tests\Integration\Support\WithRunningServer;
 use JsonException;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Random\RandomException;
 
 final class CurlClientTest extends TestCase
 {
