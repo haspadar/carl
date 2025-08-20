@@ -26,11 +26,6 @@ final readonly class StatusCode
         return $this->isInRange(200, 300);
     }
 
-    public function isRedirect(): bool
-    {
-        return $this->isInRange(300, 400);
-    }
-
     public function isInRange(int $min, int $max): bool
     {
         $code = $this->value();
