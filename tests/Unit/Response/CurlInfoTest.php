@@ -6,7 +6,7 @@
  */
 declare(strict_types=1);
 
-namespace Carl\Tests\Response;
+namespace Carl\Tests\Unit\Response;
 
 use Carl\Response\CurlInfo;
 use PHPUnit\Framework\Attributes\Test;

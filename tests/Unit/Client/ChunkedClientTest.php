@@ -6,7 +6,7 @@
  */
 declare(strict_types=1);
 
-namespace Carl\Tests\Client;
+namespace Carl\Tests\Unit\Client;
 
 use Carl\Client\ChunkedClient;
 use Carl\Client\Fake\FakeClient;

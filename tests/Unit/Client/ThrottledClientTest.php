@@ -6,14 +6,14 @@
  */
 declare(strict_types=1);
 
-namespace Carl\Tests\Client;
+namespace Carl\Tests\Unit\Client;
 
 use Carl\Client\Fake\FakeClient;
 use Carl\Client\ThrottledClient;
 use Carl\Exception;
 use Carl\Outcome\Fake\AlwaysSuccessful;
 use Carl\Request\GetRequest;
-use Carl\Tests\Fake\Time\FakeDelay;
+use Carl\Tests\Unit\Fake\Time\FakeDelay;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 

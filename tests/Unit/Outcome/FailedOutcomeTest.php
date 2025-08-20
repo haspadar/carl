@@ -6,12 +6,12 @@
  */
 declare(strict_types=1);
 
-namespace Carl\Tests\Outcome;
+namespace Carl\Tests\Unit\Outcome;
 
 use Carl\Exception;
 use Carl\Outcome\FailedOutcome;
 use Carl\Request\GetRequest;
-use Carl\Tests\Reaction\Fake\FakeFailure;
+use Carl\Tests\Unit\Reaction\Fake\FakeFailure;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 

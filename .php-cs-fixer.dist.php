@@ -16,4 +16,6 @@ return new PhpCsFixer\Config()
         'array_syntax' => ['syntax' => 'short'],
         'ordered_imports' => true,
     ])
-    ->setFinder($finder);
+    ->setFinder($finder)
+    ->setRiskyAllowed(true)
+    ->setUsingCache(true);

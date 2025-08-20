@@ -6,31 +6,31 @@
  */
 declare(strict_types=1);
 
-namespace Carl\Tests\Reaction\Fake;
+namespace Carl\Tests\Unit\Reaction\Fake;
 
 use Carl\Reaction\Reaction;
 use Carl\Request\Request;
 use Carl\Response\Response;
 use Override;
 
-final class FakeSuccess implements Reaction
+final class FakeFailure implements Reaction
 {
-    private int $count = 0;
+    private int $total = 0;
 
     #[Override]
     public function onSuccess(Request $request, Response $response): void
     {
-        $this->count++;
+        // nothing
     }
 
     #[Override]
     public function onFailure(Request $request, string $error): void
     {
-        // nothing
+        $this->total++;
     }
 
     public function total(): int
     {
-        return $this->count;
+        return $this->total;
     }
 }

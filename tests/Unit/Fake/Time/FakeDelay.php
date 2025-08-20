@@ -6,7 +6,7 @@
  */
 declare(strict_types=1);
 
-namespace Carl\Tests\Fake\Time;
+namespace Carl\Tests\Unit\Fake\Time;
 
 use Carl\Time\Delay;
 use Override;

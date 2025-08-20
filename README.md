@@ -77,7 +77,7 @@ Carl aligns more with Clean Code principles, while Guzzle is more of a pragmatic
 **Limitations:**
 
 - Many procedural fragments and scalars remain in the codebase.
-- This results in numerous `phpstan` ignore directives.
+- This results in many @var/@return annotations to describe array and scalar shapes for phpstan.
 
 **Plans:**
 
