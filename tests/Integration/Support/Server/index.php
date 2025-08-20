@@ -26,11 +26,20 @@ if (preg_match('#^/redirect/(\d{3})$#', $path, $m)) {
 
 if ($path === '/reflect') {
     $headers = [];
+
     foreach ($_SERVER as $k => $v) {
         if (str_starts_with($k, 'HTTP_')) {
             $name = strtolower(str_replace('_', '-', substr($k, 5)));
             $headers[$name] = is_array($v) ? '[array]' : (string) $v;
         }
+    }
+
+    if (isset($_SERVER['CONTENT_TYPE'])) {
+        $headers['content-type'] = (string) $_SERVER['CONTENT_TYPE'];
+    }
+
+    if (isset($_SERVER['CONTENT_LENGTH'])) {
+        $headers['content-length'] = (string) $_SERVER['CONTENT_LENGTH'];
     }
 
     $input = file_get_contents('php://input');

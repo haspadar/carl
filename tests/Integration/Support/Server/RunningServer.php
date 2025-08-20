@@ -36,11 +36,13 @@ final readonly class RunningServer
         if (!is_resource($this->proc)) {
             throw new Exception('Server process is already closed');
         }
-        proc_terminate($this->proc);
+        @proc_terminate($this->proc);
+        @proc_close($this->proc);
     }
 
     public function url(string $path = '/'): string
     {
-        return "http://$this->host:$this->port$path";
+        $normalizedPath = $path !== '' && $path[0] === '/' ? $path : "/$path";
+        return "http://{$this->host}:{$this->port}{$normalizedPath}";
     }
 }
