@@ -55,6 +55,6 @@ final readonly class ParsedResponse
 
         return $offset === false
             ? $this->raw
-            : substr($this->raw, $offset + strlen($header));
+            : ltrim(substr($this->raw, $offset + strlen($header)), "\r\n");
     }
 }

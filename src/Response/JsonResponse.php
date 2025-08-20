@@ -53,7 +53,7 @@ final readonly class JsonResponse implements Response
         if (!is_array($data)) {
             throw new Exception('JSON root is not an object/array');
         }
-        /** @var array<string|int,mixed> $data */
+
         return $data;
     }
 }
