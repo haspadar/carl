@@ -45,7 +45,7 @@ final readonly class JsonResponse implements Response
      * @throws JsonException
      * @return array<string|int,mixed>
      */
-    public function json(): array
+    public function decoded(): array
     {
         $data = json_decode($this->origin->body(), true, 512, JSON_THROW_ON_ERROR);
         if (!is_array($data)) {

@@ -6,7 +6,7 @@
  */
 declare(strict_types=1);
 
-namespace Carl\Tests\Reaction;
+namespace Carl\Tests\Unit\Reaction;
 
 use Carl\Reaction\ReactionOf;
 use Carl\Request\GetRequest;

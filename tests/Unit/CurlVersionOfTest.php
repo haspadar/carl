@@ -6,7 +6,7 @@
  */
 declare(strict_types=1);
 
-namespace Carl\Tests;
+namespace Carl\Tests\Unit;
 
 use Carl\CurlVersionOf;
 use PHPUnit\Framework\Attributes\Test;
