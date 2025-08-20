@@ -22,7 +22,7 @@ final class FakeDelay implements Delay
         $this->calls[] = $microseconds;
     }
 
-    /** @var list<int> */
+    /** @return list<int> */
     public function calls(): array
     {
         return $this->calls;
