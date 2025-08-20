@@ -20,7 +20,7 @@ final class CurlInfoTest extends TestCase
         $this->assertSame(
             '200',
             new CurlInfo([CURLINFO_RESPONSE_CODE => 200])->value(CURLINFO_RESPONSE_CODE),
-            'Must return scalar value as string'
+            'Must return scalar value as string',
         );
     }
 
@@ -30,7 +30,7 @@ final class CurlInfoTest extends TestCase
         $this->assertSame(
             'n/a',
             new CurlInfo([])->value('missing', 'n/a'),
-            'Must return default when key is absent or non-scalar'
+            'Must return default when key is absent or non-scalar',
         );
     }
 
@@ -39,7 +39,7 @@ final class CurlInfoTest extends TestCase
     {
         $this->assertTrue(
             new CurlInfo(['x' => 1])->hasKey('x'),
-            'Must detect existing key'
+            'Must detect existing key',
         );
     }
 
@@ -49,7 +49,17 @@ final class CurlInfoTest extends TestCase
         $this->assertSame(
             ['a' => 1, 'b' => 2],
             new CurlInfo(['a' => 1, 'b' => 2])->all(),
-            'Must return full info array'
+            'Must return full info array',
+        );
+    }
+
+    #[Test]
+    public function returnsDefaultWhenValueIsNonScalar(): void
+    {
+        $this->assertSame(
+            'n/a',
+            new CurlInfo(['x' => ['nested']])->value('x', 'n/a'),
+            'Must return default when value is non-scalar',
         );
     }
 }

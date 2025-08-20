@@ -8,8 +8,6 @@ declare(strict_types=1);
 
 namespace Carl\Response;
 
-use Carl\Exception;
-
 use function is_array;
 
 use const JSON_THROW_ON_ERROR;
@@ -51,7 +49,7 @@ final readonly class JsonResponse implements Response
     {
         $data = json_decode($this->origin->body(), true, 512, JSON_THROW_ON_ERROR);
         if (!is_array($data)) {
-            throw new Exception('JSON root is not an object/array');
+            throw new JsonException('JSON root is not an object/array');
         }
 
         return $data;

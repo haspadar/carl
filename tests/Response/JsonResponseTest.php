@@ -8,9 +8,9 @@ declare(strict_types=1);
 
 namespace Carl\Tests\Response;
 
-use Carl\Exception;
 use Carl\Response\Fake\SuccessResponse;
 use Carl\Response\JsonResponse;
+use JsonException;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
@@ -22,14 +22,14 @@ final class JsonResponseTest extends TestCase
         $this->assertSame(
             ['a' => 1, 'b' => ['c' => 2]],
             new JsonResponse(new SuccessResponse('{"a":1,"b":{"c":2}}'))->json(),
-            'Must decode valid JSON into associative array'
+            'Must decode valid JSON into associative array',
         );
     }
 
     #[Test]
     public function throwsWhenRootIsNotArrayOrObject(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(JsonException::class);
 
         new JsonResponse(new SuccessResponse('"str"'))->json();
     }
@@ -40,7 +40,24 @@ final class JsonResponseTest extends TestCase
         $this->assertSame(
             '{"k":42}',
             new JsonResponse(new SuccessResponse('{"k":42}'))->body(),
-            'Must proxy body() from origin'
+            'Must proxy body() from origin',
         );
+    }
+
+    #[Test]
+    public function returnsArrayWhenArrayRoot(): void
+    {
+        $this->assertSame(
+            [1, 2, 3],
+            new JsonResponse(new SuccessResponse('[1,2,3]'))->json(),
+            'Must accept array root',
+        );
+    }
+
+    #[Test]
+    public function throwsJsonExceptionOnMalformedJson(): void
+    {
+        $this->expectException(JsonException::class);
+        new JsonResponse(new SuccessResponse('{"a": '))->json();
     }
 }
