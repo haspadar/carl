@@ -12,6 +12,7 @@ use Carl\Client\CurlClient;
 use Carl\Request\PostRequest;
 use Carl\Tests\Integration\Support\AssertsReflectedResponse;
 use Carl\Tests\Integration\Support\WithRunningServer;
+use JsonException;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
@@ -21,10 +22,13 @@ final class PostRequestTest extends TestCase
     use AssertsReflectedResponse;
 
     #[Test]
+    /**
+     * @throws JsonException
+     */
     public function sendsPostRequestWithBody(): void
     {
         $response = new CurlClient()->outcome(
-            new PostRequest($this->server->url('/reflect'), 'hello')
+            new PostRequest($this->server()->url('/reflect'), 'hello')
         )->response();
 
         $this->assertReflectedMethod($response, 'POST');

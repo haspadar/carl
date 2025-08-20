@@ -12,7 +12,6 @@ use Carl\Client\CurlClient;
 use Carl\Exception;
 use Carl\Request\GetRequest;
 use Carl\Tests\Integration\Support\WithRunningServer;
-use JsonException;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
@@ -20,11 +19,8 @@ final class CurlClientTest extends TestCase
 {
     use WithRunningServer;
 
-    /**
-     * @throws JsonException
-     */
     #[Test]
-    public function sendsPostRequest(): void
+    public function returns204StatusCode(): void
     {
         $response = new CurlClient()->outcome(
             new GetRequest($this->server->url('/status/204'))

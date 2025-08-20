@@ -22,6 +22,9 @@ trait AssertsReflectedResponse
         return json_decode($raw, true, flags: JSON_THROW_ON_ERROR);
     }
 
+    /**
+     * @throws JsonException
+     */
     public function assertReflectedMethod(Response $response, string $expected): void
     {
         $this->assertMethod($this->reflected($response->body()), $expected);

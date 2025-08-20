@@ -8,8 +8,6 @@ declare(strict_types=1);
 
 namespace Carl\Response;
 
-use const CURLINFO_RESPONSE_CODE;
-
 final readonly class StatusCode
 {
     public function __construct(private Response $response)

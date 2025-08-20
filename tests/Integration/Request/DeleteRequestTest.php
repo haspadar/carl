@@ -21,14 +21,14 @@ final class DeleteRequestTest extends TestCase
     use WithRunningServer;
     use AssertsReflectedResponse;
 
+    #[Test]
     /**
      * @throws JsonException
      */
-    #[Test]
     public function sendsDeleteRequestToReflectEndpoint(): void
     {
         $response = new CurlClient()->outcome(
-            new DeleteRequest($this->server->url('/reflect'))
+            new DeleteRequest($this->server()->url('/reflect'))
         )->response();
 
         $this->assertReflectedMethod($response, 'DELETE');

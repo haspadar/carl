@@ -9,12 +9,7 @@ declare(strict_types=1);
 namespace Carl\Request;
 
 use Carl\Exception;
-
-use const CURLOPT_URL;
-
 use Override;
-
-use const PHP_QUERY_RFC3986;
 
 final readonly class WithQuery implements Request
 {

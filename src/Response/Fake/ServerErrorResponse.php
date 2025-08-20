@@ -10,9 +10,6 @@ namespace Carl\Response\Fake;
 
 use Carl\Response\CurlInfo;
 use Carl\Response\Response;
-
-use const CURLINFO_RESPONSE_CODE;
-
 use Override;
 
 /**
