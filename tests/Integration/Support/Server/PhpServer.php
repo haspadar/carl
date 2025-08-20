@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace Carl\Tests\Integration\Support\Server;
 
+use RuntimeException;
+
 /**
  * Immutable object for starting a PHP built-in server.
  *
@@ -39,10 +41,20 @@ final readonly class PhpServer
             $pipes
         );
 
+        if ($proc === false) {
+            $this->closePipes($pipes);
+            throw new RuntimeException('Failed to start PHP built-in server');
+        }
+
+        $this->closePipes($pipes);
+
+        return new RunningServer($proc, $this->host, $this->port);
+    }
+
+    private function closePipes(array $pipes): void
+    {
         foreach ($pipes as $p) {
             fclose($p);
         }
-
-        return new RunningServer($proc, $this->host, $this->port);
     }
 }
