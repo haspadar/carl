@@ -57,12 +57,14 @@ final readonly class CurlPayload
      */
     public function body(): string
     {
-        if (!preg_match_all(
+        $result = preg_match_all(
             '/^HTTP\/[\d.]+\s+\d+\s+[^\r\n]*(?:\r?\n[^\r\n]*)*?\r?\n\r?\n/m',
             $this->raw,
             $matches,
             PREG_OFFSET_CAPTURE
-        )) {
+        );
+
+        if ($result === false || $result === 0) {
             return $this->raw;
         }
 
