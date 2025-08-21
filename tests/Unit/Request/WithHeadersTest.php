@@ -71,4 +71,16 @@ final class WithHeadersTest extends TestCase
             'Must merge origin and new headers'
         );
     }
+
+    #[Test]
+    public function skipsCrLfInExistingHeaders(): void
+    {
+        $origin = new RawOptionsRequest([
+            CURLOPT_HTTPHEADER => ["X-Bad: a\r\nX-Injected: yes", "X-Ok: y"]
+        ]);
+
+        $opts = new WithHeaders($origin, ['X-New: z'])->options();
+
+        $this->assertSame(['X-Ok: y', 'X-New: z'], $opts[CURLOPT_HTTPHEADER]);
+    }
 }

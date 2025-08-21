@@ -20,7 +20,7 @@ final class WithHttpVersionTest extends TestCase
     public function throwsOnUnsupportedVersion(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Unsupported HTTP version');
+        $this->expectExceptionMessageMatches('/^Unsupported HTTP version\b/');
         new WithHttpVersion(new GetRequest('http://example.test'), -1)->options();
     }
 
@@ -37,4 +37,5 @@ final class WithHttpVersionTest extends TestCase
             $opts[CURLOPT_HTTP_VERSION] ?? null
         );
     }
+
 }

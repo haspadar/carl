@@ -145,4 +145,30 @@ final class CurlPayloadTest extends TestCase
             'Must merge duplicate headers into a single comma-separated value'
         );
     }
+
+    #[Test]
+    public function returnsRawUnchanged(): void
+    {
+        $raw = "HTTP/1.1 200 OK\r\nX: x\r\n\r\nBody";
+        $payload = new CurlPayload($raw);
+
+        $this->assertSame(
+            $raw,
+            $payload->raw(),
+            'raw() must return the original payload without changes'
+        );
+    }
+
+    #[Test]
+    public function returnsRawWhenMatchSucceedsButEmptyBlockList(): void
+    {
+        // Пустой raw, но preg_match_all всё равно отрабатывает (0 совпадений)
+        $raw = '   ';
+
+        $this->assertSame(
+            $raw,
+            new CurlPayload($raw)->body(),
+            'Must return raw when preg_match_all matches but no valid blocks'
+        );
+    }
 }

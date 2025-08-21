@@ -60,4 +60,16 @@ final class FailedOutcomeTest extends TestCase
             'FailedOutcome::request must return the original request'
         );
     }
+
+    #[Test]
+    public function isNeverSuccessful(): void
+    {
+        $this->assertFalse(
+            new FailedOutcome(
+                new GetRequest('http://localhost/'),
+                'something went wrong'
+            )->isSuccessful(),
+            'FailedOutcome must never be successful'
+        );
+    }
 }

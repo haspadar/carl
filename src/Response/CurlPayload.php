@@ -68,10 +68,8 @@ final readonly class CurlPayload
 
         /** @var list<array{string, int<-1, max>}> $blocks */
         $blocks = $matches[0];
+        /** @var array{string, int} $last */
         $last = end($blocks);
-        if ($last === false) {
-            return $this->raw;
-        }
 
         [$block, $offset] = $last;
         $start = $offset + strlen($block);

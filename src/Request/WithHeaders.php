@@ -38,19 +38,27 @@ final readonly class WithHeaders implements Request
         $existing = [];
         if (isset($options[CURLOPT_HTTPHEADER]) && is_array($options[CURLOPT_HTTPHEADER])) {
             foreach ($options[CURLOPT_HTTPHEADER] as $header) {
-                if (is_string($header)) {
+                if (
+                    is_string($header)
+                    && !str_contains($header, "\r")
+                    && !str_contains($header, "\n")
+                ) {
                     $existing[] = $header;
                 }
             }
         }
 
-        $options[CURLOPT_HTTPHEADER] = array_merge(
-            $existing,
-            array_values(array_filter(
-                $this->headers,
-                fn (string $h): bool => !str_contains($h, "\r") && !str_contains($h, "\n")
-            ))
-        );
+        $sanitized = [];
+        foreach ($this->headers as $h) {
+            if (str_contains($h, "\r")) {
+                continue;
+            }
+            if (str_contains($h, "\n")) {
+                continue;
+            }
+            $sanitized[] = $h;
+        }
+        $options[CURLOPT_HTTPHEADER] = array_merge($existing, $sanitized);
 
         return $options;
     }
