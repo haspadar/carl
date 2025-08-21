@@ -10,6 +10,14 @@ namespace Carl\Request;
 
 use Override;
 
+/**
+ * Adds proxy authentication to a cURL request.
+ *
+ * Sets `CURLOPT_PROXY` to the proxy URL and `CURLOPT_PROXYUSERPWD` to
+ * "username:password" for HTTP/S proxy authentication.
+ *
+ * Decorates another {@see Request}.
+ */
 final readonly class WithAuthProxy implements Request
 {
     public function __construct(

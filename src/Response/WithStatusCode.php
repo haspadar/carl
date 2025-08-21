@@ -36,6 +36,7 @@ final readonly class WithStatusCode implements Response
         return new CurlInfo([
             ...$this->origin->info()->all(),
             CURLINFO_RESPONSE_CODE => $this->code,
+            'http_code' => $this->code,
         ]);
     }
 }

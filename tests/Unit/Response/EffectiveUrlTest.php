@@ -1,0 +1,39 @@
+<?php
+
+/*
+ * SPDX-FileCopyrightText: Copyright (c) 2025 Kanstantsin Mesnik
+ * SPDX-License-Identifier: MIT
+ */
+declare(strict_types=1);
+
+namespace Carl\Tests\Unit\Response;
+
+use Carl\Response\CurlInfo;
+use Carl\Response\CurlResponse;
+use Carl\Response\EffectiveUrl;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
+
+final class EffectiveUrlTest extends TestCase
+{
+    #[Test]
+    public function returnsEffectiveUrl(): void
+    {
+        $url = 'https://example.com/final';
+
+        $response = new CurlResponse(
+            body: 'Redirected',
+            headers: ['Content-Type' => 'text/html'],
+            curlInfo: new CurlInfo([
+                CURLINFO_EFFECTIVE_URL => $url,
+                CURLINFO_RESPONSE_CODE => 200,
+            ]),
+        );
+
+        $this->assertSame(
+            $url,
+            new EffectiveUrl($response)->value(),
+            'Effective URL should match',
+        );
+    }
+}

@@ -10,6 +10,14 @@ namespace Carl\Request;
 
 use Override;
 
+/**
+ * Adds or replaces a single HTTP header.
+ *
+ * Ensures the header appears only once in `CURLOPT_HTTPHEADER` by removing
+ * any existing headers with the same name (case-insensitive).
+ *
+ * Decorates another {@see Request}.
+ */
 final readonly class WithHeader implements Request
 {
     public function __construct(
