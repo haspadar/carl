@@ -21,8 +21,9 @@ final readonly class WithCookies implements Request
     #[Override]
     public function options(): array
     {
-        return $this->origin->options() + [
-                CURLOPT_COOKIE => $this->cookie,
-            ];
+        return array_replace(
+            $this->origin->options(),
+            [CURLOPT_COOKIE => $this->cookie]
+        );
     }
 }

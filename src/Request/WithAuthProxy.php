@@ -23,9 +23,12 @@ final readonly class WithAuthProxy implements Request
     #[Override]
     public function options(): array
     {
-        return $this->origin->options() + [
+        return array_replace(
+            $this->origin->options(),
+            [
                 CURLOPT_PROXY => $this->proxyUrl,
                 CURLOPT_PROXYUSERPWD => "$this->username:$this->password",
-            ];
+            ]
+        );
     }
 }

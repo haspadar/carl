@@ -59,4 +59,16 @@ final class SuccessfulOutcomeTest extends TestCase
             'SuccessfulOutcome::request must return the original request'
         );
     }
+
+    #[Test]
+    public function isAlwaysSuccessful(): void
+    {
+        $this->assertTrue(
+            new SuccessfulOutcome(
+                new GetRequest('http://localhost/'),
+                new SuccessResponse('ok')
+            )->isSuccessful(),
+            'SuccessfulOutcome must always be successful'
+        );
+    }
 }

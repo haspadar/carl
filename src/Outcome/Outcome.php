@@ -23,4 +23,5 @@ interface Outcome
     public function request(): Request;
     public function react(Reaction $reaction): void;
     public function response(): Response;
+    public function isSuccessful(): bool;
 }

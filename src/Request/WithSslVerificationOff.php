@@ -11,8 +11,17 @@ namespace Carl\Request;
 use Override;
 
 /**
- *  ⚠️ Disables all SSL verification (peer, host, OCSP stapling).
- *  Use only in trusted environments (e.g. debugging, local dev).
+ * Disables all SSL verification (peer, host, and OCSP stapling).
+ *
+ * ⚠️ Use only in trusted environments (e.g., debugging, local development).
+ *
+ * This decorator forcibly sets the following options:
+ * - CURLOPT_SSL_VERIFYPEER = false
+ * - CURLOPT_SSL_VERIFYHOST = 0
+ * - CURLOPT_SSL_VERIFYSTATUS = false (if defined)
+ *
+ * Example:
+ * new WithSslVerificationOff($request);
  */
 final readonly class WithSslVerificationOff implements Request
 {

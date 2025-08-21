@@ -50,4 +50,9 @@ final readonly class FailedOutcome implements Outcome
         throw new Exception("Outcome failed: $this->error");
     }
 
+    #[Override]
+    public function isSuccessful(): bool
+    {
+        return false;
+    }
 }

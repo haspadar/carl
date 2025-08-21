@@ -12,6 +12,12 @@ use Override;
 
 final readonly class GetRequest implements Request
 {
+    /**
+     * Represents an HTTP GET request for the given URL.
+     *
+     * Provides cURL options for executing a GET request. Can be decorated with additional
+     * options like headers, timeouts, or query parameters.
+     */
     public function __construct(private string $url)
     {
     }
@@ -22,7 +28,7 @@ final readonly class GetRequest implements Request
         return [
             CURLOPT_URL => $this->url,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPGET => true,
         ];
     }
 }

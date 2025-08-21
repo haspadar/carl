@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace Carl\Tests\Unit\Response;
 
+use Carl\Response\CurlInfo;
+use Carl\Response\CurlResponse;
 use Carl\Response\Fake\SuccessResponse;
 use Carl\Response\JsonResponse;
 use JsonException;
@@ -59,5 +61,42 @@ final class JsonResponseTest extends TestCase
     {
         $this->expectException(JsonException::class);
         new JsonResponse(new SuccessResponse('{"a": '))->decoded();
+    }
+
+    #[Test]
+    public function returnsHeadersFromOrigin(): void
+    {
+        $response = new JsonResponse(
+            new CurlResponse(
+                '{}',
+                ['X-Foo' => 'bar'],
+                new CurlInfo([]),
+            )
+        );
+
+        $this->assertSame(
+            ['X-Foo' => 'bar'],
+            $response->headers(),
+            'Must return headers from origin'
+        );
+    }
+
+    #[Test]
+    public function returnsInfoFromOrigin(): void
+    {
+        $info = new CurlInfo(['http_code' => 200]);
+        $response = new JsonResponse(
+            new CurlResponse(
+                '{}',
+                [],
+                $info,
+            )
+        );
+
+        $this->assertSame(
+            $info,
+            $response->info(),
+            'Must return info from origin'
+        );
     }
 }

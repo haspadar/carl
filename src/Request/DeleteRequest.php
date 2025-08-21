@@ -10,6 +10,13 @@ namespace Carl\Request;
 
 use Override;
 
+/**
+ * Sends an HTTP DELETE request to the given URL.
+ *
+ * This class is a predefined wrapper around cURL options
+ * for issuing a DELETE request using the `CURLOPT_CUSTOMREQUEST` option.
+ * Can be further decorated with additional options (headers, timeouts, auth).
+ */
 final readonly class DeleteRequest implements Request
 {
     public function __construct(

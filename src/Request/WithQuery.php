@@ -11,6 +11,18 @@ namespace Carl\Request;
 use Carl\Exception;
 use Override;
 
+/**
+ * Adds query parameters to the request URL.
+ *
+ * Uses http_build_query() with PHP_QUERY_RFC3986 encoding.
+ *
+ * Example:
+ * new WithQuery($request, ['page' => 2, 'tags' => ['php', 'curl']])
+ *
+ * Resulting URL:
+ * https://example.com/resource?page=2&tags%5B0%5D=php&tags%5B1%5D=curl
+ * (i.e., tags[0]=php&tags[1]=curl)
+ */
 final readonly class WithQuery implements Request
 {
     /**

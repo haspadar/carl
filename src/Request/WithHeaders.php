@@ -10,6 +10,16 @@ namespace Carl\Request;
 
 use Override;
 
+/**
+ * Adds a list of HTTP headers to the request.
+ *
+ * Appends each given header string to the existing list
+ * of `CURLOPT_HTTPHEADER`, if any. Does not check for duplicates.
+ *
+ * Useful for attaching multiple headers at once.
+ *
+ * Decorates another {@see Request}.
+ */
 final readonly class WithHeaders implements Request
 {
     /**
@@ -28,13 +38,28 @@ final readonly class WithHeaders implements Request
         $existing = [];
         if (isset($options[CURLOPT_HTTPHEADER]) && is_array($options[CURLOPT_HTTPHEADER])) {
             foreach ($options[CURLOPT_HTTPHEADER] as $header) {
-                if (is_string($header)) {
+                if (
+                    is_string($header)
+                    && !str_contains($header, "\r")
+                    && !str_contains($header, "\n")
+                ) {
                     $existing[] = $header;
                 }
             }
         }
 
-        $options[CURLOPT_HTTPHEADER] = array_merge($existing, $this->headers);
+        $sanitized = [];
+        foreach ($this->headers as $h) {
+            if (str_contains($h, "\r")) {
+                continue;
+            }
+            if (str_contains($h, "\n")) {
+                continue;
+            }
+            $sanitized[] = $h;
+        }
+        $options[CURLOPT_HTTPHEADER] = array_merge($existing, $sanitized);
+
         return $options;
     }
 }

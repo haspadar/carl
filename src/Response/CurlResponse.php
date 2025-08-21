@@ -10,7 +10,7 @@ namespace Carl\Response;
 
 use Override;
 
-final readonly class BasicResponse implements Response
+final readonly class CurlResponse implements Response
 {
     /**
      * @param array<string,string> $headers

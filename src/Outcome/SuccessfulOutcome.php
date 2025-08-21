@@ -44,4 +44,10 @@ final readonly class SuccessfulOutcome implements Outcome
     {
         return $this->response;
     }
+
+    #[Override]
+    public function isSuccessful(): bool
+    {
+        return true;
+    }
 }

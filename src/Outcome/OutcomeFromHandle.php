@@ -9,9 +9,9 @@ declare(strict_types=1);
 namespace Carl\Outcome;
 
 use Carl\Request\Request;
-use Carl\Response\BasicResponse;
 use Carl\Response\CurlInfo;
-use Carl\Response\ParsedResponse;
+use Carl\Response\CurlPayload;
+use Carl\Response\CurlResponse;
 use CurlHandle;
 
 /**
@@ -19,13 +19,13 @@ use CurlHandle;
  *
  * If cURL reports an error code, produces a {@see FailedOutcome}.
  * Otherwise, wraps the response content into a {@see SuccessfulOutcome}
- * with {@see BasicResponse} and {@see CurlInfo}.
+ * with {@see CurlResponse} and {@see CurlInfo}.
  */
 final readonly class OutcomeFromHandle
 {
     public function __construct(
         private CurlHandle $handle,
-        private Request $request
+        private Request $request,
     ) {
     }
 
@@ -39,14 +39,14 @@ final readonly class OutcomeFromHandle
 
         $rawContent = curl_multi_getcontent($this->handle);
         $raw = is_string($rawContent) ? $rawContent : '';
-        $parsed = new ParsedResponse($raw);
+        $payload = new CurlPayload($raw);
 
         return new SuccessfulOutcome(
             $this->request,
-            new BasicResponse(
-                $parsed->body(),
-                $parsed->headers(),
-                new CurlInfo(curl_getinfo($this->handle))
+            new CurlResponse(
+                $payload->body(),
+                $payload->headers(),
+                new CurlInfo(curl_getinfo($this->handle)),
             )
         );
     }

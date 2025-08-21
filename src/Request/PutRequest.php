@@ -10,6 +10,11 @@ namespace Carl\Request;
 
 use Override;
 
+/**
+ * PUT request wrapper with URL only.
+ *
+ * Sets CURLOPT_CUSTOMREQUEST to 'PUT' and enables response capture.
+ */
 final readonly class PutRequest implements Request
 {
     public function __construct(private string $url)

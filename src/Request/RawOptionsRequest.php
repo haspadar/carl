@@ -10,6 +10,11 @@ namespace Carl\Request;
 
 use Override;
 
+/**
+ * Request with raw cURL options passed directly.
+ *
+ * Useful for testing or fine-tuned requests without higher-level wrappers.
+ */
 final readonly class RawOptionsRequest implements Request
 {
     /**
