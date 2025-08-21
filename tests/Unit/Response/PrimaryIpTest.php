@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace Carl\Tests\Unit\Response;
 
-
 use Carl\Response\CurlInfo;
 use Carl\Response\CurlResponse;
 use Carl\Response\PrimaryIp;
