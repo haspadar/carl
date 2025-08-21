@@ -11,8 +11,8 @@ namespace Carl\Outcome\Fake;
 use Carl\Outcome\Outcome;
 use Carl\Outcome\SuccessfulOutcome;
 use Carl\Request\Request;
-use Carl\Response\BasicResponse;
 use Carl\Response\CurlInfo;
+use Carl\Response\CurlResponse;
 
 use function is_string;
 
@@ -53,7 +53,7 @@ final readonly class FakeStatus implements FakeOutcomes
 
         return new SuccessfulOutcome(
             $request,
-            new BasicResponse(
+            new CurlResponse(
                 'ok',
                 [],
                 new CurlInfo([CURLINFO_RESPONSE_CODE => $code]),

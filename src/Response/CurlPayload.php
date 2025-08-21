@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Carl\Response;
 
-final readonly class ParsedResponse
+final readonly class CurlPayload
 {
     public function __construct(private string $raw)
     {
@@ -60,5 +60,10 @@ final readonly class ParsedResponse
         }
 
         return substr($this->raw, $pos + 4);
+    }
+
+    public function raw(): string
+    {
+        return $this->raw;
     }
 }

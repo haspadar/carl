@@ -6,6 +6,19 @@ namespace Carl\Request;
 
 use Override;
 
+/**
+ * Adds an HTTP header only if it hasn’t been added yet.
+ *
+ * Checks if the given header name (case-insensitive)
+ * is already present in the list of `CURLOPT_HTTPHEADER`.
+ * If so, leaves the headers unchanged.
+ * Otherwise, appends the header to the list.
+ *
+ * Prevents accidental duplication of headers like `Accept` or `Content-Type`
+ * in case of multiple decorators.
+ *
+ * Decorates another {@see Request}.
+ */
 final readonly class WithHeaderOnce implements Request
 {
     public function __construct(

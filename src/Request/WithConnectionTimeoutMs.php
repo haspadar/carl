@@ -10,11 +10,11 @@ namespace Carl\Request;
 
 use Override;
 
-final readonly class WithConnectionTimeout implements Request
+final readonly class WithConnectionTimeoutMs implements Request
 {
     public function __construct(
         private Request $origin,
-        private int $seconds
+        private int $milliseconds
     ) {
     }
 
@@ -22,7 +22,7 @@ final readonly class WithConnectionTimeout implements Request
     public function options(): array
     {
         return $this->origin->options() + [
-                CURLOPT_CONNECTTIMEOUT => $this->seconds,
+                CURLOPT_TIMEOUT_MS => $this->milliseconds,
             ];
     }
 }

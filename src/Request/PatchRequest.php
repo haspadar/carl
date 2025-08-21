@@ -10,6 +10,11 @@ namespace Carl\Request;
 
 use Override;
 
+/**
+ * PATCH request wrapper with default cURL options.
+ *
+ * Sets CURLOPT_CUSTOMREQUEST to PATCH and enables response capture.
+ */
 final readonly class PatchRequest implements Request
 {
     public function __construct(private string $url)

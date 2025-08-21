@@ -12,6 +12,12 @@ use Override;
 
 final readonly class GetRequest implements Request
 {
+    /**
+     * Sends an HTTP GET request to the given URL.
+     *
+     * Wraps cURL options for executing a GET request. Can be decorated with additional
+     * options like headers, timeouts, or query parameters.
+     */
     public function __construct(private string $url)
     {
     }

@@ -11,6 +11,22 @@ namespace Carl\Request;
 use Carl\Exception;
 use Override;
 
+/**
+ * Adds or replaces the query string in the request URL.
+ *
+ * Parses the original `CURLOPT_URL`, strips any existing query string,
+ * and appends the given parameters, preserving fragments (if present).
+ *
+ * Throws {@see Exception} if original URL is missing or not a string.
+ *
+ * Example:
+ * new WithQuery($request, ['page' => 2, 'tags' => ['php', 'curl']]);
+ *
+ * Resulting URL:
+ * https://example.com/resource?page=2&tags=php&tags=curl
+ *
+ * @param array<string, scalar|list<scalar>> $params Query parameters (RFC3986-encoded)
+ */
 final readonly class WithQuery implements Request
 {
     /**

@@ -10,9 +10,14 @@ namespace Carl\Request;
 
 use Override;
 
+/**
+ * POST request wrapper with URL and string body.
+ *
+ * Sets CURLOPT_POST, CURLOPT_POSTFIELDS and enables response capture.
+ */
 final readonly class PostRequest implements Request
 {
-    public function __construct(private string $url, private string $body)
+    public function __construct(private string $url, private string $body = '')
     {
     }
 

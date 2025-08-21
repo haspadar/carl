@@ -10,6 +10,16 @@ namespace Carl\Request;
 
 use Override;
 
+/**
+ * Adds an `Accept: application/json` header to the request.
+ *
+ * If an Accept header is already present, it will not be added again.
+ *
+ * Decorates another {@see Request}.
+ *
+ * Example:
+ * new WithJsonAccept($request);
+ */
 final readonly class WithJsonAccept implements Request
 {
     public function __construct(private Request $origin)

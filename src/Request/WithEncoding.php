@@ -10,6 +10,17 @@ namespace Carl\Request;
 
 use Override;
 
+/**
+ * Adds an `Accept-Encoding` option to the request.
+ *
+ * Enables decoding of compressed responses from the server,
+ * such as `gzip`, `deflate`, or `br`.
+ *
+ * Example:
+ *     new WithEncoding($request, 'gzip')
+ *
+ * Decorates another {@see Request}, appending the cURL `CURLOPT_ENCODING` option.
+ */
 final readonly class WithEncoding implements Request
 {
     public function __construct(

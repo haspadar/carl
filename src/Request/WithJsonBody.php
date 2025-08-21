@@ -10,6 +10,21 @@ namespace Carl\Request;
 
 use Override;
 
+/**
+ * Adds a JSON-encoded body to the request.
+ *
+ * Encodes the given array as JSON and sets it as the POST body
+ * using the `CURLOPT_POSTFIELDS` option.
+ *
+ * Decorates another {@see Request}.
+ *
+ * Example:
+ * new WithJsonBody($request, ['foo' => 'bar']);
+ *
+ * @param array<string|int, mixed> $data The data to encode as JSON.
+ *
+ * @throws \JsonException If encoding fails.
+ */
 final readonly class WithJsonBody implements Request
 {
     /**

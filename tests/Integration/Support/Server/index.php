@@ -24,6 +24,13 @@ if (preg_match('#^/redirect/(\d{3})$#', $path, $m)) {
     return;
 }
 
+if (preg_match('#^/sleep/(\d+)$#', $path, $matches)) {
+    usleep((int) $matches[1] * 1000);
+    http_response_code(200);
+    echo 'Slept for ' . $matches[1] . ' ms';
+    return;
+}
+
 if ($path === '/reflect') {
     $headers = [];
 

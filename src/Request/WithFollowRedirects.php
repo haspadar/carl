@@ -10,6 +10,12 @@ namespace Carl\Request;
 
 use Override;
 
+/**
+ * Adds automatic following of redirects to the request.
+ *
+ * Sets CURLOPT_FOLLOWLOCATION and optionally limits the maximum number of redirects
+ * using CURLOPT_MAXREDIRS (default: 10).
+ */
 final readonly class WithFollowRedirects implements Request
 {
     public function __construct(

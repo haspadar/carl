@@ -10,6 +10,16 @@ namespace Carl\Request;
 
 use Override;
 
+/**
+ * Adds a list of HTTP headers to the request.
+ *
+ * Appends each given header string to the existing list
+ * of `CURLOPT_HTTPHEADER`, if any. Does not check for duplicates.
+ *
+ * Useful for attaching multiple headers at once.
+ *
+ * Decorates another {@see Request}.
+ */
 final readonly class WithHeaders implements Request
 {
     /**

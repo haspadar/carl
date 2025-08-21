@@ -8,11 +8,11 @@ declare(strict_types=1);
 
 namespace Carl\Tests\Unit\Response;
 
-use Carl\Response\ParsedResponse;
+use Carl\Response\CurlPayload;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-final class ParsedResponseTest extends TestCase
+final class CurlPayloadTest extends TestCase
 {
     #[Test]
     public function returnsLastHeaderBlockWhenMultiplePresent(): void
@@ -21,7 +21,7 @@ final class ParsedResponseTest extends TestCase
             "HTTP/1.1 200 OK\r\nH2: b\r\n\r\nBODY";
         $this->assertSame(
             "HTTP/1.1 200 OK\r\nH2: b",
-            new ParsedResponse($raw)->lastHeaderBlock(),
+            new CurlPayload($raw)->lastHeaderBlock(),
             'Must extract the last header block'
         );
     }
@@ -32,7 +32,7 @@ final class ParsedResponseTest extends TestCase
         $raw = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nX-Id: 7\r\n\r\nok";
         $this->assertSame(
             ['Content-Type' => 'text/plain', 'X-Id' => '7'],
-            new ParsedResponse($raw)->headers(),
+            new CurlPayload($raw)->headers(),
             'Must parse header lines into an associative array'
         );
     }
@@ -43,7 +43,7 @@ final class ParsedResponseTest extends TestCase
         $raw = "HTTP/1.1 200 OK\r\nA: 1\r\n\r\nHello";
         $this->assertSame(
             'Hello',
-            new ParsedResponse($raw)->body(),
+            new CurlPayload($raw)->body(),
             'Must return body after the last header block'
         );
     }
@@ -53,7 +53,7 @@ final class ParsedResponseTest extends TestCase
     {
         $this->assertSame(
             "\r\nBODY",
-            new ParsedResponse("\r\nBODY")->body(),
+            new CurlPayload("\r\nBODY")->body(),
             'Must preserve raw when no headers are present'
         );
     }
@@ -66,7 +66,7 @@ final class ParsedResponseTest extends TestCase
             "HTTP/1.1 200 OK\r\nH: b\r\n\r\nNEW";
         $this->assertSame(
             'NEW',
-            new ParsedResponse($raw)->body(),
+            new CurlPayload($raw)->body(),
             'Must return body after the last header block'
         );
     }
@@ -76,7 +76,7 @@ final class ParsedResponseTest extends TestCase
     {
         $this->assertSame(
             'RAW',
-            new ParsedResponse('RAW')->body(),
+            new CurlPayload('RAW')->body(),
             'Must return raw content when no headers found'
         );
     }
@@ -89,7 +89,7 @@ final class ParsedResponseTest extends TestCase
             . "\r\nHTTP/1.1 200 OK\r\nX: a\r\n\r\nSecond";
         $this->assertSame(
             'Second',
-            new ParsedResponse($raw)->body(),
+            new CurlPayload($raw)->body(),
             'Must use the last matching header block when duplicates occur'
         );
     }
@@ -100,7 +100,7 @@ final class ParsedResponseTest extends TestCase
         $raw = "\r\n\nRAW";
         $this->assertSame(
             $raw,
-            new ParsedResponse($raw)->body(),
+            new CurlPayload($raw)->body(),
             'Must not trim raw when no headers are present'
         );
     }

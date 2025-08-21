@@ -11,6 +11,17 @@ namespace Carl\Request;
 use Carl\CurlVersionOf;
 use Override;
 
+/**
+ * Adds a default `User-Agent` header to the request if not already set.
+ *
+ * The value is generated based on the PHP version and cURL version, e.g.:
+ *     "Carl/0.1 PHP/8.4.0 curl/8.7.1"
+ *
+ * This is useful when sending requests without explicitly specifying
+ * a user agent, ensuring consistent identification of the client.
+ *
+ * Decorates another {@see Request} and delegates options after appending the header.
+ */
 final readonly class WithDefaultUserAgent implements Request
 {
     public function __construct(private Request $origin)

@@ -48,6 +48,17 @@ trait AssertsReflectedResponse
         );
     }
 
+    public function assertReflectedHeader(Response $response, string $name, string $expected): void
+    {
+        $reflected = $this->reflected($response->body());
+        $this->assertHasHeader($reflected, $name);
+        $this->assertHeader(
+            $reflected,
+            $name,
+            $expected
+        );
+    }
+
     public function assertHeader(array $reflected, string $name, string $expected): void
     {
         Assert::assertSame(
