@@ -44,34 +44,30 @@ final readonly class WithHttpVersion implements Request
     #[Override]
     public function options(): array
     {
-        /** @var list<int> $allowed */
         $allowed = [
             CURL_HTTP_VERSION_NONE,
             CURL_HTTP_VERSION_1_0,
             CURL_HTTP_VERSION_1_1,
         ];
 
-        foreach (
-            [
-                'CURL_HTTP_VERSION_2_0',
-                'CURL_HTTP_VERSION_2TLS',
-                'CURL_HTTP_VERSION_2_PRIOR_KNOWLEDGE',
-                'CURL_HTTP_VERSION_3',
-            ] as $name
-        ) {
+        foreach ([
+                     'CURL_HTTP_VERSION_2_0',
+                     'CURL_HTTP_VERSION_2TLS',
+                     'CURL_HTTP_VERSION_2_PRIOR_KNOWLEDGE',
+                     'CURL_HTTP_VERSION_3',
+                 ] as $name) {
             if (defined($name)) {
-                /** @var int $value */
-                $value = constant($name);
-                $allowed[] = $value;
+                $allowed[] = constant($name);
             }
         }
 
         if (!in_array($this->version, $allowed, true)) {
-            throw new InvalidArgumentException('Unsupported HTTP version: ' . $this->version);
+            throw new InvalidArgumentException("Unsupported HTTP version: {$this->version}");
         }
 
-        $options = $this->origin->options();
-        $options[CURLOPT_HTTP_VERSION] = $this->version;
-        return $options;
+        return array_replace(
+            $this->origin->options(),
+            [CURLOPT_HTTP_VERSION => $this->version],
+        );
     }
 }

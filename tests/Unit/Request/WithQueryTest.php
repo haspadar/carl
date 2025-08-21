@@ -26,9 +26,20 @@ final class WithQueryTest extends TestCase
         $decorated = new WithQuery($origin, ['foo' => 'bar', 'tags' => ['php', 'curl']]);
 
         $this->assertSame(
-            'https://example.com/api?foo=bar&tags[0]=php&tags[1]=curl',
-            urldecode($decorated->options()[CURLOPT_URL])
+            'https://example.com/api?foo=bar&tags%5B0%5D=php&tags%5B1%5D=curl',
+            $decorated->options()[CURLOPT_URL],
         );
+    }
+
+    #[Test]
+    public function removesExistingQueryWhenParamsEmpty(): void
+    {
+        $origin = new RawOptionsRequest([
+            CURLOPT_URL => 'https://example.com/path?a=1#frag',
+        ]);
+
+        $decorated = new WithQuery($origin, []);
+        $this->assertSame('https://example.com/path#frag', $decorated->options()[CURLOPT_URL]);
     }
 
     #[Test]
@@ -42,7 +53,7 @@ final class WithQueryTest extends TestCase
 
         $this->assertSame(
             'https://example.com/search?q=new&page=2#section1',
-            $decorated->options()[CURLOPT_URL]
+            $decorated->options()[CURLOPT_URL],
         );
     }
 

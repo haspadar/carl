@@ -32,4 +32,17 @@ final class WithFollowRedirectsTest extends TestCase
 
         $this->assertReflectedPath($response, '/reflect');
     }
+
+    #[Test]
+    public function failsWhenRedirectLimitExceeded(): void
+    {
+        $request = new WithFollowRedirects(
+            new GetRequest($this->server()->url('/redirect-twice')),
+            1,
+        );
+
+        $outcome = new CurlClient()->outcome($request);
+
+        $this->assertFalse($outcome->isSuccessful(), 'Should fail after exceeding max redirects');
+    }
 }

@@ -24,7 +24,7 @@ final class WithCurlOptionTest extends TestCase
     use AssertsHttpResponse;
 
     #[Test]
-    public function disablesRedirectFollowing(): void
+    public function forwardsProvidedOption(): void
     {
         $request = new WithCurlOption(
             new GetRequest($this->server()->url('/reflect')),
@@ -36,5 +36,19 @@ final class WithCurlOptionTest extends TestCase
         $reflected = $this->reflected($response->body());
 
         $this->assertHeader($reflected, 'x-test-header', 'hello');
+    }
+
+    #[Test]
+    public function disablesRedirectFollowing(): void
+    {
+        $request = new WithCurlOption(
+            new GetRequest($this->server()->url('/redirect/302')),
+            CURLOPT_FOLLOWLOCATION,
+            false,
+        );
+
+        $response = new CurlClient()->outcome($request)->response();
+
+        $this->assertStatusCode($response, 302);
     }
 }

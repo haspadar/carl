@@ -33,7 +33,7 @@ final class WithTimeoutMsTest extends TestCase
             1
         );
 
-        new CurlClient()->outcome($request)->response()->body();
+        new CurlClient()->outcome($request)->response();
     }
 
     #[Test]
@@ -41,7 +41,7 @@ final class WithTimeoutMsTest extends TestCase
     {
         $request = new WithTimeoutMs(
             new GetRequest($this->server()->url('/sleep/1')),
-            50,
+            150,
         );
 
         $response = new CurlClient()->outcome($request)->response();

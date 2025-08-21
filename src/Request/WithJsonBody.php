@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace Carl\Request;
 
+use JsonException;
 use Override;
 
 /**
@@ -18,12 +19,15 @@ use Override;
  *
  * Decorates another {@see Request}.
  *
+ * Typically used together with {@see WithJsonContentType} to set the
+ * `Content-Type: application/json` header.
+ *
  * Example:
  * new WithJsonBody($request, ['foo' => 'bar']);
  *
- * @param array<string|int, mixed> $data The data to encode as JSON.
+ * @throws JsonException If encoding fails.
+ *@param array<string|int, mixed> $data The data to encode as JSON.
  *
- * @throws \JsonException If encoding fails.
  */
 final readonly class WithJsonBody implements Request
 {

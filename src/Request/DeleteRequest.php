@@ -15,6 +15,7 @@ use Override;
  *
  * This class is a predefined wrapper around cURL options
  * for issuing a DELETE request using the `CURLOPT_CUSTOMREQUEST` option.
+ * Can be further decorated with additional options (headers, timeouts, auth).
  */
 final readonly class DeleteRequest implements Request
 {

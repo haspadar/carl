@@ -41,25 +41,42 @@ final readonly class CurlPayload
         $headers = [];
         foreach ($lines as $line) {
             if (preg_match('/^([^:]+):\s*(.*)$/', $line, $matches)) {
-                $headers[trim($matches[1])] = trim($matches[2]);
+                $name = trim($matches[1]);
+                $value = trim($matches[2]);
+                $headers[$name] = isset($headers[$name]) ? $headers[$name] . ', ' . $value : $value;
             }
         }
         return $headers;
     }
 
+    /**
+     * Returns the body part of the raw payload,
+     * safely skipping all HTTP response headers.
+     * Supports multi-response (e.g. with redirects),
+     * even if body contains "\r\n\r\n" sequences.
+     */
     public function body(): string
     {
-        $header = $this->lastHeaderBlock();
-        if ($header === '') {
+        if (!preg_match_all(
+            '/^HTTP\/[\d.]+\s+\d+\s+[^\r\n]*(?:\r?\n[^\r\n]*)*?\r?\n\r?\n/m',
+            $this->raw,
+            $matches,
+            PREG_OFFSET_CAPTURE
+        )) {
             return $this->raw;
         }
 
-        $pos = strrpos($this->raw, "\r\n\r\n");
-        if ($pos === false) {
+        /** @var list<array{string, int<-1, max>}> $blocks */
+        $blocks = $matches[0];
+        $last = end($blocks);
+        if ($last === false) {
             return $this->raw;
         }
 
-        return substr($this->raw, $pos + 4);
+        [$block, $offset] = $last;
+        $start = $offset + strlen($block);
+
+        return substr($this->raw, $start);
     }
 
     public function raw(): string

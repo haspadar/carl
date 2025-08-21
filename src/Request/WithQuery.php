@@ -12,20 +12,16 @@ use Carl\Exception;
 use Override;
 
 /**
- * Adds or replaces the query string in the request URL.
+ * Adds query parameters to the request URL.
  *
- * Parses the original `CURLOPT_URL`, strips any existing query string,
- * and appends the given parameters, preserving fragments (if present).
- *
- * Throws {@see Exception} if original URL is missing or not a string.
+ * Uses http_build_query() with PHP_QUERY_RFC3986 encoding.
  *
  * Example:
- * new WithQuery($request, ['page' => 2, 'tags' => ['php', 'curl']]);
+ * new WithQuery($request, ['page' => 2, 'tags' => ['php', 'curl']])
  *
  * Resulting URL:
- * https://example.com/resource?page=2&tags=php&tags=curl
- *
- * @param array<string, scalar|list<scalar>> $params Query parameters (RFC3986-encoded)
+ * https://example.com/resource?page=2&tags%5B0%5D=php&tags%5B1%5D=curl
+ * (i.e., tags[0]=php&tags[1]=curl)
  */
 final readonly class WithQuery implements Request
 {

@@ -19,9 +19,12 @@ final readonly class WithAuth implements Request
     #[Override]
     public function options(): array
     {
-        return $this->origin->options() + [
+        return array_replace(
+            $this->origin->options(),
+            [
                 CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
                 CURLOPT_USERPWD => "$this->user:$this->password",
-            ];
+            ]
+        );
     }
 }

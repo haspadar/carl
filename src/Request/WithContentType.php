@@ -18,10 +18,10 @@ final readonly class WithContentType implements Request
     #[Override]
     public function options(): array
     {
-        return new WithHeaderOnce(
+        return new WithHeader(
             $this->origin,
             'Content-Type',
-            $this->mimeType,
+            $this->mimeType
         )->options();
     }
 }

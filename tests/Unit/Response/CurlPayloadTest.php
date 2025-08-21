@@ -62,7 +62,7 @@ final class CurlPayloadTest extends TestCase
     public function returnsBodyForLastHeaderBlockWhenDuplicate(): void
     {
         $raw =
-            "HTTP/1.1 301 Moved\r\nH: a\r\n\r\nOLD" .
+            "HTTP/1.1 301 Moved\r\nH: a\r\n\r\nOLD\r\n\r\n" .
             "HTTP/1.1 200 OK\r\nH: b\r\n\r\nNEW";
         $this->assertSame(
             'NEW',
@@ -102,6 +102,47 @@ final class CurlPayloadTest extends TestCase
             $raw,
             new CurlPayload($raw)->body(),
             'Must not trim raw when no headers are present'
+        );
+    }
+
+    #[Test]
+    public function bodyExtractionWorksWhenBodyContainsCrlfCrlf(): void
+    {
+        $payload = implode('', [
+            "HTTP/1.1 200 OK\r\n",
+            "Content-Type: text/plain\r\n",
+            "\r\n",
+            "line1\r\n",
+            "line2\r\n\r\n",
+            "line3",
+        ]);
+
+        $curlPayload = new CurlPayload($payload);
+
+        $this->assertSame(
+            "line1\r\nline2\r\n\r\nline3",
+            $curlPayload->body(),
+            'Must not truncate body if it contains CRLFCRLF'
+        );
+    }
+
+    #[Test]
+    public function mergesDuplicateHeadersIntoSingleValue(): void
+    {
+        $raw = implode('', [
+            "HTTP/1.1 200 OK\r\n",
+            "X-Foo: A\r\n",
+            "X-Foo: B\r\n",
+            "\r\n",
+            "BODY"
+        ]);
+
+        $headers = new CurlPayload($raw)->headers();
+
+        $this->assertSame(
+            ['X-Foo' => 'A, B'],
+            $headers,
+            'Must merge duplicate headers into a single comma-separated value'
         );
     }
 }

@@ -35,10 +35,6 @@ final class WithContentTypeTest extends TestCase
 
         $response = new CurlClient()->outcome($request)->response();
 
-        $this->assertHeader(
-            $this->reflected($response->body()),
-            'content-type',
-            'application/json',
-        );
+        $this->assertReflectedHeader($response, 'content-type', 'application/json');
     }
 }

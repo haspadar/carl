@@ -29,6 +29,10 @@ final readonly class WithJsonAccept implements Request
     #[Override]
     public function options(): array
     {
-        return new WithHeaderOnce($this->origin, 'Accept', 'application/json')->options();
+        return new WithHeader(
+            $this->origin,
+            'Accept',
+            'application/json'
+        )->options();
     }
 }

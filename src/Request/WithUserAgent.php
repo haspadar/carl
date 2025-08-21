@@ -28,6 +28,10 @@ final readonly class WithUserAgent implements Request
     #[Override]
     public function options(): array
     {
-        return new WithHeaderOnce($this->origin, 'User-Agent', $this->userAgent)->options();
+        return new WithHeader(
+            $this->origin,
+            'User-Agent',
+            $this->userAgent
+        )->options();
     }
 }

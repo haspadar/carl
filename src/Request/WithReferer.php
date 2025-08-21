@@ -19,6 +19,10 @@ use Override;
  * This decorator ensures that the `Referer` header is added only once.
  * If the header already exists, it will not be duplicated.
  *
+ * Note: The HTTP header name is historically misspelled as "Referer" (not "Referrer").
+ *
+ * See also: {@see WithHeaderOnce}
+ *
  * Example:
  * new WithReferer($request, 'https://example.com');
  */
@@ -33,6 +37,10 @@ final readonly class WithReferer implements Request
     #[Override]
     public function options(): array
     {
-        return new WithHeaderOnce($this->origin, 'Referer', $this->referer)->options();
+        return new WithHeader(
+            $this->origin,
+            'Referer',
+            $this->referer
+        )->options();
     }
 }

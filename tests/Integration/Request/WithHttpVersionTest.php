@@ -11,8 +11,10 @@ namespace Carl\Tests\Integration\Request;
 use Carl\Client\CurlClient;
 use Carl\Request\GetRequest;
 use Carl\Request\WithHttpVersion;
+use Carl\Tests\Integration\Support\AssertsHttpResponse;
 use Carl\Tests\Integration\Support\AssertsReflectedResponse;
 use Carl\Tests\Integration\Support\WithRunningServer;
+use JsonException;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
@@ -20,12 +22,13 @@ final class WithHttpVersionTest extends TestCase
 {
     use WithRunningServer;
     use AssertsReflectedResponse;
+    use AssertsHttpResponse;
 
     /**
-     * @throws \JsonException
+     * @throws JsonException
      */
     #[Test]
-    public function usesValidHttpVersion(): void
+    public function appliesHttpVersionWithoutAlteringMethod(): void
     {
         $version = CURL_HTTP_VERSION_NONE;
         $request = new WithHttpVersion(
@@ -36,5 +39,6 @@ final class WithHttpVersionTest extends TestCase
         $response = new CurlClient()->outcome($request)->response();
 
         $this->assertReflectedMethod($response, 'GET');
+        $this->assertStatusCode($response, 200);
     }
 }

@@ -30,8 +30,9 @@ final readonly class WithHeaderIncluded implements Request
     #[Override]
     public function options(): array
     {
-        return $this->origin->options() + [
-                CURLOPT_HEADER => true,
-            ];
+        return array_replace(
+            $this->origin->options(),
+            [CURLOPT_HEADER => true]
+        );
     }
 }

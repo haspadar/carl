@@ -44,7 +44,14 @@ final readonly class WithHeaders implements Request
             }
         }
 
-        $options[CURLOPT_HTTPHEADER] = array_merge($existing, $this->headers);
+        $options[CURLOPT_HTTPHEADER] = array_merge(
+            $existing,
+            array_values(array_filter(
+                $this->headers,
+                fn (string $h): bool => !str_contains($h, "\r") && !str_contains($h, "\n")
+            ))
+        );
+
         return $options;
     }
 }

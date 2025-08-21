@@ -34,4 +34,18 @@ final class PostRequestTest extends TestCase
         $this->assertReflectedMethod($response, 'POST');
         $this->assertReflectedBody($response, 'hello');
     }
+
+    #[Test]
+    /**
+     * @throws JsonException
+     */
+    public function sendsPostRequestWithoutBody(): void
+    {
+        $response = new CurlClient()->outcome(
+            new PostRequest($this->server()->url('/reflect'))
+        )->response();
+
+        $this->assertReflectedMethod($response, 'POST');
+        $this->assertReflectedBody($response, '');
+    }
 }

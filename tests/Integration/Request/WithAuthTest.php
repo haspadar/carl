@@ -29,15 +29,15 @@ final class WithAuthTest extends TestCase
         $request = new WithAuth(
             new GetRequest($this->server()->url('/reflect')),
             'john',
-            'secret'
+            'secret',
         );
 
         $response = new CurlClient()->outcome($request)->response();
 
-        $this->assertHeader(
-            $this->reflected($response->body()),
+        $this->assertReflectedHeader(
+            $response,
             'authorization',
-            'Basic ' . base64_encode('john:secret')
+            'Basic ' . base64_encode('john:secret'),
         );
     }
 }

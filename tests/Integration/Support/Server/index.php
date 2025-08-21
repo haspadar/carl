@@ -15,6 +15,16 @@ if (preg_match('#^/status/(\d{3})$#', $path, $m)) {
     return;
 }
 
+if ($path === '/redirect-twice') {
+    header('Location: /redirect-once', true, 302);
+    return;
+}
+
+if ($path === '/redirect-once') {
+    header('Location: /reflect', true, 302);
+    return;
+}
+
 if (preg_match('#^/redirect/(\d{3})$#', $path, $m)) {
     $code = (int)$m[1];
     if ($code < 300 || $code >= 400) {
@@ -25,9 +35,11 @@ if (preg_match('#^/redirect/(\d{3})$#', $path, $m)) {
 }
 
 if (preg_match('#^/sleep/(\d+)$#', $path, $matches)) {
-    usleep((int) $matches[1] * 1000);
+    $ms = min((int) $matches[1], 10_000); // cap at 10s to prevent long test hangs
+    usleep($ms * 1000);
     http_response_code(200);
-    echo 'Slept for ' . $matches[1] . ' ms';
+    header('Content-Type: text/plain; charset=UTF-8');
+    echo 'Slept for ' . $ms . ' ms';
     return;
 }
 

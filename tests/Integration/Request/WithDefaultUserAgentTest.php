@@ -29,9 +29,7 @@ final class WithDefaultUserAgentTest extends TestCase
         );
 
         $response = new CurlClient()->outcome($request)->response();
-        $reflected = $this->reflected($response->body());
 
-        $this->assertHasHeader($reflected, 'user-agent');
-        $this->assertStringContainsString('Carl', $reflected['headers']['user-agent']);
+        $this->assertReflectedHeaderContains($response, 'user-agent', 'Carl');
     }
 }

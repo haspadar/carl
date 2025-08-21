@@ -24,11 +24,15 @@ final readonly class PostRequest implements Request
     #[Override]
     public function options(): array
     {
-        return [
+        $options = [
             CURLOPT_URL => $this->url,
             CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => $this->body,
             CURLOPT_RETURNTRANSFER => true,
         ];
+        if ($this->body !== '') {
+            $options[CURLOPT_POSTFIELDS] = $this->body;
+        }
+
+        return $options;
     }
 }

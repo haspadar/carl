@@ -28,4 +28,20 @@ final class WithProxyTest extends TestCase
 
         $this->assertSame('http://proxy.local:3128', $options[CURLOPT_PROXY], 'Should set proxy URL');
     }
+
+    #[Test]
+    public function overridesExistingProxy(): void
+    {
+        $origin = new RawOptionsRequest([
+            CURLOPT_PROXY => 'http://original:9999',
+        ]);
+
+        $decorated = new WithProxy($origin, 'http://proxy.local:3128');
+
+        $this->assertSame(
+            'http://proxy.local:3128',
+            $decorated->options()[CURLOPT_PROXY],
+            'WithProxy should override existing proxy (override semantics)',
+        );
+    }
 }

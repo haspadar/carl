@@ -13,6 +13,7 @@ namespace Carl\Request;
  *
  * Used by HTTP clients to encapsulate request configuration
  * in an object-oriented and composable way.
+ *
  */
 interface Request
 {

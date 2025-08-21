@@ -32,5 +32,10 @@ final class WithBodyTest extends TestCase
         $response = new CurlClient()->outcome($request)->response();
 
         $this->assertReflectedBody($response, 'abc=123&x=42');
+        $this->assertStringNotContainsString(
+            'original=1',
+            $response->body(),
+            'Original body should be overridden by WithBody'
+        );
     }
 }

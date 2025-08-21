@@ -31,8 +31,9 @@ final readonly class WithCurlOption implements Request
     #[Override]
     public function options(): array
     {
-        return $this->origin->options() + [
-                $this->option => $this->value,
-            ];
+        return array_replace(
+            $this->origin->options(),
+            [$this->option => $this->value]
+        );
     }
 }

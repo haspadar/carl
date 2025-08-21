@@ -55,7 +55,7 @@ final readonly class FakeStatus implements FakeOutcomes
             $request,
             new CurlResponse(
                 'ok',
-                [],
+                ['Content-Type' => 'text/plain'],
                 new CurlInfo([CURLINFO_RESPONSE_CODE => $code]),
             ),
         );

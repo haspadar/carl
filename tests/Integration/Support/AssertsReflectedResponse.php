@@ -35,7 +35,7 @@ trait AssertsReflectedResponse
         Assert::assertSame(
             $expected,
             $this->reflected($response->body())['path'] ?? '',
-            "Expected path: $expected"
+            "Expected path: $expected",
         );
     }
 
@@ -44,7 +44,7 @@ trait AssertsReflectedResponse
         Assert::assertSame(
             $expected,
             $reflected['method'] ?? '',
-            "Expected method: $expected"
+            "Expected method: $expected",
         );
     }
 
@@ -55,17 +55,43 @@ trait AssertsReflectedResponse
         $this->assertHeader(
             $reflected,
             $name,
-            $expected
+            $expected,
         );
+    }
+
+    public function assertReflectedHeaderContains(Response $response, string $name, string $substring): void
+    {
+        $reflected = $this->reflected($response->body());
+        $this->assertHasHeader($reflected, $name);
+
+        foreach ($reflected['headers'] as $key => $value) {
+            if (strcasecmp($key, $name) === 0) {
+                Assert::assertStringContainsStringIgnoringCase(
+                    $substring,
+                    $value,
+                    "Expected header $name to contain: $substring (actual: $value)",
+                );
+                return;
+            }
+        }
+
+        Assert::fail("Expected header '$name' to be present (case-insensitive)");
     }
 
     public function assertHeader(array $reflected, string $name, string $expected): void
     {
-        Assert::assertSame(
-            $expected,
-            $reflected['headers'][$name] ?? '',
-            "Expected header $name: $expected"
-        );
+        foreach ($reflected['headers'] as $key => $value) {
+            if (strcasecmp($key, $name) === 0) {
+                Assert::assertSame(
+                    $expected,
+                    $value,
+                    "Expected header $name: $expected, got: $value"
+                );
+                return;
+            }
+        }
+
+        Assert::fail("Expected header $name to be present (case-insensitive)");
     }
 
     public function assertReflectedBody(Response $response, string $expected): void
@@ -78,7 +104,7 @@ trait AssertsReflectedResponse
         Assert::assertSame(
             $expected,
             $reflected['body'] ?? '',
-            "Expected body: $expected"
+            "Expected body: $expected",
         );
     }
 
@@ -89,10 +115,12 @@ trait AssertsReflectedResponse
 
     public function assertHasHeader(array $reflected, string $name): void
     {
-        Assert::assertArrayHasKey(
-            $name,
-            $reflected['headers'],
-            "Expected header $name to be present"
+        Assert::assertNotEmpty(
+            array_filter(
+                array_keys($reflected['headers'] ?? []),
+                fn (string $key): bool => strcasecmp($key, $name) === 0,
+            ),
+            "Expected header '$name' to be present (case-insensitive)",
         );
     }
 }

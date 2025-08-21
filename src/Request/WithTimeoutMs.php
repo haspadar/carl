@@ -34,8 +34,9 @@ final readonly class WithTimeoutMs implements Request
     #[Override]
     public function options(): array
     {
-        return $this->origin->options() + [
-                CURLOPT_TIMEOUT_MS => $this->microseconds,
-            ];
+        return array_replace(
+            $this->origin->options(),
+            [CURLOPT_TIMEOUT_MS => $this->microseconds]
+        );
     }
 }

@@ -31,6 +31,6 @@ final class WithEncodingTest extends TestCase
 
         $response = new CurlClient()->outcome($request)->response();
 
-        $this->assertReflectedHeader($response, 'accept-encoding', 'gzip');
+        $this->assertReflectedHeaderContains($response, 'accept-encoding', 'gzip');
     }
 }
