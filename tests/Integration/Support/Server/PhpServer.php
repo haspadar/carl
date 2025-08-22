@@ -23,7 +23,7 @@ use RuntimeException;
  * // ... run HTTP requests ...
  * $server->stop();
  */
-final readonly class PhpServer
+final readonly class PhpServer implements Server
 {
     public function __construct(
         private string $host,
@@ -31,6 +31,7 @@ final readonly class PhpServer
     ) {
     }
 
+    #[\Override]
     public function start(): RunningServer
     {
         $proc = proc_open(
@@ -41,20 +42,14 @@ final readonly class PhpServer
             $pipes
         );
 
-        if ($proc === false) {
-            $this->closePipes($pipes);
-            throw new RuntimeException('Failed to start PHP built-in server');
-        }
-
-        $this->closePipes($pipes);
-
-        return new RunningServer($proc, $this->host, $this->port);
-    }
-
-    private function closePipes(array $pipes): void
-    {
         foreach ($pipes as $p) {
             fclose($p);
         }
+
+        if ($proc === false) {
+            throw new RuntimeException('Failed to start PHP built-in server');
+        }
+
+        return new RunningServer($proc, $this->host, $this->port);
     }
 }

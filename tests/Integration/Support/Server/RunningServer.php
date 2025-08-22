@@ -27,7 +27,7 @@ final readonly class RunningServer
     public function __construct(
         private mixed $proc,
         private string $host,
-        private int $port
+        private int $port,
     ) {
     }
 
@@ -44,5 +44,15 @@ final readonly class RunningServer
     {
         $normalizedPath = $path !== '' && $path[0] === '/' ? $path : "/$path";
         return "http://{$this->host}:{$this->port}{$normalizedPath}";
+    }
+
+    public function host(): string
+    {
+        return $this->host;
+    }
+
+    public function port(): int
+    {
+        return $this->port;
     }
 }

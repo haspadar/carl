@@ -10,6 +10,7 @@ namespace Carl\Tests\Integration\Support;
 
 use Carl\Tests\Integration\Support\Server\PhpServer;
 use Carl\Tests\Integration\Support\Server\RunningServer;
+use Carl\Tests\Integration\Support\Server\WaitForPortServer;
 use PHPUnit\Framework\Attributes\After;
 use PHPUnit\Framework\Attributes\Before;
 use Random\RandomException;
@@ -25,7 +26,9 @@ trait WithRunningServer
     #[Before]
     protected function startServer(): void
     {
-        $this->server = new PhpServer('127.0.0.1', random_int(8000, 9000))->start();
+        $this->server = new WaitForPortServer(
+            new PhpServer('127.0.0.1', random_int(8000, 9000))
+        )->start();
         $this->waitForServer($this->server);
     }
 
