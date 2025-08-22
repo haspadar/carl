@@ -27,11 +27,11 @@ interface Client
      * Implementations should preserve the order of $requests and return one
      * Outcome per Request. The $reaction is invoked for every produced Outcome.
      *
-     * @param list<Request>                $requests Ordered requests to execute
+     * @param iterable<Request>            $requests Ordered requests to execute
      * @param Reaction                     $reaction Reaction to apply to each outcome
      * @return list<Outcome>                         Outcomes in the same order as $requests
      */
-    public function outcomes(array $requests, Reaction $reaction = new VoidReaction()): array;
+    public function outcomes(iterable $requests, Reaction $reaction = new VoidReaction()): array;
 
     /**
      * Execute a single request.

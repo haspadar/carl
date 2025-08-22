@@ -49,12 +49,29 @@ final readonly class ChunkedClient implements Client
      * @throws Exception
      */
     #[Override]
-    public function outcomes(array $requests, Reaction $reaction = new VoidReaction()): array
+    public function outcomes(iterable $requests, Reaction $reaction = new VoidReaction()): array
     {
-        $result = [];
-        foreach (array_chunk($requests, $this->size) as $chunk) {
-            array_push($result, ...$this->origin->outcomes($chunk, $reaction));
+        $chunks = [];
+        $buffer = [];
+
+        foreach ($requests as $request) {
+            $buffer[] = $request;
+
+            if (count($buffer) === $this->size) {
+                $chunks[] = $buffer;
+                $buffer = [];
+            }
         }
-        return $result;
+
+        if ($buffer !== []) {
+            $chunks[] = $buffer;
+        }
+
+        return array_merge(
+            ...array_map(
+                fn (array $chunk): array => $this->origin->outcomes($chunk, $reaction),
+                $chunks
+            )
+        );
     }
 }

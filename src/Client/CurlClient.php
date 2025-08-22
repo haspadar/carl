@@ -51,10 +51,9 @@ final readonly class CurlClient implements Client
      *
      * @throws Exception When curl_init() fails
      * @return list<Outcome>
-     * @param list<Request> $requests
      */
     #[Override]
-    public function outcomes(array $requests, Reaction $reaction = new VoidReaction()): array
+    public function outcomes(iterable $requests, Reaction $reaction = new VoidReaction()): array
     {
         $multiHandle = curl_multi_init();
         foreach ($this->multiOptions as $opt => $val) {
