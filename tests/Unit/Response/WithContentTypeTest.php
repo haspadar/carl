@@ -12,14 +12,13 @@ use Carl\Response\CurlInfo;
 use Carl\Response\CurlResponse;
 use Carl\Response\WithContentType;
 use Carl\Tests\Integration\Support\AssertsHttpResponse;
-use Carl\Tests\Integration\Support\AssertsReflectedResponse;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 final class WithContentTypeTest extends TestCase
 {
     use AssertsHttpResponse;
-    use AssertsReflectedResponse;
+
     #[Test]
     public function returnsExpectedContentTypeHeaderWhenWrapped(): void
     {

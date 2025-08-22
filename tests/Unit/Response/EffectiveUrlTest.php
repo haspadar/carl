@@ -36,4 +36,21 @@ final class EffectiveUrlTest extends TestCase
             'Effective URL should match',
         );
     }
+
+
+    #[Test]
+    public function returnsEmptyStringIfEffectiveUrlMissing(): void
+    {
+        $response = new CurlResponse(
+            body: '...',
+            headers: [],
+            curlInfo: new CurlInfo([])
+        );
+
+        $this->assertSame(
+            '',
+            new EffectiveUrl($response)->value(),
+            'Should return empty string when effective URL is not set',
+        );
+    }
 }

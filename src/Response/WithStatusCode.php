@@ -14,7 +14,7 @@ final readonly class WithStatusCode implements Response
 {
     public function __construct(
         private Response $origin,
-        private int $code
+        private int $code,
     ) {
     }
 
@@ -30,6 +30,10 @@ final readonly class WithStatusCode implements Response
         return $this->origin->headers();
     }
 
+    /**
+     * Adds both 'CURLINFO_RESPONSE_CODE' (curl constant) and 'http_code' (legacy array key)
+     * to preserve compatibility with all consumers of CurlInfo.
+     */
     #[Override]
     public function info(): CurlInfo
     {

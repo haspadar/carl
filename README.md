@@ -54,7 +54,7 @@ Carl takes the opposite approach: small, final, immutable objects, strict SRP, a
 | Testability   | Mocks, adapters, prophecy             | Built-in fakes for clients & responses               |
 | Dependencies  | Heavy (PSR-7, PSR-18, Symfony, etc.)  | Zero deps (only PHP + cURL)                          |
 | Configuration | One big array of options              | Composed decorators (`WithUserAgent`, `WithHeaders`) |
-| Lazy eval     | No (eager on send)                    | Yes (outcome(), body(), etc.)                        |
+| Lazy eval     | No (eager on send)                    | Yes (`outcome()`, `body()`, etc.)                    |
 
 Carl aligns more with Clean Code principles, while Guzzle is more of a pragmatic toolbox.
 
@@ -77,10 +77,8 @@ Carl aligns more with Clean Code principles, while Guzzle is more of a pragmatic
 
 **Current approach:**
 
-- Traits (e.g., `AssertsReflectedResponse`, `WithRunningServer`) are used in tests for quick composition of assertions
-  and setup logic.
-- Procedural fragments and scalars remain in the codebase, requiring `@var` / `@return` annotations for static analysis
-  tools.
+- Traits (e.g., `AssertsReflectedResponse`, `WithRunningServer`) are used in tests for quick composition of assertions and setup logic.
+- Procedural fragments and scalars remain in the codebase, requiring `@var`/`@return` annotations for static analysis tools.
 
 **Plans:**
 

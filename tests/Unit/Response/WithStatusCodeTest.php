@@ -20,20 +20,32 @@ final class WithStatusCodeTest extends TestCase
     use AssertsHttpResponse;
 
     #[Test]
-    public function overridesStatusCodeWhenWrapped(): void
+    public function overridesHttpCodeWhenWrapped(): void
     {
         $response = new WithStatusCode(
-            new CurlResponse(
-                'irrelevant',
-                [],
-                new CurlInfo(['http_code' => 500])
-            ),
-            201
+            new CurlResponse('irrelevant', [], new CurlInfo(['http_code' => 500])),
+            201,
         );
+
         $this->assertStatusCode(
             $response,
             201,
-            'Should override status code in info()'
+            'Should override http_code',
+        );
+    }
+
+    #[Test]
+    public function overridesCurlInfoConstantWhenWrapped(): void
+    {
+        $response = new WithStatusCode(
+            new CurlResponse('irrelevant', [], new CurlInfo(['http_code' => 500])),
+            201,
+        );
+
+        $this->assertSame(
+            201,
+            (int)$response->info()->value(CURLINFO_RESPONSE_CODE),
+            'Should also set CURLINFO_RESPONSE_CODE',
         );
     }
 
@@ -42,13 +54,13 @@ final class WithStatusCodeTest extends TestCase
     {
         $response = new WithStatusCode(
             new CurlResponse('expected body', [], new CurlInfo([])),
-            201
+            201,
         );
 
         $this->assertSame(
             'expected body',
             $response->body(),
-            'Should delegate body() to origin'
+            'Should delegate body() to origin',
         );
     }
 
@@ -57,13 +69,13 @@ final class WithStatusCodeTest extends TestCase
     {
         $response = new WithStatusCode(
             new CurlResponse('irrelevant', ['X-Foo' => 'Bar'], new CurlInfo([])),
-            201
+            201,
         );
 
         $this->assertSame(
             ['X-Foo' => 'Bar'],
             $response->headers(),
-            'Should delegate headers() to origin'
+            'Should delegate headers() to origin',
         );
     }
 }

@@ -16,6 +16,10 @@ use Override;
  * Sets `CURLOPT_HTTPAUTH` to `CURLAUTH_BASIC` and `CURLOPT_USERPWD` to
  * "username:password".
  *
+ * Override semantics: replaces any existing auth options from the origin.
+ * Security: avoid logging options arrays, as they will contain credentials
+ * in plain text.
+ *
  * Decorates another {@see Request}.
  */
 final readonly class WithAuth implements Request

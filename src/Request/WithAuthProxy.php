@@ -16,6 +16,11 @@ use Override;
  * Sets `CURLOPT_PROXY` to the proxy URL and `CURLOPT_PROXYUSERPWD` to
  * "username:password" for HTTP/S proxy authentication.
  *
+ * Override semantics: replaces any existing `CURLOPT_PROXY`/`CURLOPT_PROXYUSERPWD`
+ * values from the origin via `array_replace()`. If you need to control the proxy
+ * auth method explicitly, set `CURLOPT_PROXYAUTH` in an additional decorator.
+ * Be mindful not to log request options, as they contain credentials in plain text.
+ *
  * Decorates another {@see Request}.
  */
 final readonly class WithAuthProxy implements Request

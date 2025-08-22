@@ -24,7 +24,7 @@ final class PrimaryIpTest extends TestCase
             headers: [],
             curlInfo: new CurlInfo([
                 CURLINFO_PRIMARY_IP => '192.168.1.100',
-            ])
+            ]),
         );
 
         $this->assertSame(
@@ -40,7 +40,7 @@ final class PrimaryIpTest extends TestCase
         $response = new CurlResponse(
             body: '...',
             headers: [],
-            curlInfo: new CurlInfo([])
+            curlInfo: new CurlInfo([]),
         );
 
         $this->assertSame(
@@ -48,5 +48,17 @@ final class PrimaryIpTest extends TestCase
             new PrimaryIp($response)->value(),
             'Should return fallback IP if not set',
         );
+    }
+
+    #[Test]
+    public function returnsIpv6IfSet(): void
+    {
+        $response = new CurlResponse(
+            body: '...',
+            headers: [],
+            curlInfo: new CurlInfo([CURLINFO_PRIMARY_IP => '2001:db8::1']),
+        );
+
+        $this->assertSame('2001:db8::1', new PrimaryIp($response)->value());
     }
 }

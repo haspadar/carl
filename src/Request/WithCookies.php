@@ -16,6 +16,9 @@ use Override;
  * Useful for passing session or custom cookies in a single header-like string
  * (e.g., "name=value; other=123").
  *
+ * Override semantics: replaces any existing `CURLOPT_COOKIE` from the origin.
+ * Input must be a single cookie header string (no CRLF).
+ *
  * Decorates another {@see Request}.
  */
 final readonly class WithCookies implements Request

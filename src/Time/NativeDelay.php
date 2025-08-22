@@ -16,6 +16,9 @@ use Override;
  * This class introduces a real delay (blocking), typically used in production.
  * For testing or non-blocking scenarios, use a fake or no-op implementation.
  *
+ * Expects a non-negative microsecond value; extremely large durations may be
+ * truncated or interrupted by the OS.
+ *
  * @codeCoverageIgnore
  */
 final readonly class NativeDelay implements Delay

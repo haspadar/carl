@@ -35,10 +35,21 @@ final readonly class WithHeader implements Request
         $headers = [];
         if (isset($options[CURLOPT_HTTPHEADER]) && is_array($options[CURLOPT_HTTPHEADER])) {
             foreach ($options[CURLOPT_HTTPHEADER] as $header) {
-                if (
-                    is_string($header) &&
-                    stripos($header, $this->name . ':') !== 0
-                ) {
+                if (!is_string($header)) {
+                    continue;
+                }
+                if (str_contains($header, "\r")) {
+                    continue;
+                }
+                if (str_contains($header, "\n")) {
+                    continue;
+                }
+                $pos = strpos($header, ':');
+                if ($pos === false) {
+                    continue;
+                }
+                $existingName = substr($header, 0, $pos);
+                if (strcasecmp($existingName, $this->name) !== 0) {
                     $headers[] = $header;
                 }
             }
