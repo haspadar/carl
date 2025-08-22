@@ -123,8 +123,7 @@ new WithReferer($origin, 'https://example.com')
 ### ⏱ Technical
 
 ```php
-new WithTimeout($origin, 30)
-new WithConnectionTimeout($origin, 10)
+new WithTimeoutMs($origin, 30_000) // 30 seconds
 new WithSslVerificationOff($origin)
 new WithHttpVersion($origin, CURL_HTTP_VERSION_2_0)
 new WithProxy($origin, 'http://proxy.local:8080')
