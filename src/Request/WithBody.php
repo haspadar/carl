@@ -10,6 +10,18 @@ namespace Carl\Request;
 
 use Override;
 
+/**
+ * Adds a raw string body to the request.
+ *
+ * Sets `CURLOPT_POSTFIELDS` with the provided payload. Combine with
+ * content-type decorators such as {@see WithContentType} or {@see WithJsonContentType}.
+ *
+ * Note: Setting `CURLOPT_POSTFIELDS` can cause libcurl to use POST by default.
+ * Ensure the origin defines the intended HTTP method (e.g., POST request type
+ * or `CURLOPT_CUSTOMREQUEST`), as this decorator does not enforce the verb.
+ *
+ * Decorates another {@see Request}.
+ */
 final readonly class WithBody implements Request
 {
     public function __construct(
