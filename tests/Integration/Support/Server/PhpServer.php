@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace Carl\Tests\Integration\Support\Server;
 
+use Override;
 use RuntimeException;
 
 /**
@@ -31,7 +32,7 @@ final readonly class PhpServer implements Server
     ) {
     }
 
-    #[\Override]
+    #[Override]
     public function start(): RunningServer
     {
         $proc = proc_open(

@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace Carl\Tests\Integration\Support;
 
+use Carl\Tests\Integration\Support\Server\FreePort;
 use Carl\Tests\Integration\Support\Server\PhpServer;
 use Carl\Tests\Integration\Support\Server\RunningServer;
 use Carl\Tests\Integration\Support\Server\WaitForPortServer;
@@ -27,7 +28,7 @@ trait WithRunningServer
     protected function startServer(): void
     {
         $this->server = new WaitForPortServer(
-            new PhpServer('127.0.0.1', random_int(8000, 9000))
+            new PhpServer('127.0.0.1', new FreePort()->value())
         )->start();
         $this->waitForServer($this->server);
     }

@@ -8,8 +8,6 @@ declare(strict_types=1);
 
 namespace Carl\Tests\Integration\Support\Server;
 
-use Carl\Exception;
-
 /**
  * Represents a running PHP built-in server process.
  *
@@ -34,7 +32,7 @@ final readonly class RunningServer
     public function stop(): void
     {
         if (!is_resource($this->proc)) {
-            throw new Exception('Server process is already closed');
+            return;
         }
         @proc_terminate($this->proc);
         @proc_close($this->proc);
