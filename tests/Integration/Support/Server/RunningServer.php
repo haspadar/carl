@@ -8,8 +8,6 @@ declare(strict_types=1);
 
 namespace Carl\Tests\Integration\Support\Server;
 
-use Carl\Exception;
-
 /**
  * Represents a running PHP built-in server process.
  *
@@ -27,14 +25,14 @@ final readonly class RunningServer
     public function __construct(
         private mixed $proc,
         private string $host,
-        private int $port
+        private int $port,
     ) {
     }
 
     public function stop(): void
     {
         if (!is_resource($this->proc)) {
-            throw new Exception('Server process is already closed');
+            return;
         }
         @proc_terminate($this->proc);
         @proc_close($this->proc);
@@ -44,5 +42,15 @@ final readonly class RunningServer
     {
         $normalizedPath = $path !== '' && $path[0] === '/' ? $path : "/$path";
         return "http://{$this->host}:{$this->port}{$normalizedPath}";
+    }
+
+    public function host(): string
+    {
+        return $this->host;
+    }
+
+    public function port(): int
+    {
+        return $this->port;
     }
 }
