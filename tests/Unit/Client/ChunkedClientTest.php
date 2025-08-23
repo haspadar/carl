@@ -67,4 +67,17 @@ final class ChunkedClientTest extends TestCase
 
         $this->assertSame([], $client->outcomes([]), 'Must return empty array for empty input');
     }
+
+    #[Test]
+    public function returnsEmptyArrayForEmptyInput(): void
+    {
+        $client = new ChunkedClient(
+            new FakeClient(new AlwaysSuccessful()),
+            3
+        );
+
+        $result = $client->outcomes([]);
+
+        $this->assertSame([], $result, 'Must return empty array for empty input');
+    }
 }

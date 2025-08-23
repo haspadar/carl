@@ -108,4 +108,6 @@ final class ThrottledClientTest extends TestCase
             'ThrottledClient must delegate outcome() to origin client'
         );
     }
+
+
 }

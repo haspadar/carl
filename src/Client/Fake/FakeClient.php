@@ -45,12 +45,13 @@ final readonly class FakeClient implements Client
     }
 
     #[Override]
-    public function outcomes(array $requests, Reaction $reaction = new VoidReaction()): array
+    public function outcomes(iterable $requests, Reaction $reaction = new VoidReaction()): array
     {
         $result = [];
 
-        foreach ($requests as $i => $request) {
-            $outcome = $this->fakeOutcomes->at($i, $request);
+        $index = 0;
+        foreach ($requests as $request) {
+            $outcome = $this->fakeOutcomes->at($index++, $request);
             $outcome->react($reaction);
             $result[] = $outcome;
         }
