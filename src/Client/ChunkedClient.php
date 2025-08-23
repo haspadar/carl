@@ -46,32 +46,42 @@ final readonly class ChunkedClient implements Client
     }
 
     /**
+     * Executes requests in fixed-size chunks.
+     *
+     * Each chunk is delegated to the underlying client, and outcomes are
+     * collected from all chunks in chunk submission order. If the underlying
+     * client preserves request order within each chunk, then the overall outcome
+     * order will correspond to input order.
+     *
+     * Note: If the inner client returns outcomes in completion order (e.g. CurlClient),
+     * the final outcome order may differ from the input.
+     *
      * @throws Exception
+     * @param Reaction $reaction Reaction to apply to each outcome
+     * @return list<Outcome>              Combined outcomes from all chunks
+     * @param iterable<Request> $requests Requests to send in batches
      */
     #[Override]
     public function outcomes(iterable $requests, Reaction $reaction = new VoidReaction()): array
     {
-        $chunks = [];
+        $result = [];
         $buffer = [];
 
         foreach ($requests as $request) {
             $buffer[] = $request;
 
             if (count($buffer) === $this->size) {
-                $chunks[] = $buffer;
+                $outcomes = $this->origin->outcomes($buffer, $reaction);
+                array_push($result, ...$outcomes);
                 $buffer = [];
             }
         }
 
         if ($buffer !== []) {
-            $chunks[] = $buffer;
+            $outcomes = $this->origin->outcomes($buffer, $reaction);
+            array_push($result, ...$outcomes);
         }
 
-        return array_merge(
-            ...array_map(
-                fn (array $chunk): array => $this->origin->outcomes($chunk, $reaction),
-                $chunks
-            )
-        );
+        return $result;
     }
 }

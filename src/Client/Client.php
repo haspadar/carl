@@ -16,20 +16,21 @@ use Carl\Request\Request;
 /**
  * HTTP client abstraction.
  *
- * Implementations should preserve request order and produce the same number
- * of outcomes as requests. The given Reaction is applied to each produced outcome.
+ * Implementations must return one Outcome per Request.
+ * The output order is implementation-defined and may not match the input.
+ * Reactions are invoked per produced outcome.
  */
 interface Client
 {
     /**
      * Execute a batch of requests.
      *
-     * Implementations should preserve the order of $requests and return one
-     * Outcome per Request. The $reaction is invoked for every produced Outcome.
+     * The number of returned outcomes will match the number of requests.
+     * Implementations may return them in any order.
      *
-     * @param iterable<Request>            $requests Ordered requests to execute
-     * @param Reaction                     $reaction Reaction to apply to each outcome
-     * @return list<Outcome>                         Outcomes in the same order as $requests
+     * @param iterable<Request> $requests Requests to execute
+     * @param Reaction          $reaction Reaction to apply to each outcome
+     * @return list<Outcome>              Outcomes for the requests
      */
     public function outcomes(iterable $requests, Reaction $reaction = new VoidReaction()): array;
 

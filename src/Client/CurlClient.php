@@ -44,61 +44,73 @@ final readonly class CurlClient implements Client
     }
 
     /**
-     * Execute requests concurrently via curl_multi and preserve order of completion.
+     * Execute requests concurrently via curl_multi.
      *
-     * For each finished easy handle, an Outcome is produced and the Reaction is invoked.
-     * Returns all produced outcomes (completion order, not submission order).
+     * Each finished handle is converted to an Outcome and passed to the given Reaction.
+     * Returns all outcomes in the order they are completed (not the input order).
+     *
+     * The number of outcomes will match the number of input requests.
      *
      * @throws Exception When curl_init() fails
-     * @return list<Outcome>
+     * @param Reaction $reaction Reaction to apply to each outcome
+     * @return list<Outcome>              Outcomes in completion order
+     * @param iterable<Request> $requests Requests to execute concurrently
      */
     #[Override]
     public function outcomes(iterable $requests, Reaction $reaction = new VoidReaction()): array
     {
-        $multiHandle = curl_multi_init();
-        foreach ($this->multiOptions as $opt => $val) {
-            curl_multi_setopt($multiHandle, $opt, $val);
-        }
-
-        /** @var SplObjectStorage<CurlHandle, Request> $handleToRequest */
-        $handleToRequest = new SplObjectStorage();
-
-        foreach ($requests as $request) {
-            $easyHandle = curl_init();
-            if ($easyHandle === false) {
-                throw new Exception('curl_init() failed');
-            }
-            curl_setopt_array($easyHandle, $request->options());
-            curl_multi_add_handle($multiHandle, $easyHandle);
-            $handleToRequest[$easyHandle] = $request;
-        }
-
         $outcomes = [];
-
-        do {
-            curl_multi_exec($multiHandle, $running);
-            $selected = curl_multi_select($multiHandle);
-            if ($selected === -1) {
-                usleep(1_000);
+        $multiHandle = curl_multi_init();
+        try {
+            foreach ($this->multiOptions as $opt => $val) {
+                curl_multi_setopt($multiHandle, $opt, $val);
             }
 
-            while (($info = curl_multi_info_read($multiHandle)) !== false) {
-                /** @var CurlHandle $completedHandle */
-                $completedHandle = $info['handle'];
-                /** @var Request $request */
-                $request = $handleToRequest[$completedHandle];
+            /** @var SplObjectStorage<CurlHandle, Request> $handleToRequest */
+            $handleToRequest = new SplObjectStorage();
 
-                $outcome = new OutcomeFromHandle($completedHandle, $request)->value();
-                $outcome->react($reaction);
-                $outcomes[] = $outcome;
-
-                curl_multi_remove_handle($multiHandle, $completedHandle);
-                curl_close($completedHandle);
-                $handleToRequest->detach($completedHandle);
+            foreach ($requests as $request) {
+                $easyHandle = curl_init();
+                if ($easyHandle === false) {
+                    throw new Exception('curl_init() failed');
+                }
+                curl_setopt_array($easyHandle, $request->options());
+                curl_multi_add_handle($multiHandle, $easyHandle);
+                $handleToRequest[$easyHandle] = $request;
             }
-        } while ($running > 0);
 
-        curl_multi_close($multiHandle);
+            do {
+                curl_multi_exec($multiHandle, $running);
+                $selected = curl_multi_select($multiHandle);
+                if ($selected === -1) {
+                    usleep(1_000);
+                }
+
+                while (($info = curl_multi_info_read($multiHandle)) !== false) {
+                    /** @var CurlHandle $completedHandle */
+                    $completedHandle = $info['handle'];
+                    /** @var Request $request */
+                    $request = $handleToRequest[$completedHandle];
+
+                    $outcome = new OutcomeFromHandle($completedHandle, $request)->value();
+                    $outcome->react($reaction);
+                    $outcomes[] = $outcome;
+
+                    curl_multi_remove_handle($multiHandle, $completedHandle);
+                    curl_close($completedHandle);
+                    $handleToRequest->detach($completedHandle);
+                }
+            } while ($running > 0);
+        } finally {
+            if (isset($handleToRequest)) {
+                /** @var CurlHandle $pendingHandle */
+                foreach ($handleToRequest as $pendingHandle) {
+                    curl_multi_remove_handle($multiHandle, $pendingHandle);
+                    curl_close($pendingHandle);
+                }
+            }
+            curl_multi_close($multiHandle);
+        }
 
         return $outcomes;
     }

@@ -54,13 +54,21 @@ final readonly class ThrottledClient implements Client
 
     #[Override]
     /**
-     * @return list<Outcome>
+     * Executes requests sequentially with a delay between them.
+     *
+     * Requests are passed one-by-one to the origin client with optional delays
+     * between calls. The resulting outcomes are returned in the same order as
+     * the input requests, assuming the origin client preserves order.
+     *
+     * @param iterable<Request> $requests Ordered requests to execute
+     * @param Reaction          $reaction Reaction to apply to each outcome
+     * @return list<Outcome>              Outcomes in the same order as $requests
      */
     public function outcomes(iterable $requests, Reaction $reaction = new VoidReaction()): array
     {
         $result = [];
         $microseconds = $this->delaySeconds > 0.0
-            ? (int) round($this->delaySeconds * 1_000_000.0)
+            ? max(1, (int) round($this->delaySeconds * 1_000_000.0))
             : 0;
 
         $isFirst = true;
