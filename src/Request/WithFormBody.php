@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Carl\Request;
 
 use Override;
+use Stringable;
 
 /**
  * Adds a form-encoded payload (`application/x-www-form-urlencoded`) to the request.
@@ -21,11 +22,12 @@ use Override;
 final readonly class WithFormBody implements Request
 {
     /**
-     * @param array<string|int, mixed> $payload The data to encode as form data.
+     * @param array<string, scalar|array<string, scalar>> $payload The data to encode as form data.
+     *                       Nested arrays are encoded using PHP’s bracket notation (e.g., foo[bar]=baz).
      */
     public function __construct(
         private Request $origin,
-        private array $payload
+        private array $payload,
     ) {
     }
 
@@ -33,7 +35,13 @@ final readonly class WithFormBody implements Request
     public function options(): array
     {
         $options = $this->origin->options();
-        $options[CURLOPT_POSTFIELDS] = http_build_query($this->payload);
+        $options[CURLOPT_POSTFIELDS] = http_build_query(
+            $this->payload,
+            '',
+            '&',
+            PHP_QUERY_RFC1738,
+        );
+
         return $options;
     }
 }

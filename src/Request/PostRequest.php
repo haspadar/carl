@@ -25,7 +25,7 @@ use Override;
  *     ['foo' => 'bar']
  * );
  *
- * Decorates a `Request` with POST semantics.
+ * Defines a POST request; compose with decorators to add headers or a body.
  */
 final readonly class PostRequest implements Request
 {

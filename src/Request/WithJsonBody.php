@@ -27,7 +27,7 @@ use Override;
  *
  * @throws JsonException If encoding fails.
  * @param array<string|int, mixed> $payload The data to encode as JSON.
- * */
+ */
 final readonly class WithJsonBody implements Request
 {
     /**

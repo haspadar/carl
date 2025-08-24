@@ -22,6 +22,18 @@ trait AssertsReflectedResponse
         return json_decode($raw, true, flags: JSON_THROW_ON_ERROR);
     }
 
+    public function parsedFormBody(Response $response): array
+    {
+        parse_str($this->reflected($response->body())['body'] ?? '', $parsed);
+        return $parsed;
+    }
+
+    public function assertParsedBody(Response $response, array $expected): void
+    {
+        $actual = $this->parsedFormBody($response);
+        Assert::assertSame($expected, $actual);
+    }
+
     /**
      * @throws JsonException
      */

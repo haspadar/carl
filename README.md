@@ -133,6 +133,7 @@ new WithProxy($origin, 'http://proxy.local:8080')
 
 ```php
 new WithBody($origin, 'name=John&age=30')
+new WithFormBody($origin, ['name' => 'John', 'age' => 30])
 new WithJsonBody($origin, ['id' => 123, 'name' => 'Alice'])
 new WithCookies($origin, 'sessionid=abc123; theme=dark')
 new WithFollowRedirects($origin, 5)
@@ -180,6 +181,8 @@ new WithFormBody(
     new PostRequest('https://api.example.com/login'),
     ['username' => 'admin', 'password' => 'secret']
 )
+// Note: To enforce the content type, wrap with:
+// new WithContentType($origin, 'application/x-www-form-urlencoded')
 ```
 
 ## 🧩 Response Decorators

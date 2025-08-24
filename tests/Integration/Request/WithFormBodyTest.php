@@ -32,7 +32,10 @@ final class WithFormBodyTest extends TestCase
 
         $response = new CurlClient()->outcome($request)->response();
 
-        $this->assertReflectedBody($response, 'foo=bar&baz=123');
+        $this->assertSame(
+            ['foo' => 'bar', 'baz' => '123'],
+            $this->parsedFormBody($response)
+        );
     }
 
     #[Test]
@@ -47,9 +50,10 @@ final class WithFormBodyTest extends TestCase
         );
 
         $response = new CurlClient()->outcome($request)->response();
+        $parsed = $this->parsedFormBody($response);
 
-        $this->assertReflectedBody($response, 'x=42&y=z');
-        $this->assertStringNotContainsString('a=1', $response->body());
+        $this->assertSame(['x' => '42', 'y' => 'z'], $parsed);
+        $this->assertArrayNotHasKey('a', $parsed);
     }
 
     #[Test]
@@ -65,7 +69,49 @@ final class WithFormBodyTest extends TestCase
 
         $response = new CurlClient()->outcome($request)->response();
 
-        $this->assertReflectedBody($response, 'a=b');
+        $this->assertSame(['a' => 'b'], $this->parsedFormBody($response));
         $this->assertReflectedHeader($response, 'content-type', 'application/x-www-form-urlencoded');
+    }
+
+    #[Test]
+    public function encodesUnicodeAndSpaces(): void
+    {
+        $request = new WithFormBody(
+            new PostRequest($this->server()->url('/reflect')),
+            ['q' => 'foo bar', 'emoji' => '💙']
+        );
+
+        $response = new CurlClient()->outcome($request)->response();
+
+        $this->assertSame(
+            ['q' => 'foo bar', 'emoji' => '💙'],
+            $this->parsedFormBody($response)
+        );
+    }
+
+    #[Test]
+    public function encodesNestedArraysAsBracketNotation(): void
+    {
+        $request = new WithFormBody(
+            new PostRequest($this->server()->url('/reflect')),
+            ['a' => ['b' => 'c']]
+        );
+
+        $response = new CurlClient()->outcome($request)->response();
+
+        $this->assertStringContainsString('a%5Bb%5D=c', $this->reflected($response->body())['body']);
+    }
+
+    #[Test]
+    public function allowsEmptyPayload(): void
+    {
+        $request = new WithFormBody(
+            new PostRequest($this->server()->url('/reflect')),
+            []
+        );
+
+        $response = new CurlClient()->outcome($request)->response();
+
+        $this->assertSame([], $this->parsedFormBody($response));
     }
 }

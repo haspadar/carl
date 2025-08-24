@@ -47,6 +47,6 @@ final class WithJsonBodyTest extends TestCase
 
         $response = new CurlClient()->outcome($request)->response();
         $this->assertReflectedBody($response, '{"alpha":1,"beta":2}');
-        $this->assertStringNotContainsString('legacy', $response->body());
+        $this->assertStringNotContainsString('legacy', $this->reflected($response->body())['body'] ?? '');
     }
 }

@@ -22,7 +22,7 @@ final class WithBodyTest extends TestCase
     use AssertsReflectedResponse;
 
     #[Test]
-    public function sendsOverriddenBody(): void
+    public function sendsBody(): void
     {
         $request = new WithBody(
             new PostRequest($this->server()->url('/reflect')),
@@ -31,6 +31,7 @@ final class WithBodyTest extends TestCase
 
         $response = new CurlClient()->outcome($request)->response();
 
+        $this->assertReflectedMethod($response, 'POST');
         $this->assertReflectedBody($response, 'abc=123&x=42');
     }
 }
