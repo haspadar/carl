@@ -15,28 +15,22 @@ use PHPUnit\Framework\TestCase;
 final class PostRequestTest extends TestCase
 {
     #[Test]
-    public function setsPostFieldsWhenBodyProvided(): void
+    public function setsPostAndReturnTransferOptions(): void
     {
-        $request = new PostRequest('http://localhost', 'payload');
+        $request = new PostRequest('http://localhost');
         $options = $request->options();
 
-        $this->assertArrayHasKey(
-            CURLOPT_POSTFIELDS,
-            $options,
-            'CURLOPT_POSTFIELDS should be set when body is non-empty'
-        );
+        $this->assertSame('http://localhost', $options[CURLOPT_URL] ?? null);
+        $this->assertTrue($options[CURLOPT_POST] ?? false);
+        $this->assertTrue($options[CURLOPT_RETURNTRANSFER] ?? false);
     }
 
     #[Test]
-    public function omitsPostFieldsWhenBodyEmpty(): void
+    public function doesNotSetPostFields(): void
     {
-        $request = new PostRequest('http://localhost', '');
+        $request = new PostRequest('http://localhost');
         $options = $request->options();
 
-        $this->assertArrayNotHasKey(
-            CURLOPT_POSTFIELDS,
-            $options,
-            'CURLOPT_POSTFIELDS should be omitted when body is empty'
-        );
+        $this->assertArrayNotHasKey(CURLOPT_POSTFIELDS, $options);
     }
 }

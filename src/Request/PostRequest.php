@@ -11,28 +11,35 @@ namespace Carl\Request;
 use Override;
 
 /**
- * POST request wrapper with URL and string body.
+ * POST request wrapper with only URL.
  *
- * Sets CURLOPT_POST, CURLOPT_POSTFIELDS and enables response capture.
+ * Sets `CURLOPT_POST` and enables response capture.
+ * Does not set a body — use decorators such as {@see WithFormBody}, {@see WithJsonBody}, or {@see WithBody}
+ * to add a request payload.
+ *
+ * Example:
+ * new WithJsonBody(
+ *     new WithJsonContentType(
+ *         new PostRequest($url)
+ *     ),
+ *     ['foo' => 'bar']
+ * );
+ *
+ * Decorates a `Request` with POST semantics.
  */
 final readonly class PostRequest implements Request
 {
-    public function __construct(private string $url, private string $body = '')
+    public function __construct(private string $url)
     {
     }
 
     #[Override]
     public function options(): array
     {
-        $options = [
+        return [
             CURLOPT_URL => $this->url,
             CURLOPT_POST => true,
             CURLOPT_RETURNTRANSFER => true,
         ];
-        if ($this->body !== '') {
-            $options[CURLOPT_POSTFIELDS] = $this->body;
-        }
-
-        return $options;
     }
 }

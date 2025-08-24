@@ -22,20 +22,15 @@ final class WithBodyTest extends TestCase
     use AssertsReflectedResponse;
 
     #[Test]
-    public function sendsBody(): void
+    public function sendsOverriddenBody(): void
     {
         $request = new WithBody(
-            new PostRequest($this->server()->url('/reflect'), 'original=1'),
+            new PostRequest($this->server()->url('/reflect')),
             'abc=123&x=42'
         );
 
         $response = new CurlClient()->outcome($request)->response();
 
         $this->assertReflectedBody($response, 'abc=123&x=42');
-        $this->assertStringNotContainsString(
-            'original=1',
-            $response->body(),
-            'Original body should be overridden by WithBody'
-        );
     }
 }
