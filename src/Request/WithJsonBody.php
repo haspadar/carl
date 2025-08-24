@@ -26,17 +26,16 @@ use Override;
  * new WithJsonBody($request, ['foo' => 'bar']);
  *
  * @throws JsonException If encoding fails.
- *@param array<string|int, mixed> $data The data to encode as JSON.
- *
+ * @param array<string|int, mixed> $payload The data to encode as JSON.
  */
 final readonly class WithJsonBody implements Request
 {
     /**
-     * @param array<string|int, mixed> $data
+     * @param array<string|int, mixed> $payload
      */
     public function __construct(
         private Request $origin,
-        private array $data,
+        private array $payload,
     ) {
     }
 
@@ -44,7 +43,7 @@ final readonly class WithJsonBody implements Request
     public function options(): array
     {
         $options = $this->origin->options();
-        $options[CURLOPT_POSTFIELDS] = json_encode($this->data, JSON_THROW_ON_ERROR);
+        $options[CURLOPT_POSTFIELDS] = json_encode($this->payload, JSON_THROW_ON_ERROR);
         return $options;
     }
 }

@@ -133,6 +133,7 @@ new WithProxy($origin, 'http://proxy.local:8080')
 
 ```php
 new WithBody($origin, 'name=John&age=30')
+new WithFormBody($origin, ['name' => 'John', 'age' => 30])
 new WithJsonBody($origin, ['id' => 123, 'name' => 'Alice'])
 new WithCookies($origin, 'sessionid=abc123; theme=dark')
 new WithFollowRedirects($origin, 5)
@@ -157,13 +158,32 @@ Carl ships with basic HTTP request objects:
 
 ```php
 new GetRequest('https://api.example.com/data')
-new PostRequest('https://api.example.com/submit', '{"name":"John","age":30}')
+new PostRequest('https://api.example.com/submit')
 new PutRequest('https://api.example.com/update/123')
 new PatchRequest('https://api.example.com/modify/123')
 new DeleteRequest('https://api.example.com/delete/123')
 ```
 
-These are minimal request objects. You extend them with decorators to configure headers, timeouts, and more.
+These objects only define the HTTP method and URL.
+To send payloads, combine them with decorators:
+```php
+new WithJsonBody(
+    new WithJsonContentType(
+        new PostRequest('https://api.example.com/submit')
+    ),
+    ['name' => 'John', 'age' => 30]
+)
+```
+
+Or use WithFormBody for application/x-www-form-urlencoded:
+```php
+new WithFormBody(
+    new PostRequest('https://api.example.com/login'),
+    ['username' => 'admin', 'password' => 'secret']
+)
+// Note: To enforce the content type, wrap with:
+// new WithContentType($origin, 'application/x-www-form-urlencoded')
+```
 
 ## 🧩 Response Decorators
 

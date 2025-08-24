@@ -23,6 +23,27 @@ trait AssertsReflectedResponse
     }
 
     /**
+     * Parse application/x-www-form-urlencoded body from the reflected payload.
+     *
+     * @throws JsonException
+     * @return array<string, string|array<string, string>>
+     */
+    public function parsedFormBody(Response $response): array
+    {
+        parse_str($this->reflected($response->body())['body'] ?? '', $parsed);
+        return $parsed;
+    }
+
+    /**
+     * @throws JsonException
+     */
+    public function assertParsedBody(Response $response, array $expected): void
+    {
+        $actual = $this->parsedFormBody($response);
+        Assert::assertSame($expected, $actual, 'Parsed form body mismatch');
+    }
+
+    /**
      * @throws JsonException
      */
     public function assertReflectedMethod(Response $response, string $expected): void
@@ -85,7 +106,7 @@ trait AssertsReflectedResponse
                 Assert::assertSame(
                     $expected,
                     $value,
-                    "Expected header $name: $expected, got: $value"
+                    "Expected header $name: $expected, got: $value",
                 );
                 return;
             }
