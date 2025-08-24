@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Carl\Request;
 
 use Override;
-use Stringable;
 
 /**
  * Adds a form-encoded payload (`application/x-www-form-urlencoded`) to the request.

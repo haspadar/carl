@@ -27,15 +27,12 @@ final class WithFormBodyTest extends TestCase
     {
         $request = new WithFormBody(
             new PostRequest($this->server()->url('/reflect')),
-            ['foo' => 'bar', 'baz' => '123']
+            ['foo' => 'bar', 'baz' => '123'],
         );
 
         $response = new CurlClient()->outcome($request)->response();
 
-        $this->assertSame(
-            ['foo' => 'bar', 'baz' => '123'],
-            $this->parsedFormBody($response)
-        );
+        $this->assertParsedBody($response, ['foo' => 'bar', 'baz' => '123']);
     }
 
     #[Test]
@@ -44,9 +41,9 @@ final class WithFormBodyTest extends TestCase
         $request = new WithFormBody(
             new WithFormBody(
                 new PostRequest($this->server()->url('/reflect')),
-                ['a' => 1]
+                ['a' => 1],
             ),
-            ['x' => 42, 'y' => 'z']
+            ['x' => 42, 'y' => 'z'],
         );
 
         $response = new CurlClient()->outcome($request)->response();
@@ -62,14 +59,14 @@ final class WithFormBodyTest extends TestCase
         $request = new WithContentType(
             new WithFormBody(
                 new PostRequest($this->server()->url('/reflect')),
-                ['a' => 'b']
+                ['a' => 'b'],
             ),
-            'application/x-www-form-urlencoded'
+            'application/x-www-form-urlencoded',
         );
 
         $response = new CurlClient()->outcome($request)->response();
 
-        $this->assertSame(['a' => 'b'], $this->parsedFormBody($response));
+        $this->assertParsedBody($response, ['a' => 'b']);
         $this->assertReflectedHeader($response, 'content-type', 'application/x-www-form-urlencoded');
     }
 
@@ -78,14 +75,14 @@ final class WithFormBodyTest extends TestCase
     {
         $request = new WithFormBody(
             new PostRequest($this->server()->url('/reflect')),
-            ['q' => 'foo bar', 'emoji' => '💙']
+            ['q' => 'foo bar', 'emoji' => '💙'],
         );
 
         $response = new CurlClient()->outcome($request)->response();
 
         $this->assertSame(
             ['q' => 'foo bar', 'emoji' => '💙'],
-            $this->parsedFormBody($response)
+            $this->parsedFormBody($response),
         );
     }
 
@@ -94,12 +91,12 @@ final class WithFormBodyTest extends TestCase
     {
         $request = new WithFormBody(
             new PostRequest($this->server()->url('/reflect')),
-            ['a' => ['b' => 'c']]
+            ['a' => ['b' => 'c']],
         );
 
         $response = new CurlClient()->outcome($request)->response();
 
-        $this->assertStringContainsString('a%5Bb%5D=c', $this->reflected($response->body())['body']);
+        $this->assertStringContainsString('a%5Bb%5D=c', $this->reflected($response->body())['body'] ?? '');
     }
 
     #[Test]
@@ -107,11 +104,24 @@ final class WithFormBodyTest extends TestCase
     {
         $request = new WithFormBody(
             new PostRequest($this->server()->url('/reflect')),
-            []
+            [],
         );
 
         $response = new CurlClient()->outcome($request)->response();
 
-        $this->assertSame([], $this->parsedFormBody($response));
+        $this->assertParsedBody($response, []);
+    }
+
+    #[Test]
+    public function normalizesScalarsToStrings(): void
+    {
+        $request = new WithFormBody(
+            new PostRequest($this->server()->url('/reflect')),
+            ['num' => 7, 't' => true, 'f' => false]
+        );
+
+        $response = new CurlClient()->outcome($request)->response();
+
+        $this->assertParsedBody($response, ['num' => '7', 't' => '1', 'f' => '0']);
     }
 }
