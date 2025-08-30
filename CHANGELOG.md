@@ -24,3 +24,8 @@ All notable changes to this project will be documented in this file.
 
 ### Breaking
 - ⚠️ `PostRequest` no longer accepts a body argument. Use the `WithFormBody` decorator to attach payloads.
+
+## [0.4.0] – 2025-08-30
+
+### Added
+- `RandomOutcomes`: fake outcomes generator that produces either `SuccessfulOutcome` with a random HTTP status and JSON body, or `FailedOutcome` based on a configurable failure chance. Useful for testing consumers against varied responses.
