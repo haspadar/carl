@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace Carl\Outcome\Fake;
 
+use Carl\Exception;
 use Carl\Outcome\FailedOutcome;
 use Carl\Outcome\Outcome;
 use Carl\Outcome\SuccessfulOutcome;
@@ -21,7 +22,7 @@ use Random\RandomException;
 /**
  * RandomOutcomes produces random outcomes:
  *  - SuccessfulOutcome with random HTTP status code and JSON body
- *  - FailedOutcome with plain text body to simulate network errors
+ *  - FailedOutcome with an error message to simulate network errors
  *
  * Example:
  *   $client = new FakeClient(new RandomOutcomes());
@@ -47,22 +48,37 @@ final readonly class RandomOutcomes implements FakeOutcomes
     #[Override]
     public function at(int $index, Request $request): Outcome
     {
+        if ($this->statuses === []) {
+            throw new Exception('RandomOutcomes: $statuses must be a non-empty list of HTTP status codes');
+        }
+
+        foreach ($this->statuses as $s) {
+            if ($s < 100 || $s > 599) {
+                throw new Exception('RandomOutcomes: $statuses must contain only integers in [100,599]');
+            }
+        }
+
+        if ($this->failureChance < 0 || $this->failureChance > 100) {
+            throw new Exception('RandomOutcomes: $failureChance must be between 0 and 100');
+        }
+
         if (random_int(1, 100) <= $this->failureChance) {
             return new FailedOutcome(
                 $request,
-                "Simulated network failure"
+                "Simulated network failure",
             );
         }
 
-        $code = $this->statuses[array_rand($this->statuses)];
+        $statuses = array_values($this->statuses);
+        $code = $statuses[random_int(0, count($statuses) - 1)];
 
         return new SuccessfulOutcome(
             $request,
             new CurlResponse(
                 json_encode(['status' => $code, 'message' => "response:$code"], JSON_THROW_ON_ERROR),
-                ['Content-Type' => 'application/json'],
-                new CurlInfo([CURLINFO_RESPONSE_CODE => $code])
-            )
+                ['Content-Type' => 'application/json; charset=utf-8'],
+                new CurlInfo([CURLINFO_RESPONSE_CODE => $code]),
+            ),
         );
     }
 }
