@@ -15,8 +15,7 @@ Inspired by [Elegant Objects](https://www.elegantobjects.org/#principles) and [c
 
 ## Features
 
-- Immutable, final classes with single responsibility  
-- Immutability by default  
+- Final, immutable classes with single responsibility  
 - No `null` values anywhere  
 - No `static` methods or state  
 - Lazy evaluation of HTTP requests  
@@ -57,6 +56,8 @@ $outcomes = $client->outcomes($requests, new class implements Reaction {
         echo "Failure: " . $error . "\n";
     }
 });
++Note: CurlClient returns outcomes in completion order (not request order).
+
 ```
 
 ---
@@ -84,7 +85,7 @@ new FakeClient(new Cycle([
         new GetRequest('https://example.com/b'),
     ], 
     new OnSuccessResponse(
-        fn (Response $response) => echo $response->body()
+        fn (Response $response) => print $response->body()
     )
 );
 // Sequence: OK, error, OK, error, ...
@@ -94,7 +95,7 @@ new FakeClient(new Cycle([
 
 ## 💤 Lazy Evaluation
 
-Carl objects are lightweight and perform no heavy work in constructors. Network requests and parsing are deferred until you explicitly call `outcome()`, `outcomes()`, or `body()`. This ensures predictable, testable, and fast object composition.
+Carl objects are lightweight and perform no heavy work in constructors. Network I/O occurs only when you call `outcome()` or `outcomes()`. Response parsing/consumption (e.g., `body()`) is deferred until you access it. This keeps composition predictable and fast.
 
 ---
 
