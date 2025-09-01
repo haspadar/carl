@@ -22,7 +22,7 @@ use Override;
  *
  * Example:
  * $response = new NotFoundResponse();
- * echo $response->info()->value(CURLINFO_RESPONSE_CODE); // 404
+ * echo $response->info()->value('http_code'); // 404
  */
 final readonly class NotFoundResponse implements Response
 {
@@ -46,7 +46,8 @@ final readonly class NotFoundResponse implements Response
     public function info(): CurlInfo
     {
         return new CurlInfo([
-            CURLINFO_RESPONSE_CODE => 404,
+            'http_code' => 404,
         ]);
     }
 }
+

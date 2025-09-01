@@ -19,7 +19,7 @@ final class CurlInfoTest extends TestCase
     {
         $this->assertSame(
             '200',
-            new CurlInfo([CURLINFO_RESPONSE_CODE => 200])->value(CURLINFO_RESPONSE_CODE),
+            new CurlInfo(['http_code' => 200])->value('http_code'),
             'Must return scalar value as string',
         );
     }

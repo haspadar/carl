@@ -8,6 +8,19 @@ declare(strict_types=1);
 
 namespace Carl\Response;
 
+/**
+ * Immutable wrapper around the raw cURL payload string.
+ *
+ * Splits the raw content returned by curl_multi_getcontent()
+ * into headers and body. Correctly handles multiple HTTP
+ * response blocks (e.g. redirects), always using the last
+ * header block when extracting headers.
+ *
+ * Example:
+ * $payload = new CurlPayload($raw);
+ * $headers = $payload->headers(); // associative array
+ * $body    = $payload->body();    // string body
+ */
 final readonly class CurlPayload
 {
     public function __construct(private string $raw)

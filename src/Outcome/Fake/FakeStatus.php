@@ -29,7 +29,7 @@ use Override;
  *     ->outcome(new GetRequest("http://localhost/404"))
  *     ->response()
  *     ->info()
- *     ->value(CURLINFO_RESPONSE_CODE); // 404
+ *     ->value('http_code'); // 404
  *
  * @codeCoverageIgnore
  */
@@ -56,7 +56,7 @@ final readonly class FakeStatus implements FakeOutcomes
             new CurlResponse(
                 'ok',
                 ['Content-Type' => 'text/plain'],
-                new CurlInfo([CURLINFO_RESPONSE_CODE => $code]),
+                new CurlInfo(['http_code' => $code]),
             ),
         );
     }

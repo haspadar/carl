@@ -42,7 +42,7 @@ final readonly class ClientErrorResponse implements Response
     public function info(): CurlInfo
     {
         return new CurlInfo([
-            CURLINFO_RESPONSE_CODE => 400,
+            'http_code' => 400,
         ]);
     }
 }

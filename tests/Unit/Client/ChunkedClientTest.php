@@ -14,11 +14,14 @@ use Carl\Outcome\Fake\AlwaysSuccessful;
 use Carl\Outcome\Fake\FakeStatus;
 use Carl\Outcome\Outcome;
 use Carl\Request\GetRequest;
+use Carl\Tests\Integration\Support\AssertsHttpResponse;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 final class ChunkedClientTest extends TestCase
 {
+    use AssertsHttpResponse;
+
     #[Test]
     public function returnsOutcomeWhenSingleRequestDelegated(): void
     {
@@ -27,13 +30,11 @@ final class ChunkedClientTest extends TestCase
             2,
         );
 
-        $this->assertSame(
+        $outcome = $client->outcome(new GetRequest('http://example.test/ok'));
+
+        $this->assertStatusCode(
+            $outcome->response(),
             201,
-            (int) $client
-                ->outcome(new GetRequest('http://example.test/ok'))
-                ->response()
-                ->info()
-                ->value(CURLINFO_RESPONSE_CODE),
             'Must return status code from origin->outcome()'
         );
     }
@@ -46,18 +47,20 @@ final class ChunkedClientTest extends TestCase
             2
         );
 
-        $statusCodes = array_map(
-            fn (Outcome $outcome): int => (int) $outcome->response()->info()->value(CURLINFO_RESPONSE_CODE),
-            $client->outcomes([
-                new GetRequest('http://localhost/201'),
-                new GetRequest('http://localhost/404'),
-                new GetRequest('http://localhost/302'),
-                new GetRequest('http://localhost/500'),
-                new GetRequest('http://localhost/204'),
-            ])
-        );
+        $outcomes = $client->outcomes([
+            new GetRequest('http://localhost/201'),
+            new GetRequest('http://localhost/404'),
+            new GetRequest('http://localhost/302'),
+            new GetRequest('http://localhost/500'),
+            new GetRequest('http://localhost/204'),
+        ]);
 
-        $this->assertSame([201, 404, 302, 500, 204], $statusCodes, 'Must preserve order and merge results correctly');
+        $this->assertCount(5, $outcomes);
+        $this->assertStatusCode($outcomes[0]->response(), 201);
+        $this->assertStatusCode($outcomes[1]->response(), 404);
+        $this->assertStatusCode($outcomes[2]->response(), 302);
+        $this->assertStatusCode($outcomes[3]->response(), 500);
+        $this->assertStatusCode($outcomes[4]->response(), 204);
     }
 
     #[Test]

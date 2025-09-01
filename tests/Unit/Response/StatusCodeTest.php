@@ -22,7 +22,7 @@ final class StatusCodeTest extends TestCase
     {
         $status = new StatusCode(
             new CurlResponse('...', [], new CurlInfo([
-                CURLINFO_RESPONSE_CODE => 201,
+                'http_code' => 201,
             ])),
         );
 
@@ -37,7 +37,7 @@ final class StatusCodeTest extends TestCase
     {
         $status = new StatusCode(
             new CurlResponse('irrelevant', [], new CurlInfo([
-                CURLINFO_RESPONSE_CODE => $code,
+                'http_code' => $code,
             ])),
         );
 
@@ -56,7 +56,7 @@ final class StatusCodeTest extends TestCase
     {
         $status = new StatusCode(
             new CurlResponse('irrelevant', [], new CurlInfo([
-                CURLINFO_RESPONSE_CODE => $code,
+                'http_code' => $code,
             ])),
         );
 
@@ -71,7 +71,7 @@ final class StatusCodeTest extends TestCase
     {
         $status = new StatusCode(
             new CurlResponse('...', [], new CurlInfo([
-                CURLINFO_RESPONSE_CODE => 404,
+                'http_code' => 404,
             ])),
         );
 
@@ -83,7 +83,7 @@ final class StatusCodeTest extends TestCase
     {
         $status = new StatusCode(
             new CurlResponse('...', [], new CurlInfo([
-                CURLINFO_RESPONSE_CODE => 301,
+                'http_code' => 301,
             ])),
         );
 

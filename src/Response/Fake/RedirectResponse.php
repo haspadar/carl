@@ -22,7 +22,8 @@ use Override;
  *
  * Example:
  * $response = new RedirectResponse("https://example.com/next");
- * echo $response->headers()['Location']; // https://example.com/next
+ * echo $response->headers()['Location'];      // https://example.com/next
+ * echo $response->info()->value('http_code'); // 302
  */
 final readonly class RedirectResponse implements Response
 {
@@ -51,8 +52,8 @@ final readonly class RedirectResponse implements Response
     public function info(): CurlInfo
     {
         return new CurlInfo([
-            CURLINFO_RESPONSE_CODE => 302,
-            CURLINFO_REDIRECT_URL => $this->location,
+            'http_code'    => 302,
+            'redirect_url' => $this->location,
         ]);
     }
 }

@@ -35,21 +35,6 @@ final class WithStatusCodeTest extends TestCase
     }
 
     #[Test]
-    public function overridesCurlInfoConstantWhenWrapped(): void
-    {
-        $response = new WithStatusCode(
-            new CurlResponse('irrelevant', [], new CurlInfo(['http_code' => 500])),
-            201,
-        );
-
-        $this->assertSame(
-            201,
-            (int)$response->info()->value(CURLINFO_RESPONSE_CODE),
-            'Should also set CURLINFO_RESPONSE_CODE',
-        );
-    }
-
-    #[Test]
     public function returnsBodyFromOriginWhenCalled(): void
     {
         $response = new WithStatusCode(

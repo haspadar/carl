@@ -23,7 +23,7 @@ final class PrimaryIpTest extends TestCase
             body: '...',
             headers: [],
             curlInfo: new CurlInfo([
-                CURLINFO_PRIMARY_IP => '192.168.1.100',
+                'primary_ip' => '192.168.1.100',
             ]),
         );
 
@@ -56,7 +56,7 @@ final class PrimaryIpTest extends TestCase
         $response = new CurlResponse(
             body: '...',
             headers: [],
-            curlInfo: new CurlInfo([CURLINFO_PRIMARY_IP => '2001:db8::1']),
+            curlInfo: new CurlInfo(['primary_ip' => '2001:db8::1']),
         );
 
         $this->assertSame('2001:db8::1', new PrimaryIp($response)->value());
