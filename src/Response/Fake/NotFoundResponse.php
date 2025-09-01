@@ -50,4 +50,3 @@ final readonly class NotFoundResponse implements Response
         ]);
     }
 }
-

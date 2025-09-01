@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace Carl\Response;
 
+use Carl\Exception;
 use Override;
 
 /**
@@ -43,9 +44,13 @@ final readonly class WithStatusCode implements Response
     #[Override]
     public function info(): CurlInfo
     {
-        return new CurlInfo([
-            ...$this->origin->info()->all(),
-            'http_code' => $this->code,
-        ]);
+        if ($this->code < 100 || $this->code > 599) {
+            throw new Exception("Invalid HTTP status code: $this->code");
+        }
+
+        return new CurlInfo(array_replace(
+            $this->origin->info()->all(),
+            ['http_code' => $this->code],
+        ));
     }
 }

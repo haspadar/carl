@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace Carl\Tests\Unit\Response;
 
+use Carl\Exception;
 use Carl\Response\CurlInfo;
 use Carl\Response\CurlResponse;
 use Carl\Response\WithStatusCode;
@@ -62,5 +63,28 @@ final class WithStatusCodeTest extends TestCase
             $response->headers(),
             'Should delegate headers() to origin',
         );
+    }
+
+
+    #[Test]
+    public function throwsWhenCodeBelow100(): void
+    {
+        $this->expectException(Exception::class);
+
+        new WithStatusCode(
+            new CurlResponse('irrelevant', [], new CurlInfo([])),
+            99,
+        )->info();
+    }
+
+    #[Test]
+    public function throwsWhenCodeAbove599(): void
+    {
+        $this->expectException(Exception::class);
+
+        new WithStatusCode(
+            new CurlResponse('irrelevant', [], new CurlInfo([])),
+            600,
+        )->info();
     }
 }

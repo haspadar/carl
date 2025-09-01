@@ -25,8 +25,7 @@ final class EffectiveUrlTest extends TestCase
             body: 'Redirected',
             headers: ['Content-Type' => 'text/html'],
             curlInfo: new CurlInfo([
-                'url'       => $url,
-                'http_code' => 200,
+                'url' => $url,
             ]),
         );
 

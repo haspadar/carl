@@ -12,7 +12,6 @@ use Carl\Client\ChunkedClient;
 use Carl\Client\Fake\FakeClient;
 use Carl\Outcome\Fake\AlwaysSuccessful;
 use Carl\Outcome\Fake\FakeStatus;
-use Carl\Outcome\Outcome;
 use Carl\Request\GetRequest;
 use Carl\Tests\Integration\Support\AssertsHttpResponse;
 use PHPUnit\Framework\Attributes\Test;

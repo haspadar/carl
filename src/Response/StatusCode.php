@@ -28,7 +28,7 @@ final readonly class StatusCode
 
     public function value(): int
     {
-        return (int) $this->response->info()->value('http_code');
+        return (int) $this->response->info()->value('http_code', '0');
     }
 
     public function isSuccessful(): bool
