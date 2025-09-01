@@ -8,8 +8,19 @@ declare(strict_types=1);
 
 namespace Carl\Response;
 
+use Carl\Exception;
 use Override;
 
+/**
+ * Response decorator that overrides the HTTP status code.
+ *
+ * Ensures that CurlInfo contains the provided code under the 'http_code' key,
+ * which is the same format as produced by curl_getinfo().
+ *
+ * Example:
+ * $response = new WithStatusCode($origin, 503);
+ * $status   = $response->info()->value('http_code'); // 503
+ */
 final readonly class WithStatusCode implements Response
 {
     public function __construct(
@@ -30,17 +41,16 @@ final readonly class WithStatusCode implements Response
         return $this->origin->headers();
     }
 
-    /**
-     * Adds both 'CURLINFO_RESPONSE_CODE' (curl constant) and 'http_code' (legacy array key)
-     * to preserve compatibility with all consumers of CurlInfo.
-     */
     #[Override]
     public function info(): CurlInfo
     {
-        return new CurlInfo([
-            ...$this->origin->info()->all(),
-            CURLINFO_RESPONSE_CODE => $this->code,
-            'http_code' => $this->code,
-        ]);
+        if ($this->code < 100 || $this->code > 599) {
+            throw new Exception("Invalid HTTP status code: $this->code");
+        }
+
+        return new CurlInfo(array_replace(
+            $this->origin->info()->all(),
+            ['http_code' => $this->code],
+        ));
     }
 }

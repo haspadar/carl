@@ -39,7 +39,7 @@ final readonly class AlwaysSuccessful implements FakeOutcomes
             new CurlResponse(
                 $this->body,
                 ['Content-Type' => 'text/plain'],
-                new CurlInfo([CURLINFO_RESPONSE_CODE => $this->code])
+                new CurlInfo(['http_code' => $this->code])
             )
         );
     }

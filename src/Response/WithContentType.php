@@ -10,6 +10,17 @@ namespace Carl\Response;
 
 use Override;
 
+/**
+ * Response decorator that overrides the Content-Type header.
+ *
+ * Replaces or adds the 'Content-Type' entry in the response headers
+ * while delegating all other data to the origin response.
+ *
+ * Example:
+ * $response = new WithContentType($origin, 'application/json');
+ * $headers  = $response->headers();
+ * // 'Content-Type' => 'application/json'
+ */
 final readonly class WithContentType implements Response
 {
     public function __construct(

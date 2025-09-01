@@ -77,7 +77,7 @@ final readonly class RandomOutcomes implements FakeOutcomes
             new CurlResponse(
                 json_encode(['status' => $code, 'message' => "response:$code"], JSON_THROW_ON_ERROR),
                 ['Content-Type' => 'application/json; charset=utf-8'],
-                new CurlInfo([CURLINFO_RESPONSE_CODE => $code]),
+                new CurlInfo(['http_code' => $code]),
             ),
         );
     }

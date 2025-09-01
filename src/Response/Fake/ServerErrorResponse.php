@@ -22,7 +22,7 @@ use Override;
  *
  * Example:
  * $response = new ServerErrorResponse("Something went wrong");
- * echo $response->info()->value(CURLINFO_RESPONSE_CODE); // 500
+ * echo $response->info()->value('http_code'); // 500
  */
 final readonly class ServerErrorResponse implements Response
 {
@@ -46,7 +46,7 @@ final readonly class ServerErrorResponse implements Response
     public function info(): CurlInfo
     {
         return new CurlInfo([
-            CURLINFO_RESPONSE_CODE => 500,
+            'http_code' => 500,
         ]);
     }
 }

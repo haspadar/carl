@@ -171,4 +171,17 @@ final class CurlPayloadTest extends TestCase
             'Must return raw when preg_match_all matches but no valid blocks'
         );
     }
+
+    #[Test]
+    public function mergesHeadersCaseInsensitively(): void
+    {
+        $raw = "HTTP/1.1 200 OK\r\nX-Foo: a\r\nx-foo: b\r\n\r\nbody";
+        $payload = new CurlPayload($raw);
+
+        $this->assertSame(
+            ['X-Foo' => 'a, b'],
+            $payload->headers(),
+            'Duplicate headers with different casing must merge'
+        );
+    }
 }

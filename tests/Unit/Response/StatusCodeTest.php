@@ -22,7 +22,7 @@ final class StatusCodeTest extends TestCase
     {
         $status = new StatusCode(
             new CurlResponse('...', [], new CurlInfo([
-                CURLINFO_RESPONSE_CODE => 201,
+                'http_code' => 201,
             ])),
         );
 
@@ -37,7 +37,7 @@ final class StatusCodeTest extends TestCase
     {
         $status = new StatusCode(
             new CurlResponse('irrelevant', [], new CurlInfo([
-                CURLINFO_RESPONSE_CODE => $code,
+                'http_code' => $code,
             ])),
         );
 
@@ -56,7 +56,7 @@ final class StatusCodeTest extends TestCase
     {
         $status = new StatusCode(
             new CurlResponse('irrelevant', [], new CurlInfo([
-                CURLINFO_RESPONSE_CODE => $code,
+                'http_code' => $code,
             ])),
         );
 
@@ -71,7 +71,7 @@ final class StatusCodeTest extends TestCase
     {
         $status = new StatusCode(
             new CurlResponse('...', [], new CurlInfo([
-                CURLINFO_RESPONSE_CODE => 404,
+                'http_code' => 404,
             ])),
         );
 
@@ -83,11 +83,37 @@ final class StatusCodeTest extends TestCase
     {
         $status = new StatusCode(
             new CurlResponse('...', [], new CurlInfo([
-                CURLINFO_RESPONSE_CODE => 301,
+                'http_code' => 301,
             ])),
         );
 
         $this->assertTrue($status->isInRange(300, 400), '301 should be in 3xx range');
         $this->assertFalse($status->isInRange(400, 500), '301 should not be in 4xx range');
+    }
+
+    #[Test]
+    public function isInRangeIncludesMinBoundary(): void
+    {
+        $status = new StatusCode(
+            new CurlResponse('...', [], new CurlInfo(['http_code' => 301])),
+        );
+
+        $this->assertTrue(
+            $status->isInRange(301, 302),
+            'Min boundary should be inclusive'
+        );
+    }
+
+    #[Test]
+    public function isInRangeExcludesMaxBoundary(): void
+    {
+        $status = new StatusCode(
+            new CurlResponse('...', [], new CurlInfo(['http_code' => 302])),
+        );
+
+        $this->assertFalse(
+            $status->isInRange(301, 302),
+            'Max boundary should be exclusive'
+        );
     }
 }

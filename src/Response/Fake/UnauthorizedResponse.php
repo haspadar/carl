@@ -19,6 +19,10 @@ use Override;
  *
  * Useful in tests to simulate cases where authentication
  * is required or the provided credentials are invalid.
+ *
+ * Example:
+ * $response = new UnauthorizedResponse();
+ * echo $response->info()->value('http_code'); // 401
  */
 final readonly class UnauthorizedResponse implements Response
 {
@@ -42,7 +46,7 @@ final readonly class UnauthorizedResponse implements Response
     public function info(): CurlInfo
     {
         return new CurlInfo([
-            CURLINFO_RESPONSE_CODE => 401,
+            'http_code' => 401,
         ]);
     }
 }
