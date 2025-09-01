@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace Carl\Client;
 
+use Carl\Exception;
 use Carl\Outcome\Outcome;
 use Carl\Reaction\Reaction;
 use Carl\Reaction\VoidReaction;
@@ -22,7 +23,7 @@ use Override;
 final readonly class LimitedClient implements Client
 {
     /**
-     * @param int<1,max> $limit Maximum number of requests to execute
+     * @param int $limit Maximum number of requests to execute
      */
     public function __construct(
         private Client $origin,
@@ -39,6 +40,10 @@ final readonly class LimitedClient implements Client
     #[Override]
     public function outcomes(iterable $requests, Reaction $reaction = new VoidReaction()): array
     {
+        if ($this->limit < 1) {
+            throw new Exception("Limit must be >= 1, got $this->limit");
+        }
+
         $limited = (function () use ($requests) {
             $count = 0;
             foreach ($requests as $request) {
