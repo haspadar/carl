@@ -8,8 +8,23 @@ declare(strict_types=1);
 
 namespace Carl\Response;
 
+/**
+ * Immutable wrapper around the raw cURL payload string.
+ *
+ * Splits the raw content returned by curl_multi_getcontent()
+ * into headers and body. Correctly handles multiple HTTP
+ * response blocks (e.g. redirects), always using the last
+ * header block when extracting headers.
+ *
+ * Example:
+ * $payload = new CurlPayload($raw);
+ * $headers = $payload->headers(); // associative array
+ * $body    = $payload->body();    // string body
+ */
 final readonly class CurlPayload
 {
+    private const string HEADER_BLOCK_RE = '/^HTTP\/\d(?:\.\d+)?\s+\d{3}(?:\s+[^\r\n]*)?(?:\r?\n[^\r\n]*)*?\r?\n\r?\n/m';
+
     public function __construct(private string $raw)
     {
     }
@@ -17,7 +32,7 @@ final readonly class CurlPayload
     public function lastHeaderBlock(): string
     {
         preg_match_all(
-            '/^HTTP\/[\d.]+\s+\d+\s+[^\r\n]*(?:\r?\n[^\r\n]*)*?\r?\n\r?\n/m',
+            self::HEADER_BLOCK_RE,
             $this->raw,
             $matches,
         );
@@ -38,12 +53,21 @@ final readonly class CurlPayload
         $lines = preg_split('/\r?\n/', $this->lastHeaderBlock()) ?: [];
         array_shift($lines);
 
-        $headers = [];
+        $headers  = [];
+        $indexMap = []; // lowercased header name -> original key
         foreach ($lines as $line) {
             if (preg_match('/^([^:]+):\s*(.*)$/', $line, $matches)) {
-                $name = trim($matches[1]);
+                $name  = trim($matches[1]);
+                $key   = strtolower($name);
                 $value = trim($matches[2]);
-                $headers[$name] = isset($headers[$name]) ? $headers[$name] . ', ' . $value : $value;
+
+                if (isset($indexMap[$key])) {
+                    $orig = $indexMap[$key];
+                    $headers[$orig] .= ', ' . $value;
+                } else {
+                    $headers[$name] = $value;
+                    $indexMap[$key] = $name;
+                }
             }
         }
         return $headers;
@@ -58,7 +82,7 @@ final readonly class CurlPayload
     public function body(): string
     {
         $result = preg_match_all(
-            '/^HTTP\/[\d.]+\s+\d+\s+[^\r\n]*(?:\r?\n[^\r\n]*)*?\r?\n\r?\n/m',
+            self::HEADER_BLOCK_RE,
             $this->raw,
             $matches,
             PREG_OFFSET_CAPTURE

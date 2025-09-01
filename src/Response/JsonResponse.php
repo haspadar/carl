@@ -13,6 +13,18 @@ use function is_array;
 use JsonException;
 use Override;
 
+/**
+ * Response decorator for JSON payloads.
+ *
+ * Delegates body, headers, and info to the origin response,
+ * but adds a decoded() method that parses the body as JSON.
+ * Decoding uses associative arrays and throws JsonException
+ * on invalid JSON or if the root value is not an object/array.
+ *
+ * Example:
+ * $response = new JsonResponse($origin);
+ * $data = $response->decoded(); // array from JSON body
+ */
 final readonly class JsonResponse implements Response
 {
     public function __construct(

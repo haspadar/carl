@@ -8,6 +8,17 @@ declare(strict_types=1);
 
 namespace Carl\Response;
 
+/**
+ * Immutable wrapper around the array returned by curl_getinfo().
+ *
+ * Provides safe access to cURL transfer metadata such as 'url',
+ * 'content_type', 'http_code', etc. Keys may be accessed by their
+ * string names as defined by curl_getinfo().
+ *
+ * Example:
+ * $info = new CurlInfo(curl_getinfo($handle));
+ * $code = $info->value('http_code'); // e.g. 200
+ */
 final readonly class CurlInfo
 {
     /** @param array<string|int, mixed> $info */

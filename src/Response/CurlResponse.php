@@ -10,6 +10,18 @@ namespace Carl\Response;
 
 use Override;
 
+/**
+ * Immutable HTTP response backed by cURL data.
+ *
+ * Combines body, parsed headers, and CurlInfo metadata
+ * into a single Response implementation.
+ *
+ * Example:
+ * $response = new CurlResponse($body, $headers, $info);
+ * echo $response->body();
+ * print_r($response->headers());
+ * echo $response->info()->value('http_code');
+ */
 final readonly class CurlResponse implements Response
 {
     /**

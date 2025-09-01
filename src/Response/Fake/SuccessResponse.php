@@ -46,7 +46,7 @@ final readonly class SuccessResponse implements Response
     public function info(): CurlInfo
     {
         return new CurlInfo([
-            CURLINFO_RESPONSE_CODE => 200,
+            'http_code' => 200,
         ]);
     }
 }
