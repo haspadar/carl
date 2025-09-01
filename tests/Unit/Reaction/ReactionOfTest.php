@@ -22,11 +22,13 @@ final class ReactionOfTest extends TestCase
         $called = 0;
 
         new ReactionOf(
-            function () use (&$called): void { $called++; },
-            function (): void {}
+            function () use (&$called): void {
+                $called++;
+            },
+            function (): void {},
         )->onSuccess(
             new GetRequest('http://localhost/'),
-            new SuccessResponse('ok')
+            new SuccessResponse('ok'),
         );
 
         $this->assertSame(1, $called, 'Must call onSuccess callback');
@@ -39,10 +41,12 @@ final class ReactionOfTest extends TestCase
 
         new ReactionOf(
             function (): void {},
-            function () use (&$called): void { $called++; }
+            function () use (&$called): void {
+                $called++;
+            },
         )->onFailure(
             new GetRequest('http://localhost/'),
-            'error'
+            'error',
         );
 
         $this->assertSame(1, $called, 'Must call onFailure callback');
