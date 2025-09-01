@@ -10,6 +10,7 @@ namespace Carl\Tests\Unit\Client;
 
 use Carl\Client\Fake\FakeClient;
 use Carl\Client\LimitedClient;
+use Carl\Exception;
 use Carl\Outcome\Fake\AlwaysSuccessful;
 use Carl\Outcome\Fake\FakeStatus;
 use Carl\Request\GetRequest;
@@ -26,7 +27,7 @@ final class LimitedClientTest extends TestCase
     {
         $client = new LimitedClient(
             new FakeClient(new AlwaysSuccessful(202, 'pong')),
-            1
+            1,
         );
 
         $outcome = $client->outcome(new GetRequest('http://localhost/ping'));
@@ -34,7 +35,7 @@ final class LimitedClientTest extends TestCase
         $this->assertStatusCode(
             $outcome->response(),
             202,
-            'Must delegate outcome() to origin client'
+            'Must delegate outcome() to origin client',
         );
     }
 
@@ -43,7 +44,7 @@ final class LimitedClientTest extends TestCase
     {
         $client = new LimitedClient(
             new FakeClient(new FakeStatus()),
-            2
+            2,
         );
 
         $requests = [
@@ -84,5 +85,38 @@ final class LimitedClientTest extends TestCase
 
         $this->assertStatusCode($outcomes[0]->response(), 201);
         $this->assertStatusCode($outcomes[1]->response(), 500);
+    }
+
+    #[Test]
+    public function throwsWhenLimitBelowOne(): void
+    {
+        $client = new LimitedClient(new FakeClient(new AlwaysSuccessful()), 0);
+
+        $this->expectException(Exception::class);
+
+        $client->outcomes([
+            new GetRequest('http://localhost/201'),
+        ]);
+    }
+
+    #[Test]
+    public function doesNotAdvanceIterableBeyondLimit(): void
+    {
+        $client = new LimitedClient(new FakeClient(new FakeStatus()), 2);
+
+        $iterated = 0;
+        $requests = (function () use (&$iterated) {
+            yield new GetRequest('http://localhost/201');
+            $iterated++;
+            yield new GetRequest('http://localhost/404');
+            $iterated++;
+            yield new GetRequest('http://localhost/500');
+            $iterated++;
+        })();
+
+        $outcomes = $client->outcomes($requests);
+
+        $this->assertCount(2, $outcomes, 'Must produce exactly N outcomes');
+        $this->assertSame(2, $iterated, 'Iterable must not be advanced past the limit');
     }
 }

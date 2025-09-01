@@ -47,10 +47,11 @@ final readonly class LimitedClient implements Client
         $limited = (function () use ($requests) {
             $count = 0;
             foreach ($requests as $request) {
-                if ($count++ >= $this->limit) {
+                if ($count >= $this->limit) {
                     break;
                 }
                 yield $request;
+                $count++;
             }
         })();
 
