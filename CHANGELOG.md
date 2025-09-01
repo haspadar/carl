@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.0] – 2025-09-01
+
+### Changed
+- Response layer now uses string keys from `curl_getinfo()` instead of numeric constants. This aligns with PHP curl info array keys and simplifies access in responses and tests.
+
+### Added
+- `LimitedClient`: a rate-limiting client decorator with corresponding `LimitedClientTest`.
+
 ## [0.2.0] – 2025-08-23
 
 ### Changed
