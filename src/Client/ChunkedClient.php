@@ -23,10 +23,9 @@ use Override;
  * cannot handle too many concurrent requests at once.
  *
  * Example:
- * ```php
+ *
  * $client = new ChunkedClient(new CurlClient(), 10);
  * $outcomes = $client->outcomes($requests);
- * ```
  */
 final readonly class ChunkedClient implements Client
 {
