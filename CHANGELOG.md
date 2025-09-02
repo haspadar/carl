@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+## [0.6.0] – 2025-09-01
+
+### Added
+- `ReactionList`: composite Reaction that forwards `onSuccess`/`onFailure` to each contained reaction in order.
+
 ## [0.5.0] – 2025-09-01
 
 ### Changed
@@ -9,6 +16,22 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - `LimitedClient`: a rate-limiting client decorator with corresponding `LimitedClientTest`.
+
+## [0.4.0] – 2025-08-30
+
+### Added
+- `RandomOutcomes`: fake outcomes generator that produces either `SuccessfulOutcome` with a random HTTP status and JSON body, or `FailedOutcome` based on a configurable failure chance. Useful for testing consumers against varied responses.
+
+## [0.3.0] – 2025-08-24
+
+### Added
+- `WithFormBody`: decorator for `application/x-www-form-urlencoded` request payloads
+
+### Removed
+- Removed legacy support for passing body directly to `PostRequest`
+
+### Breaking
+- ⚠️ `PostRequest` no longer accepts a body argument. Use the `WithFormBody` decorator to attach payloads.
 
 ## [0.2.0] – 2025-08-23
 
@@ -22,18 +45,10 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Intermittent test failure (`Connection reset by peer`) by ensuring server is ready before requests
 
-## [0.3.0] – 2025-08-24
+---
 
-### Added
-- `WithFormBody`: decorator for `application/x-www-form-urlencoded` request payloads
-
-### Removed
-- Removed legacy support for passing body directly to `PostRequest`
-
-### Breaking
-- ⚠️ `PostRequest` no longer accepts a body argument. Use the `WithFormBody` decorator to attach payloads.
-
-## [0.4.0] – 2025-08-30
-
-### Added
-- `RandomOutcomes`: fake outcomes generator that produces either `SuccessfulOutcome` with a random HTTP status and JSON body, or `FailedOutcome` based on a configurable failure chance. Useful for testing consumers against varied responses.
+[0.6.0]: https://github.com/haspadar/carl/compare/v0.5.0...v0.6.0
+[0.5.0]: https://github.com/haspadar/carl/compare/v0.4.0...v0.5.0
+[0.4.0]: https://github.com/haspadar/carl/compare/v0.3.0...v0.4.0
+[0.3.0]: https://github.com/haspadar/carl/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/haspadar/carl/releases/tag/v0.2.0
