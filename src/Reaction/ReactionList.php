@@ -19,11 +19,12 @@ use Override;
  * logging, tracing, etc.) to the same outcomes.
  *
  * Example:
- * $reaction = new CompositeReaction([
+ * $reaction = new ReactionList([
  *     new OnSuccess(fn() => print "ok1\n"),
  *     new OnSuccess(fn() => print "ok2\n"),
+ * ]);
  */
-final readonly class CompositeReaction implements Reaction
+final readonly class ReactionList implements Reaction
 {
     /** @var list<Reaction> */
     private array $reactions;
