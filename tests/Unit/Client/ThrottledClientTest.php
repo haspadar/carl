@@ -20,7 +20,7 @@ use PHPUnit\Framework\TestCase;
 final class ThrottledClientTest extends TestCase
 {
     #[Test]
-    public function sleepsBetweenRequests(): void
+    public function sleepsAfterBatch(): void
     {
         $delay = new FakeDelay();
         $client = new ThrottledClient(
@@ -36,36 +36,20 @@ final class ThrottledClientTest extends TestCase
         ]);
 
         $this->assertSame(
-            [10_000, 10_000],
+            [10_000],
             $delay->calls(),
-            'Must sleep N-1 times with exact microseconds',
+            'Must sleep exactly once after processing the batch',
         );
     }
 
     #[Test]
-    public function noSleepForEmpty(): void
+    public function noSleepForEmptyBatch(): void
     {
         $delay = new FakeDelay();
         new ThrottledClient(new FakeClient(new AlwaysSuccessful()), 0.01, $delay)
             ->outcomes([]);
 
-        $this->assertSame([], $delay->calls(), 'No sleeps expected for empty requests');
-    }
-
-    #[Test]
-    public function noSleepForSingleRequest(): void
-    {
-        $delay = new FakeDelay();
-        new ThrottledClient(
-            new FakeClient(
-                new AlwaysSuccessful()
-            ),
-            0.01,
-            $delay
-        )
-            ->outcomes([new GetRequest('http://localhost/only')]);
-
-        $this->assertSame([], $delay->calls(), 'No sleeps expected for single request');
+        $this->assertSame([], $delay->calls(), 'No sleeps expected for empty batch');
     }
 
     #[Test]
@@ -73,16 +57,13 @@ final class ThrottledClientTest extends TestCase
     {
         $delay = new FakeDelay();
         new ThrottledClient(
-            new FakeClient(
-                new AlwaysSuccessful()
-            ),
+            new FakeClient(new AlwaysSuccessful()),
             0.0,
             $delay
-        )
-            ->outcomes([
-                new GetRequest('http://localhost/1'),
-                new GetRequest('http://localhost/2'),
-            ]);
+        )->outcomes([
+            new GetRequest('http://localhost/1'),
+            new GetRequest('http://localhost/2'),
+        ]);
 
         $this->assertSame([], $delay->calls(), 'Zero delay must not sleep');
     }
@@ -108,6 +89,4 @@ final class ThrottledClientTest extends TestCase
             'ThrottledClient must delegate outcome() to origin client'
         );
     }
-
-
 }
