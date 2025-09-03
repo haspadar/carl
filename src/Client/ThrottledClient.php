@@ -17,16 +17,16 @@ use Carl\Time\Delay;
 use Carl\Time\NativeDelay;
 use Override;
 
-use function round;
-
 /**
- * Client decorator that throttles request execution.
+ * Client decorator that throttles execution of request batches.
  *
- * Adds a delay between consecutive requests in outcomes().
- * Delay is specified in seconds (may be fractional).
+ * Applies a single delay after each outcomes() call (i.e., per batch), not between
+ * individual requests within the batch. To throttle between chunks, compose as:
+ * new ChunkedClient(new ThrottledClient($origin, $delaySeconds), $chunkSize).
  *
- * - When delaySeconds = 0.0 no pause is applied.
- * - For N requests, the delay is applied (N-1) times.
+ * Notes:
+ * - When delaySeconds = 0.0, no pause is applied.
+ * - Empty batches do not sleep.
  * - outcome() executes without delay.
  *
  * Uses Delay abstraction for sleeping (NativeDelay by default).
@@ -34,7 +34,7 @@ use function round;
 final readonly class ThrottledClient implements Client
 {
     /**
-     * @param float $delaySeconds Non-negative seconds to sleep between requests
+     * @param float $delaySeconds Non-negative seconds to sleep after each batch (outcomes() call)
      */
     public function __construct(
         private Client $origin,
@@ -53,34 +53,19 @@ final readonly class ThrottledClient implements Client
     }
 
     #[Override]
-    /**
-     * Executes requests sequentially with a delay between them.
-     *
-     * Requests are passed one-by-one to the origin client with optional delays
-     * between calls. The resulting outcomes are returned in the same order as
-     * the input requests, assuming the origin client preserves order.
-     *
-     * @param iterable<Request> $requests Ordered requests to execute
-     * @param Reaction          $reaction Reaction to apply to each outcome
-     * @return list<Outcome>              Outcomes in the same order as $requests
-     */
     public function outcomes(iterable $requests, Reaction $reaction = new VoidReaction()): array
     {
-        $result = [];
-        $microseconds = $this->delaySeconds > 0.0
-            ? max(1, (int) round($this->delaySeconds * 1_000_000.0))
-            : 0;
-
-        $isFirst = true;
-        foreach ($requests as $request) {
-            if (!$isFirst && $microseconds > 0) {
-                $this->delay->sleep($microseconds);
-            }
-
-            $isFirst = false;
-            $result[] = $this->origin->outcome($request, $reaction);
+        if ($requests === []) {
+            return [];
         }
 
-        return $result;
+        $outcomes = $this->origin->outcomes($requests, $reaction);
+
+        if ($outcomes !== [] && $this->delaySeconds > 0.0) {
+            $microseconds = max(1, (int)ceil($this->delaySeconds * 1_000_000.0));
+            $this->delay->sleep($microseconds);
+        }
+
+        return $outcomes;
     }
 }

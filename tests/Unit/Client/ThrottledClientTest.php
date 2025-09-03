@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace Carl\Tests\Unit\Client;
 
+use Carl\Client\ChunkedClient;
 use Carl\Client\Fake\FakeClient;
 use Carl\Client\ThrottledClient;
 use Carl\Exception;
@@ -20,7 +21,7 @@ use PHPUnit\Framework\TestCase;
 final class ThrottledClientTest extends TestCase
 {
     #[Test]
-    public function sleepsBetweenRequests(): void
+    public function sleepsAfterBatch(): void
     {
         $delay = new FakeDelay();
         $client = new ThrottledClient(
@@ -36,36 +37,20 @@ final class ThrottledClientTest extends TestCase
         ]);
 
         $this->assertSame(
-            [10_000, 10_000],
+            [10_000],
             $delay->calls(),
-            'Must sleep N-1 times with exact microseconds',
+            'Must sleep exactly once after processing the batch',
         );
     }
 
     #[Test]
-    public function noSleepForEmpty(): void
+    public function noSleepForEmptyBatch(): void
     {
         $delay = new FakeDelay();
         new ThrottledClient(new FakeClient(new AlwaysSuccessful()), 0.01, $delay)
             ->outcomes([]);
 
-        $this->assertSame([], $delay->calls(), 'No sleeps expected for empty requests');
-    }
-
-    #[Test]
-    public function noSleepForSingleRequest(): void
-    {
-        $delay = new FakeDelay();
-        new ThrottledClient(
-            new FakeClient(
-                new AlwaysSuccessful()
-            ),
-            0.01,
-            $delay
-        )
-            ->outcomes([new GetRequest('http://localhost/only')]);
-
-        $this->assertSame([], $delay->calls(), 'No sleeps expected for single request');
+        $this->assertSame([], $delay->calls(), 'No sleeps expected for empty batch');
     }
 
     #[Test]
@@ -73,16 +58,13 @@ final class ThrottledClientTest extends TestCase
     {
         $delay = new FakeDelay();
         new ThrottledClient(
-            new FakeClient(
-                new AlwaysSuccessful()
-            ),
+            new FakeClient(new AlwaysSuccessful()),
             0.0,
             $delay
-        )
-            ->outcomes([
-                new GetRequest('http://localhost/1'),
-                new GetRequest('http://localhost/2'),
-            ]);
+        )->outcomes([
+            new GetRequest('http://localhost/1'),
+            new GetRequest('http://localhost/2'),
+        ]);
 
         $this->assertSame([], $delay->calls(), 'Zero delay must not sleep');
     }
@@ -109,5 +91,66 @@ final class ThrottledClientTest extends TestCase
         );
     }
 
+    #[Test]
+    public function rejectsNaN(): void
+    {
+        $this->expectException(Exception::class);
+        new ThrottledClient(new FakeClient(new AlwaysSuccessful()), NAN);
+    }
+
+    #[Test]
+    public function rejectsInfinity(): void
+    {
+        $this->expectException(Exception::class);
+        new ThrottledClient(new FakeClient(new AlwaysSuccessful()), INF);
+    }
+
+    #[Test]
+    public function outcomeDoesNotSleep(): void
+    {
+        $delay = new FakeDelay();
+        $client = new ThrottledClient(new FakeClient(new AlwaysSuccessful()), 0.01, $delay);
+        $client->outcome(new GetRequest('http://localhost/ping'));
+        $this->assertSame([], $delay->calls(), 'outcome() must not sleep');
+    }
+
+    #[Test]
+    public function sleepsOnceForSingleRequest(): void
+    {
+        $delay = new FakeDelay();
+        $client = new ThrottledClient(new FakeClient(new AlwaysSuccessful()), 0.01, $delay);
+        $client->outcomes([new GetRequest('http://localhost/only')]);
+        $this->assertSame([10_000], $delay->calls(), 'Single non-empty batch must sleep exactly once');
+    }
+
+    #[Test]
+    public function sleepsBetweenChunksWhenComposedWithChunkedClient(): void
+    {
+        $delay = new FakeDelay();
+        $client = new ChunkedClient(
+            new ThrottledClient(new FakeClient(new AlwaysSuccessful()), 0.01, $delay),
+            2
+        );
+
+        $client->outcomes([
+            new GetRequest('http://localhost/1'),
+            new GetRequest('http://localhost/2'),
+            new GetRequest('http://localhost/3'),
+            new GetRequest('http://localhost/4'),
+            new GetRequest('http://localhost/5'),
+        ]);
+
+        $this->assertSame([10_000, 10_000, 10_000], $delay->calls(), 'Must sleep after each processed chunk');
+    }
+
+    #[Test]
+    public function tinyDelayRoundsUpToOneMicrosecond(): void
+    {
+        $delay = new FakeDelay();
+        $client = new ThrottledClient(new FakeClient(new AlwaysSuccessful()), 1e-9, $delay);
+        $client->outcomes([new GetRequest('http://localhost/tiny')]);
+
+        $this->assertSame([1], $delay->calls(), 'Tiny positive delay must round up to 1 microsecond');
+    }
 
 }
