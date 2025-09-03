@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.7.0] - 2025-09-03
+### Changed
+- ThrottledClient now applies delay once per batch (after each outcomes() call).
+- Empty batches do not trigger delay.
+
 ## [0.6.0] – 2025-09-01
 
 ### Added
@@ -47,6 +52,7 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+[0.6.0]: https://github.com/haspadar/carl/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/haspadar/carl/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/haspadar/carl/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/haspadar/carl/compare/v0.3.0...v0.4.0

@@ -17,25 +17,24 @@ use Carl\Time\Delay;
 use Carl\Time\NativeDelay;
 use Override;
 
-use function round;
-
 /**
  * Client decorator that throttles execution of request batches.
  *
- * A delay is applied once after each outcomes() call, not between
- * individual requests inside the batch. This allows combining the
- * client with chunking strategies: each batch is executed in full,
- * then a pause is enforced before the next batch.
+ * Applies a single delay after each outcomes() call (i.e., per batch), not between
+ * individual requests within the batch. To throttle between chunks, compose as:
+ * new ChunkedClient(new ThrottledClient($origin, $delaySeconds), $chunkSize).
  *
- * - When delaySeconds = 0.0 no pause is applied
- * - outcome() executes without delay
+ * Notes:
+ * - When delaySeconds = 0.0, no pause is applied.
+ * - Empty batches do not sleep.
+ * - outcome() executes without delay.
  *
  * Uses Delay abstraction for sleeping (NativeDelay by default).
  */
 final readonly class ThrottledClient implements Client
 {
     /**
-     * @param float $delaySeconds Non-negative seconds to sleep between requests
+     * @param float $delaySeconds Non-negative seconds to sleep after each batch (outcomes() call)
      */
     public function __construct(
         private Client $origin,
@@ -59,7 +58,7 @@ final readonly class ThrottledClient implements Client
         $outcomes = $this->origin->outcomes($requests, $reaction);
 
         if ($outcomes !== [] && $this->delaySeconds > 0.0) {
-            $microseconds = max(1, (int) round($this->delaySeconds * 1_000_000.0));
+            $microseconds = max(1, (int) ceil($this->delaySeconds * 1_000_000.0));
             $this->delay->sleep($microseconds);
         }
 

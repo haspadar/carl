@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace Carl\Tests\Unit\Client;
 
+use Carl\Client\ChunkedClient;
 use Carl\Client\Fake\FakeClient;
 use Carl\Client\ThrottledClient;
 use Carl\Exception;
@@ -88,5 +89,57 @@ final class ThrottledClientTest extends TestCase
             $outcome->response()->body(),
             'ThrottledClient must delegate outcome() to origin client'
         );
+    }
+
+    #[Test]
+    public function rejectsNaN(): void
+    {
+        $this->expectException(Exception::class);
+        new ThrottledClient(new FakeClient(new AlwaysSuccessful()), NAN);
+    }
+
+    #[Test]
+    public function rejectsInfinity(): void
+    {
+        $this->expectException(Exception::class);
+        new ThrottledClient(new FakeClient(new AlwaysSuccessful()), INF);
+    }
+
+    #[Test]
+    public function outcomeDoesNotSleep(): void
+    {
+        $delay = new FakeDelay();
+        $client = new ThrottledClient(new FakeClient(new AlwaysSuccessful()), 0.01, $delay);
+        $client->outcome(new GetRequest('http://localhost/ping'));
+        $this->assertSame([], $delay->calls(), 'outcome() must not sleep');
+    }
+
+    #[Test]
+    public function sleepsOnceForSingleRequest(): void
+    {
+        $delay = new FakeDelay();
+        $client = new ThrottledClient(new FakeClient(new AlwaysSuccessful()), 0.01, $delay);
+        $client->outcomes([new GetRequest('http://localhost/only')]);
+        $this->assertSame([10_000], $delay->calls(), 'Single non-empty batch must sleep exactly once');
+    }
+
+    #[Test]
+    public function sleepsBetweenChunksWhenComposedWithChunkedClient(): void
+    {
+        $delay = new FakeDelay();
+        $client = new ChunkedClient(
+            new ThrottledClient(new FakeClient(new AlwaysSuccessful()), 0.01, $delay),
+            2
+        );
+
+        $client->outcomes([
+            new GetRequest('http://localhost/1'),
+            new GetRequest('http://localhost/2'),
+            new GetRequest('http://localhost/3'),
+            new GetRequest('http://localhost/4'),
+            new GetRequest('http://localhost/5'),
+        ]);
+
+        $this->assertSame([10_000, 10_000, 10_000], $delay->calls(), 'Must sleep after each processed chunk');
     }
 }
