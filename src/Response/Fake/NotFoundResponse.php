@@ -26,7 +26,9 @@ use Override;
  */
 final readonly class NotFoundResponse implements Response
 {
-    public function __construct(private string $message = 'Not Found') {}
+    public function __construct(private string $message = 'Not Found')
+    {
+    }
 
     #[Override]
     public function body(): string

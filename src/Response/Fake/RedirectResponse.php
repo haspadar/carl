@@ -30,7 +30,8 @@ final readonly class RedirectResponse implements Response
     public function __construct(
         private string $location,
         private string $message = 'Redirecting...',
-    ) {}
+    ) {
+    }
 
     #[Override]
     public function body(): string

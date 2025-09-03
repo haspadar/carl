@@ -22,7 +22,9 @@ use Override;
  */
 final readonly class ClientErrorResponse implements Response
 {
-    public function __construct(private string $message = 'Bad Request') {}
+    public function __construct(private string $message = 'Bad Request')
+    {
+    }
 
     #[Override]
     public function body(): string

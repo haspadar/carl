@@ -26,7 +26,9 @@ use Override;
  */
 final readonly class UnauthorizedResponse implements Response
 {
-    public function __construct(private string $message = 'Unauthorized') {}
+    public function __construct(private string $message = 'Unauthorized')
+    {
+    }
 
     #[Override]
     public function body(): string

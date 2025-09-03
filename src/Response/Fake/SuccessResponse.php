@@ -26,7 +26,9 @@ use Override;
  */
 final readonly class SuccessResponse implements Response
 {
-    public function __construct(private string $message = 'OK') {}
+    public function __construct(private string $message = 'OK')
+    {
+    }
 
     #[Override]
     public function body(): string

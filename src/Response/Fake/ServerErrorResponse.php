@@ -26,7 +26,9 @@ use Override;
  */
 final readonly class ServerErrorResponse implements Response
 {
-    public function __construct(private string $message = 'Internal Server Error') {}
+    public function __construct(private string $message = 'Internal Server Error')
+    {
+    }
 
     #[Override]
     public function body(): string
