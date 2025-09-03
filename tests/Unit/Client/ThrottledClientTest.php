@@ -142,4 +142,15 @@ final class ThrottledClientTest extends TestCase
 
         $this->assertSame([10_000, 10_000, 10_000], $delay->calls(), 'Must sleep after each processed chunk');
     }
+
+    #[Test]
+    public function tinyDelayRoundsUpToOneMicrosecond(): void
+    {
+        $delay = new FakeDelay();
+        $client = new ThrottledClient(new FakeClient(new AlwaysSuccessful()), 1e-9, $delay);
+        $client->outcomes([new GetRequest('http://localhost/tiny')]);
+
+        $this->assertSame([1], $delay->calls(), 'Tiny positive delay must round up to 1 microsecond');
+    }
+
 }

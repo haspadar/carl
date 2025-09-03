@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ## [0.7.0] - 2025-09-03
+
 ### Changed
 - ThrottledClient now applies delay once per batch (after each outcomes() call).
 - Empty batches do not trigger delay.

@@ -11,7 +11,9 @@ namespace Carl\Tests\Unit\Reaction;
 use Carl\Reaction\ReactionList;
 use Carl\Reaction\ReactionOf;
 use Carl\Request\GetRequest;
+use Carl\Request\Request;
 use Carl\Response\Fake\SuccessResponse;
+use Carl\Response\Response;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
@@ -25,16 +27,16 @@ final class ReactionListTest extends TestCase
 
         $list = new ReactionList([
             new ReactionOf(
-                function ($req, $res) use (&$firstCounter): void {
+                function (Request $request, Response $response) use (&$firstCounter): void {
                     $firstCounter++;
                 },
-                function ($req, $error): void {}
+                function (Request $request, string $response): void {}
             ),
             new ReactionOf(
-                function ($req, $res) use (&$secondCounter): void {
+                function (Request $request, Response $response) use (&$secondCounter): void {
                     $secondCounter++;
                 },
-                function ($req, $error): void {}
+                function (Request $request, string $response): void {}
             ),
         ]);
 
@@ -55,14 +57,14 @@ final class ReactionListTest extends TestCase
 
         $list = new ReactionList([
             new ReactionOf(
-                function ($req, $res): void {},
-                function ($req, $error) use (&$firstCounter): void {
+                function (Request $request, Response $response): void {},
+                function (Request $request, string $error) use (&$firstCounter): void {
                     $firstCounter++;
                 }
             ),
             new ReactionOf(
-                function ($req, $res): void {},
-                function ($req, $error) use (&$secondCounter): void {
+                function (Request $request, Response $response): void {},
+                function (Request $request, string $error) use (&$secondCounter): void {
                     $secondCounter++;
                 }
             ),
@@ -84,18 +86,18 @@ final class ReactionListTest extends TestCase
 
         $list = new ReactionList([
             new ReactionOf(
-                function ($request, $response) use (&$calls): void {
+                function (Request $request, Response $response) use (&$calls): void {
                     $calls[] = 'first-success';
                 },
-                function ($request, $error) use (&$calls): void {
+                function (Request $request, string $error) use (&$calls): void {
                     $calls[] = 'first-failure';
                 }
             ),
             new ReactionOf(
-                function ($request, $response) use (&$calls): void {
+                function (Request $request, Response $response) use (&$calls): void {
                     $calls[] = 'second-success';
                 },
-                function ($request, $error) use (&$calls): void {
+                function (Request $request, string $error) use (&$calls): void {
                     $calls[] = 'second-failure';
                 }
             ),
