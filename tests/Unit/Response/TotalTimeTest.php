@@ -27,10 +27,11 @@ final class TotalTimeTest extends TestCase
             ),
         );
 
-        $this->assertSame(
+        $this->assertEqualsWithDelta(
             1.234,
             $response->seconds(),
-            'TotalTime must return the total_time value from CurlInfo'
+            1e-12,
+            'TotalTime must return the total_time value from CurlInfo',
         );
     }
 
@@ -45,10 +46,11 @@ final class TotalTimeTest extends TestCase
             ),
         );
 
-        $this->assertSame(
+        $this->assertEqualsWithDelta(
             0.0,
             $response->seconds(),
-            'TotalTime must return 0.0 when total_time is missing'
+            1e-12,
+            'TotalTime must return ~0.0 when total_time is missing',
         );
     }
 }

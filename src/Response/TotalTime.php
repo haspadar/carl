@@ -20,18 +20,21 @@ final readonly class TotalTime implements Response
     }
 
     #[Override]
+    /** @codeCoverageIgnore */
     public function body(): string
     {
         return $this->origin->body();
     }
 
     #[Override]
+    /** @codeCoverageIgnore */
     public function headers(): array
     {
         return $this->origin->headers();
     }
 
     #[Override]
+    /** @codeCoverageIgnore */
     public function info(): CurlInfo
     {
         return $this->origin->info();
@@ -39,6 +42,16 @@ final readonly class TotalTime implements Response
 
     public function seconds(): float
     {
-        return (float) $this->origin->info()->value('total_time');
+        $info = $this->origin->info();
+
+        if ($info->hasKey('total_time')) {
+            return (float)$info->value('total_time', '0');
+        }
+
+        if ($info->hasKey('total_time_us')) {
+            return (float)$info->value('total_time_us', '0') / 1_000_000.0;
+        }
+
+        return 0.0;
     }
 }

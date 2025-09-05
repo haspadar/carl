@@ -31,7 +31,7 @@ final class RedirectUrlTest extends TestCase
 
         $this->assertSame(
             $url,
-            $response->url(),
+            $response->value(),
             'RedirectUrl must return the last redirect URL from CurlInfo'
         );
     }
@@ -49,7 +49,7 @@ final class RedirectUrlTest extends TestCase
 
         $this->assertSame(
             '',
-            $response->url(),
+            $response->value(),
             'RedirectUrl must return empty string when redirect_url is missing'
         );
     }

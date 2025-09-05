@@ -37,7 +37,7 @@ final class RedirectCountTest extends TestCase
     #[Test]
     public function returnsZeroIfMissing(): void
     {
-        $response = new \Carl\Response\RedirectCount(
+        $response = new RedirectCount(
             new CurlResponse(
                 'irrelevant',
                 [],

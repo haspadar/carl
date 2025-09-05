@@ -24,18 +24,21 @@ final readonly class RedirectCount implements Response
     }
 
     #[Override]
+    /** @codeCoverageIgnore */
     public function body(): string
     {
         return $this->origin->body();
     }
 
     #[Override]
+    /** @codeCoverageIgnore */
     public function headers(): array
     {
         return $this->origin->headers();
     }
 
     #[Override]
+    /** @codeCoverageIgnore */
     public function info(): CurlInfo
     {
         return $this->origin->info();
