@@ -41,10 +41,10 @@ final readonly class SuccessResponse implements Response
     {
         return [
             'Content-Type' => 'text/plain; charset=utf-8',
-            'Content-Length' => (string)strlen($this->message),
+            'Content-Length' => (string)strlen($this->body()),
             'Server' => 'FakeServer/1.0',
-            'Date' => gmdate('D, d M Y H:i:s') . ' GMT',
-            'Connection' => 'keep-alive',
+            'Date' => gmdate(DATE_RFC7231),
+            'Connection' => 'close',
         ];
     }
 
@@ -67,7 +67,7 @@ final readonly class SuccessResponse implements Response
             'speed_upload' => 0,
             'url' => 'http://fake.local/test',
             'primary_ip' => '127.0.0.1',
-            'content_type' => 'text/plain',
+            'content_type' => 'text/plain; charset=utf-8',
             'redirect_url' => '',
         ]);
     }
