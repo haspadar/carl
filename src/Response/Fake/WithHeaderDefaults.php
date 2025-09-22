@@ -14,7 +14,9 @@ use Override;
  */
 final readonly class WithHeaderDefaults implements Response
 {
-    public function __construct(private Response $origin) {}
+    public function __construct(private Response $origin)
+    {
+    }
 
     #[Override]
     public function body(): string

@@ -30,7 +30,8 @@ final readonly class AlwaysSuccessful implements FakeOutcomes
     public function __construct(
         private int $code = 200,
         private string $body = 'OK',
-    ) {}
+    ) {
+    }
 
     #[Override]
     public function at(int $index, Request $request): Outcome

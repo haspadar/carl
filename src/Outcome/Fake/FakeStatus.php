@@ -13,9 +13,9 @@ use Carl\Outcome\SuccessfulOutcome;
 use Carl\Request\Request;
 use Carl\Response\CurlInfo;
 use Carl\Response\CurlResponse;
-
 use Carl\Response\Fake\WithHeaderDefaults;
 use Carl\Response\Fake\WithInfoDefaults;
+
 use function is_string;
 
 use Override;
