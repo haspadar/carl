@@ -53,4 +53,23 @@ final class TotalTimeTest extends TestCase
             'TotalTime must return ~0.0 when total_time is missing',
         );
     }
+
+    #[Test]
+    public function convertsMicrosecondsToSeconds(): void
+    {
+        $response = new TotalTime(
+            new CurlResponse(
+                'irrelevant',
+                [],
+                new CurlInfo(['total_time_us' => 1_234_000]),
+            ),
+        );
+
+        $this->assertEqualsWithDelta(
+            1.234,
+            $response->seconds(),
+            1e-12,
+            'TotalTime must convert total_time_us from microseconds to seconds',
+        );
+    }
 }

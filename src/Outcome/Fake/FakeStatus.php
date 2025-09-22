@@ -14,6 +14,8 @@ use Carl\Request\Request;
 use Carl\Response\CurlInfo;
 use Carl\Response\CurlResponse;
 
+use Carl\Response\Fake\WithHeaderDefaults;
+use Carl\Response\Fake\WithInfoDefaults;
 use function is_string;
 
 use Override;
@@ -53,10 +55,14 @@ final readonly class FakeStatus implements FakeOutcomes
 
         return new SuccessfulOutcome(
             $request,
-            new CurlResponse(
-                'ok',
-                ['Content-Type' => 'text/plain'],
-                new CurlInfo(['http_code' => $code]),
+            new WithInfoDefaults(
+                new WithHeaderDefaults(
+                    new CurlResponse(
+                        'ok',
+                        [],
+                        new CurlInfo(['http_code' => $code]),
+                    ),
+                ),
             ),
         );
     }
