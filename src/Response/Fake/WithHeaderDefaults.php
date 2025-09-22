@@ -14,8 +14,18 @@ use Override;
  */
 final readonly class WithHeaderDefaults implements Response
 {
+    /** @var array<string,string> */
+    private array $defaults;
+
     public function __construct(private Response $origin)
     {
+        $this->defaults = [
+            'Content-Type' => 'text/plain; charset=utf-8',
+            'Content-Length' => (string)strlen($this->origin->body()),
+            'Server' => 'FakeServer/1.0',
+            'Date' => gmdate(DATE_RFC7231),
+            'Connection' => 'close',
+        ];
     }
 
     #[Override]
@@ -29,15 +39,7 @@ final readonly class WithHeaderDefaults implements Response
     {
         $headers = $this->origin->headers();
 
-        $defaults = [
-            'Content-Type' => 'text/plain; charset=utf-8',
-            'Content-Length' => (string)strlen($this->origin->body()),
-            'Server' => 'FakeServer/1.0',
-            'Date' => gmdate(DATE_RFC7231),
-            'Connection' => 'close',
-        ];
-
-        return array_merge($defaults, $headers);
+        return array_merge($this->defaults, $headers);
     }
 
     #[Override]

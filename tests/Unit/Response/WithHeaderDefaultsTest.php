@@ -1,8 +1,12 @@
 <?php
 
+/*
+ * SPDX-FileCopyrightText: Copyright (c) 2025 Kanstantsin Mesnik
+ * SPDX-License-Identifier: MIT
+ */
 declare(strict_types=1);
 
-namespace Carl\Tests\Unit\Response\Fake;
+namespace Carl\Tests\Unit\Response;
 
 use Carl\Response\CurlInfo;
 use Carl\Response\CurlResponse;
@@ -19,24 +23,22 @@ final class WithHeaderDefaultsTest extends TestCase
             new CurlResponse('abc', [], new CurlInfo([])),
         );
 
-        $headers = $response->headers();
-
-        $this->assertArrayHasKey('Content-Type', $headers, 'Should contain Content-Type');
-        $this->assertArrayHasKey('Content-Length', $headers, 'Should contain Content-Length');
-        $this->assertArrayHasKey('Server', $headers, 'Should contain Server');
-        $this->assertArrayHasKey('Date', $headers, 'Should contain Date');
-        $this->assertArrayHasKey('Connection', $headers, 'Should contain Connection');
+        $this->assertEqualsCanonicalizing(
+            ['Content-Type', 'Content-Length', 'Server', 'Connection', 'Date'],
+            array_keys($response->headers()),
+            'Headers must contain the default keys',
+        );
     }
 
     #[Test]
-    public function preservesOriginalHeaders(): void
+    public function originHeadersOverrideDefaults(): void
     {
         $response = new WithHeaderDefaults(
-            new CurlResponse('x', ['X-Custom' => '42'], new CurlInfo([])),
+            new CurlResponse('x', ['Content-Type' => 'application/json'], new CurlInfo([])),
         );
 
         $headers = $response->headers();
 
-        $this->assertSame('42', $headers['X-Custom'], 'Should keep original header');
+        $this->assertSame('application/json', $headers['Content-Type'], 'Origin header should override default');
     }
 }

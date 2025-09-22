@@ -37,7 +37,7 @@ final readonly class WithInfoDefaults implements Response
 
         $defaults = [
             'http_code' => 200,
-            'total_time' => 0.0,
+            'total_time_us' => 0,
             'namelookup_time' => 0.0,
             'connect_time' => 0.0,
             'appconnect_time' => 0.0,

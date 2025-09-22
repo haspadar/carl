@@ -48,7 +48,11 @@ final readonly class FakeStatus implements FakeOutcomes
 
         $path = (string)parse_url($url, PHP_URL_PATH);
         $segment = basename($path);
-        $code = filter_var($segment, FILTER_VALIDATE_INT);
+        $code = filter_var(
+            $segment,
+            FILTER_VALIDATE_INT,
+            ['options' => ['min_range' => 100, 'max_range' => 599]],
+        );
         if ($code === false) {
             $code = 200;
         }
@@ -60,7 +64,7 @@ final readonly class FakeStatus implements FakeOutcomes
                     new CurlResponse(
                         'ok',
                         [],
-                        new CurlInfo(['http_code' => $code]),
+                        new CurlInfo(['http_code' => $code, 'url' => $url]),
                     ),
                 ),
             ),

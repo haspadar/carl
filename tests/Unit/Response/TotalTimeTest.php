@@ -10,6 +10,7 @@ namespace Carl\Tests\Unit\Response;
 
 use Carl\Response\CurlInfo;
 use Carl\Response\CurlResponse;
+use Carl\Response\Fake\WithInfoDefaults;
 use Carl\Response\TotalTime;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -50,7 +51,7 @@ final class TotalTimeTest extends TestCase
             0.0,
             $response->seconds(),
             1e-12,
-            'TotalTime must return ~0.0 when total_time is missing',
+            'TotalTime must return 0.0 when total_time is missing',
         );
     }
 
@@ -70,6 +71,27 @@ final class TotalTimeTest extends TestCase
             $response->seconds(),
             1e-12,
             'TotalTime must convert total_time_us from microseconds to seconds',
+        );
+    }
+
+    #[Test]
+    public function convertsMicrosecondsToSecondsEvenWithInfoDefaults(): void
+    {
+        $response = new TotalTime(
+            new WithInfoDefaults(
+                new CurlResponse(
+                    'irrelevant',
+                    [],
+                    new CurlInfo(['total_time_us' => 1_234_000]),
+                ),
+            ),
+        );
+
+        $this->assertEqualsWithDelta(
+            1.234,
+            $response->seconds(),
+            1e-12,
+            'TotalTime must use total_time_us when seconds value is not provided by origin, even with defaults wrapper',
         );
     }
 }

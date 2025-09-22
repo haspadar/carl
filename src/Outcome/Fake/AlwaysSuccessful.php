@@ -36,6 +36,9 @@ final readonly class AlwaysSuccessful implements FakeOutcomes
     #[Override]
     public function at(int $index, Request $request): Outcome
     {
+        /** @var string $url */
+        $url = $request->options()[CURLOPT_URL] ?? '';
+
         return new SuccessfulOutcome(
             $request,
             new WithInfoDefaults(
@@ -43,7 +46,10 @@ final readonly class AlwaysSuccessful implements FakeOutcomes
                     new CurlResponse(
                         $this->body,
                         [],
-                        new CurlInfo(['http_code' => $this->code]),
+                        new CurlInfo([
+                            'http_code' => $this->code,
+                            'url' => $url,
+                        ]),
                     ),
                 ),
             ),
