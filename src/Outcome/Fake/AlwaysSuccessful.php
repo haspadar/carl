@@ -13,6 +13,8 @@ use Carl\Outcome\SuccessfulOutcome;
 use Carl\Request\Request;
 use Carl\Response\CurlInfo;
 use Carl\Response\CurlResponse;
+use Carl\Response\Fake\WithHeaderDefaults;
+use Carl\Response\Fake\WithInfoDefaults;
 use Override;
 
 /**
@@ -27,20 +29,30 @@ final readonly class AlwaysSuccessful implements FakeOutcomes
 {
     public function __construct(
         private int $code = 200,
-        private string $body = 'OK'
+        private string $body = 'OK',
     ) {
     }
 
     #[Override]
     public function at(int $index, Request $request): Outcome
     {
+        /** @var string $url */
+        $url = $request->options()[CURLOPT_URL] ?? '';
+
         return new SuccessfulOutcome(
             $request,
-            new CurlResponse(
-                $this->body,
-                ['Content-Type' => 'text/plain'],
-                new CurlInfo(['http_code' => $this->code])
-            )
+            new WithInfoDefaults(
+                new WithHeaderDefaults(
+                    new CurlResponse(
+                        $this->body,
+                        [],
+                        new CurlInfo([
+                            'http_code' => $this->code,
+                            'url' => $url,
+                        ]),
+                    ),
+                ),
+            ),
         );
     }
 }

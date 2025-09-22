@@ -16,13 +16,6 @@ use Override;
  * @codeCoverageIgnore
  *
  * Fake HTTP response that always represents a server error (500).
- *
- * Useful in tests to simulate failing HTTP calls
- * without requiring a real server-side failure.
- *
- * Example:
- * $response = new ServerErrorResponse("Something went wrong");
- * echo $response->info()->value('http_code'); // 500
  */
 final readonly class ServerErrorResponse implements Response
 {
@@ -41,10 +34,6 @@ final readonly class ServerErrorResponse implements Response
     {
         return [
             'Content-Type' => 'text/plain; charset=utf-8',
-            'Content-Length' => (string)strlen($this->message),
-            'Server' => 'FakeServer/1.0',
-            'Date' => gmdate('D, d M Y H:i:s') . ' GMT',
-            'Connection' => 'close',
         ];
     }
 
@@ -53,22 +42,6 @@ final readonly class ServerErrorResponse implements Response
     {
         return new CurlInfo([
             'http_code' => 500,
-            'total_time' => 0.001,
-            'namelookup_time' => 0.0,
-            'connect_time' => 0.0,
-            'appconnect_time' => 0.0,
-            'pretransfer_time' => 0.0,
-            'starttransfer_time' => 0.001,
-            'redirect_time' => 0.0,
-            'redirect_count' => 0,
-            'size_download' => strlen($this->message),
-            'size_upload' => 0,
-            'speed_download' => strlen($this->message) * 1000,
-            'speed_upload' => 0,
-            'url' => 'http://fake.local/server-error',
-            'primary_ip' => '127.0.0.1',
-            'content_type' => 'text/plain; charset=utf-8',
-            'redirect_url' => '',
         ]);
     }
 }

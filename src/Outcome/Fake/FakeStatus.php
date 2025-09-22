@@ -13,6 +13,8 @@ use Carl\Outcome\SuccessfulOutcome;
 use Carl\Request\Request;
 use Carl\Response\CurlInfo;
 use Carl\Response\CurlResponse;
+use Carl\Response\Fake\WithHeaderDefaults;
+use Carl\Response\Fake\WithInfoDefaults;
 
 use function is_string;
 
@@ -46,17 +48,25 @@ final readonly class FakeStatus implements FakeOutcomes
 
         $path = (string)parse_url($url, PHP_URL_PATH);
         $segment = basename($path);
-        $code = filter_var($segment, FILTER_VALIDATE_INT);
+        $code = filter_var(
+            $segment,
+            FILTER_VALIDATE_INT,
+            ['options' => ['min_range' => 100, 'max_range' => 599]],
+        );
         if ($code === false) {
             $code = 200;
         }
 
         return new SuccessfulOutcome(
             $request,
-            new CurlResponse(
-                'ok',
-                ['Content-Type' => 'text/plain'],
-                new CurlInfo(['http_code' => $code]),
+            new WithInfoDefaults(
+                new WithHeaderDefaults(
+                    new CurlResponse(
+                        'ok',
+                        [],
+                        new CurlInfo(['http_code' => $code, 'url' => $url]),
+                    ),
+                ),
             ),
         );
     }
