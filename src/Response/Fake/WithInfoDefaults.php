@@ -15,7 +15,9 @@ use Random\RandomException;
  */
 final readonly class WithInfoDefaults implements Response
 {
-    public function __construct(private Response $origin) {}
+    public function __construct(private Response $origin)
+    {
+    }
 
     #[Override]
     public function body(): string
@@ -30,22 +32,21 @@ final readonly class WithInfoDefaults implements Response
     }
 
     /**
-     * Timings: *_time values are seconds (float); total_time_us is microseconds (int).
+     * Returns CurlInfo with default values.
+     * Timing fields are generated monotonically.
      *
      * @throws RandomException
      */
     #[Override]
-    /**
-     * Returns CurlInfo with default values.
-     * Timing fields are generated monotonically.
-     */
-    #[Override]
     public function info(): CurlInfo
     {
-        $dns = random_int(100, 1_000) / 1_000_000;
-        $connect = $dns + random_int(9_000, 49_000) / 1_000_000;
-        $start = $connect + random_int(20_000, 200_000) / 1_000_000;
-        $totalUs = max(random_int(50_000, 500_000), (int)ceil(($start + 0.001) * 1_000_000));
+        $dns = (float) (random_int(100, 1_000) / 1_000_000);
+        $connect = $dns + (float) (random_int(9_000, 49_000) / 1_000_000);
+        $start = $connect + (float) (random_int(20_000, 200_000) / 1_000_000);
+        $totalUs = max(
+            random_int(50_000, 500_000),
+            (int) ceil(($start + 0.001) * 1_000_000.0)
+        );
 
         return new CurlInfo(array_merge([
             'http_code' => 200,
