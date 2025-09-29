@@ -7,6 +7,7 @@ namespace Carl\Response\Fake;
 use Carl\Response\CurlInfo;
 use Carl\Response\Response;
 use Override;
+use Random\RandomException;
 
 /**
  * Decorator that ensures a Response always has
@@ -30,31 +31,42 @@ final readonly class WithInfoDefaults implements Response
         return $this->origin->headers();
     }
 
+    /**
+     * Returns CurlInfo with default values.
+     * Timing fields are generated monotonically.
+     *
+     * @throws RandomException
+     */
     #[Override]
     public function info(): CurlInfo
     {
-        $info = $this->origin->info()->all();
+        $dns = (float) (random_int(100, 1_000) / 1_000_000);
+        $connect = $dns + (float) (random_int(9_000, 49_000) / 1_000_000);
+        $start = $connect + (float) (random_int(20_000, 200_000) / 1_000_000);
+        $totalUs = max(
+            random_int(50_000, 500_000),
+            (int) ceil(($start + 0.001) * 1_000_000.0)
+        );
 
-        $defaults = [
+        return new CurlInfo(array_merge([
             'http_code' => 200,
-            'total_time_us' => 0,
-            'namelookup_time' => 0.0,
-            'connect_time' => 0.0,
+            'total_time' => $totalUs / 1_000_000,
+            'total_time_us' => $totalUs,
+            'namelookup_time' => $dns,
+            'connect_time' => $connect,
             'appconnect_time' => 0.0,
-            'pretransfer_time' => 0.0,
-            'starttransfer_time' => 0.0,
+            'pretransfer_time' => $connect,
+            'starttransfer_time' => $start,
             'redirect_time' => 0.0,
             'redirect_count' => 0,
             'size_download' => 0,
             'size_upload' => 0,
             'speed_download' => 0,
             'speed_upload' => 0,
-            'url' => '',
-            'primary_ip' => '',
-            'content_type' => '',
+            'url' => 'http://localhost/fake',
+            'primary_ip' => '127.0.0.1',
+            'content_type' => 'text/plain; charset=utf-8',
             'redirect_url' => '',
-        ];
-
-        return new CurlInfo(array_merge($defaults, $info));
+        ], $this->origin->info()->all()));
     }
 }
