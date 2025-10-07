@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 final class TotalTimeTest extends TestCase
 {
     #[Test]
-    public function returnsTotalTime(): void
+    public function returnsTotalTimeWhenPresent(): void
     {
         $response = new TotalTime(
             new CurlResponse(
@@ -31,31 +31,12 @@ final class TotalTimeTest extends TestCase
             1.234,
             $response->seconds(),
             1e-12,
-            'TotalTime must return the total_time value from CurlInfo',
+            'Must return total_time value when present',
         );
     }
 
     #[Test]
-    public function returnsZeroIfMissing(): void
-    {
-        $response = new TotalTime(
-            new CurlResponse(
-                'irrelevant',
-                [],
-                new CurlInfo([]),
-            ),
-        );
-
-        $this->assertEqualsWithDelta(
-            0.0,
-            $response->seconds(),
-            1e-12,
-            'TotalTime must return 0.0 when total_time is missing',
-        );
-    }
-
-    #[Test]
-    public function convertsMicrosecondsToSeconds(): void
+    public function convertsMicrosecondsToSecondsWhenOnlyTotalTimeUsExists(): void
     {
         $response = new TotalTime(
             new CurlResponse(
@@ -69,7 +50,73 @@ final class TotalTimeTest extends TestCase
             1.234,
             $response->seconds(),
             1e-12,
-            'TotalTime must convert total_time_us from microseconds to seconds',
+            'Must convert microseconds to seconds when only total_time_us present',
+        );
+    }
+
+    #[Test]
+    public function returnsZeroWhenNoTimingKeysExist(): void
+    {
+        $response = new TotalTime(
+            new CurlResponse(
+                'irrelevant',
+                [],
+                new CurlInfo([]),
+            ),
+        );
+
+        $this->assertEqualsWithDelta(
+            0.0,
+            $response->seconds(),
+            1e-12,
+            'Must return 0.0 when no total_time or total_time_us keys exist',
+        );
+    }
+
+    #[Test]
+    public function proxiesBodyFromOrigin(): void
+    {
+        $response = new TotalTime(
+            new CurlResponse('body-value', [], new CurlInfo([])),
+        );
+
+        $this->assertSame(
+            'body-value',
+            $response->body(),
+            'Must proxy body() from origin response',
+        );
+    }
+
+    #[Test]
+    public function proxiesHeadersFromOrigin(): void
+    {
+        $response = new TotalTime(
+            new CurlResponse(
+                'irrelevant',
+                ['X-Test' => 'yes'],
+                new CurlInfo([]),
+            ),
+        );
+
+        $this->assertSame(
+            ['X-Test' => 'yes'],
+            $response->headers(),
+            'Must proxy headers() from origin response',
+        );
+    }
+
+    #[Test]
+    public function proxiesInfoFromOrigin(): void
+    {
+        $info = new CurlInfo(['http_code' => 200]);
+        $response = new TotalTime(
+            new CurlResponse('irrelevant', [], $info),
+        );
+
+        $this->assertSame(
+            $info,
+            $response->info(),
+            'Must proxy info() from origin response',
         );
     }
 }

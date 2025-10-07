@@ -12,7 +12,7 @@ use Carl\Reaction\ReactionList;
 use Carl\Reaction\ReactionOf;
 use Carl\Request\GetRequest;
 use Carl\Request\Request;
-use Carl\Response\Fake\SuccessResponse;
+use Carl\Response\Fake\FixedResponse;
 use Carl\Response\Response;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -42,7 +42,7 @@ final class ReactionListTest extends TestCase
 
         $list->onSuccess(
             new GetRequest('http://localhost/'),
-            new SuccessResponse('ok')
+            new FixedResponse(200, 'ok')
         );
 
         $this->assertSame(1, $firstCounter, 'First reaction must be called on success');
@@ -105,7 +105,7 @@ final class ReactionListTest extends TestCase
 
         $list->onSuccess(
             new GetRequest('http://localhost/'),
-            new SuccessResponse('ok')
+            new FixedResponse(200, 'ok')
         );
 
         $list->onFailure(

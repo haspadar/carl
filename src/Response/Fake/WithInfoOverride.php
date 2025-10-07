@@ -15,13 +15,16 @@ use Override;
 /**
  * @codeCoverageIgnore
  *
- * Fake HTTP response representing a client error (HTTP 400).
- * Decorates any Response and overrides http_code lazily.
+ * Decorator that overrides specific keys in CurlInfo.
+ * Useful in tests to simulate different response metadata.
  */
-final readonly class ClientErrorResponse implements Response
+final readonly class WithInfoOverride implements Response
 {
-    public function __construct(private Response $origin)
-    {
+    public function __construct(
+        private Response $origin,
+        /** @var array<string,mixed> */
+        private array $overrides
+    ) {
     }
 
     #[Override]
@@ -39,6 +42,11 @@ final readonly class ClientErrorResponse implements Response
     #[Override]
     public function info(): CurlInfo
     {
-        return new WithInfoOverride($this->origin, ['http_code' => 400])->info();
+        return new CurlInfo(
+            array_merge(
+                $this->origin->info()->all(),
+                $this->overrides
+            )
+        );
     }
 }

@@ -16,28 +16,29 @@ use Override;
  * @codeCoverageIgnore
  *
  * Fake HTTP response representing a "Not Found" error (404).
+ * Decorates any Response and overrides http_code lazily.
  */
 final readonly class NotFoundResponse implements Response
 {
-    public function __construct(private string $message = 'Not Found')
+    public function __construct(private Response $origin)
     {
     }
 
     #[Override]
     public function body(): string
     {
-        return $this->message;
+        return $this->origin->body();
     }
 
     #[Override]
     public function headers(): array
     {
-        return ['Content-Type' => 'text/plain; charset=utf-8'];
+        return $this->origin->headers();
     }
 
     #[Override]
     public function info(): CurlInfo
     {
-        return new CurlInfo(['http_code' => 404]);
+        return new WithInfoOverride($this->origin, ['http_code' => 404])->info();
     }
 }

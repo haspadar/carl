@@ -10,14 +10,14 @@ namespace Carl\Tests\Unit\Reaction;
 
 use Carl\Reaction\OnSuccessResponse;
 use Carl\Request\GetRequest;
-use Carl\Response\Fake\SuccessResponse;
+use Carl\Response\Fake\FixedResponse;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 final class OnSuccessResponseTest extends TestCase
 {
     #[Test]
-    public function incrementsWhenSuccess(): void
+    public function callsCallbackWhenSuccess(): void
     {
         $called = 0;
 
@@ -25,14 +25,14 @@ final class OnSuccessResponseTest extends TestCase
             $called++;
         })->onSuccess(
             new GetRequest('http://localhost/'),
-            new SuccessResponse('ok')
+            new FixedResponse(200, 'ok')
         );
 
         $this->assertSame(1, $called, 'Must call callback on success');
     }
 
     #[Test]
-    public function ignoresWhenFailure(): void
+    public function doesNotCallCallbackWhenFailure(): void
     {
         $called = 0;
 

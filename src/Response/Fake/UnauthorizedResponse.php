@@ -19,30 +19,28 @@ use Override;
  */
 final readonly class UnauthorizedResponse implements Response
 {
-    public function __construct(private string $message = 'Unauthorized')
+    public function __construct(private Response $origin)
     {
     }
 
     #[Override]
     public function body(): string
     {
-        return $this->message;
+        return $this->origin->body();
     }
 
     #[Override]
     public function headers(): array
     {
-        return [
-            'Content-Type' => 'text/plain; charset=utf-8',
-            'WWW-Authenticate' => 'Basic realm="FakeServer"',
-        ];
+        return array_merge(
+            $this->origin->headers(),
+            ['WWW-Authenticate' => 'Basic realm="FakeServer"']
+        );
     }
 
     #[Override]
     public function info(): CurlInfo
     {
-        return new CurlInfo([
-            'http_code' => 401,
-        ]);
+        return new WithInfoOverride($this->origin, ['http_code' => 401])->info();
     }
 }

@@ -11,7 +11,7 @@ namespace Carl\Tests\Unit\Reaction;
 use Carl\Reaction\ReactionOf;
 use Carl\Request\GetRequest;
 use Carl\Request\Request;
-use Carl\Response\Fake\SuccessResponse;
+use Carl\Response\Fake\FixedResponse;
 use Carl\Response\Response;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -27,10 +27,10 @@ final class ReactionOfTest extends TestCase
             function (Request $request, Response $response) use (&$called): void {
                 $called++;
             },
-            function (Request $request, string $error): void {},
+            function (Request $request, string $error): void {}
         )->onSuccess(
             new GetRequest('http://localhost/'),
-            new SuccessResponse('ok'),
+            new FixedResponse(200, 'ok')
         );
 
         $this->assertSame(1, $called, 'Must call onSuccess callback');
@@ -45,10 +45,10 @@ final class ReactionOfTest extends TestCase
             function (Request $request, Response $response): void {},
             function (Request $request, string $error) use (&$called): void {
                 $called++;
-            },
+            }
         )->onFailure(
             new GetRequest('http://localhost/'),
-            'error',
+            'error'
         );
 
         $this->assertSame(1, $called, 'Must call onFailure callback');

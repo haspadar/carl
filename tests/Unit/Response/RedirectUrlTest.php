@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 final class RedirectUrlTest extends TestCase
 {
     #[Test]
-    public function returnsRedirectUrl(): void
+    public function returnsRedirectUrlWhenPresent(): void
     {
         $url = 'https://example.com/final';
 
@@ -32,12 +32,12 @@ final class RedirectUrlTest extends TestCase
         $this->assertSame(
             $url,
             $response->value(),
-            'RedirectUrl must return the last redirect URL from CurlInfo'
+            'Must return redirect_url value from CurlInfo when present',
         );
     }
 
     #[Test]
-    public function returnsEmptyStringIfMissing(): void
+    public function returnsEmptyStringWhenMissing(): void
     {
         $response = new RedirectUrl(
             new CurlResponse(
@@ -50,7 +50,50 @@ final class RedirectUrlTest extends TestCase
         $this->assertSame(
             '',
             $response->value(),
-            'RedirectUrl must return empty string when redirect_url is missing'
+            'Must return empty string when redirect_url key missing in CurlInfo',
+        );
+    }
+
+    #[Test]
+    public function proxiesBodyFromOrigin(): void
+    {
+        $response = new RedirectUrl(
+            new CurlResponse('body-data', [], new CurlInfo([])),
+        );
+
+        $this->assertSame(
+            'body-data',
+            $response->body(),
+            'Must proxy body() from origin response',
+        );
+    }
+
+    #[Test]
+    public function proxiesHeadersFromOrigin(): void
+    {
+        $response = new RedirectUrl(
+            new CurlResponse('irrelevant', ['X-Test' => '1'], new CurlInfo([])),
+        );
+
+        $this->assertSame(
+            ['X-Test' => '1'],
+            $response->headers(),
+            'Must proxy headers() from origin response',
+        );
+    }
+
+    #[Test]
+    public function proxiesInfoFromOrigin(): void
+    {
+        $info = new CurlInfo(['redirect_url' => 'https://redirect']);
+        $response = new RedirectUrl(
+            new CurlResponse('irrelevant', [], $info),
+        );
+
+        $this->assertSame(
+            $info,
+            $response->info(),
+            'Must proxy info() from origin response',
         );
     }
 }

@@ -16,36 +16,37 @@ use Override;
  * @codeCoverageIgnore
  *
  * Fake HTTP response that always represents a redirect (302).
+ * Decorates an origin response, overriding Location header and http_code.
  */
 final readonly class RedirectResponse implements Response
 {
     public function __construct(
+        private Response $origin,
         private string $location,
-        private string $message = 'Redirecting...'
     ) {
     }
 
     #[Override]
     public function body(): string
     {
-        return $this->message;
+        return $this->origin->body();
     }
 
     #[Override]
     public function headers(): array
     {
-        return [
-            'Content-Type' => 'text/plain; charset=utf-8',
-            'Location' => $this->location,
-        ];
+        return new WithHeaderOverride(
+            $this->origin,
+            ['Location' => $this->location]
+        )->headers();
     }
 
     #[Override]
     public function info(): CurlInfo
     {
-        return new CurlInfo([
-            'http_code' => 302,
-            'redirect_url' => $this->location,
-        ]);
+        return new WithInfoOverride(
+            $this->origin,
+            ['http_code' => 302, 'redirect_url' => $this->location]
+        )->info();
     }
 }

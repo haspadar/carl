@@ -15,13 +15,16 @@ use Override;
 /**
  * @codeCoverageIgnore
  *
- * Fake HTTP response representing a client error (HTTP 400).
- * Decorates any Response and overrides http_code lazily.
+ * Decorator that overrides specific headers of a Response.
+ * Useful in tests to simulate authentication, redirects, etc.
  */
-final readonly class ClientErrorResponse implements Response
+final readonly class WithHeaderOverride implements Response
 {
-    public function __construct(private Response $origin)
-    {
+    public function __construct(
+        private Response $origin,
+        /** @var array<string,string> */
+        private array $overrides
+    ) {
     }
 
     #[Override]
@@ -33,12 +36,12 @@ final readonly class ClientErrorResponse implements Response
     #[Override]
     public function headers(): array
     {
-        return $this->origin->headers();
+        return array_merge($this->origin->headers(), $this->overrides);
     }
 
     #[Override]
     public function info(): CurlInfo
     {
-        return new WithInfoOverride($this->origin, ['http_code' => 400])->info();
+        return $this->origin->info();
     }
 }

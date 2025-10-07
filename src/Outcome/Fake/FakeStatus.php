@@ -11,10 +11,8 @@ namespace Carl\Outcome\Fake;
 use Carl\Outcome\Outcome;
 use Carl\Outcome\SuccessfulOutcome;
 use Carl\Request\Request;
-use Carl\Response\CurlInfo;
-use Carl\Response\CurlResponse;
-use Carl\Response\Fake\WithHeaderDefaults;
-use Carl\Response\Fake\WithInfoDefaults;
+use Carl\Response\Fake\FixedResponse;
+use Carl\Response\Fake\WithRequestUrl;
 
 use function is_string;
 
@@ -22,9 +20,6 @@ use Override;
 
 /**
  * Fake outcome that extracts an HTTP status code from the URI path.
- *
- * Useful in tests when you want to simulate responses with different
- * status codes without real HTTP requests.
  *
  * Example:
  * new FakeClient(new FakeStatus())
@@ -59,15 +54,10 @@ final readonly class FakeStatus implements FakeOutcomes
 
         return new SuccessfulOutcome(
             $request,
-            new WithInfoDefaults(
-                new WithHeaderDefaults(
-                    new CurlResponse(
-                        'ok',
-                        [],
-                        new CurlInfo(['http_code' => $code, 'url' => $url]),
-                    ),
-                ),
-            ),
+            new WithRequestUrl(
+                new FixedResponse($code, 'ok'),
+                $request
+            )
         );
     }
 }
