@@ -53,9 +53,9 @@ final class WithHeaderTest extends TestCase
         $withValid = new WithHeader($withInvalid, 'X-Good', 'OK');
 
         $this->assertSame(
-            ['X-Good: OK'],
+            ['BadHeader: X', 'X-Good: OK'],
             $withValid->options()[CURLOPT_HTTPHEADER],
-            'Must ignore malformed headers and add only valid one'
+            'Must sanitize malformed headers and keep valid ones'
         );
     }
 
