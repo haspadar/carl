@@ -11,10 +11,8 @@ namespace Carl\Outcome\Fake;
 use Carl\Outcome\Outcome;
 use Carl\Outcome\SuccessfulOutcome;
 use Carl\Request\Request;
-use Carl\Response\CurlInfo;
-use Carl\Response\CurlResponse;
-use Carl\Response\Fake\WithHeaderDefaults;
-use Carl\Response\Fake\WithInfoDefaults;
+use Carl\Response\Fake\FixedResponse;
+use Carl\Response\Fake\WithRequestUrl;
 use Override;
 
 /**
@@ -36,22 +34,11 @@ final readonly class AlwaysSuccessful implements FakeOutcomes
     #[Override]
     public function at(int $index, Request $request): Outcome
     {
-        /** @var string $url */
-        $url = $request->options()[CURLOPT_URL] ?? '';
-
         return new SuccessfulOutcome(
             $request,
-            new WithInfoDefaults(
-                new WithHeaderDefaults(
-                    new CurlResponse(
-                        $this->body,
-                        [],
-                        new CurlInfo([
-                            'http_code' => $this->code,
-                            'url' => $url,
-                        ]),
-                    ),
-                ),
+            new WithRequestUrl(
+                new FixedResponse($this->code, $this->body),
+                $request
             ),
         );
     }

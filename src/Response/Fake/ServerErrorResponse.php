@@ -1,9 +1,5 @@
 <?php
 
-/*
- * SPDX-FileCopyrightText: Copyright (c) 2025 Kanstantsin Mesnik
- * SPDX-License-Identifier: MIT
- */
 declare(strict_types=1);
 
 namespace Carl\Response\Fake;
@@ -15,33 +11,29 @@ use Override;
 /**
  * @codeCoverageIgnore
  *
- * Fake HTTP response that always represents a server error (500).
+ * Fake HTTP response representing a server error (HTTP 500).
  */
 final readonly class ServerErrorResponse implements Response
 {
-    public function __construct(private string $message = 'Internal Server Error')
+    public function __construct(private Response $origin)
     {
     }
 
     #[Override]
     public function body(): string
     {
-        return $this->message;
+        return $this->origin->body();
     }
 
     #[Override]
     public function headers(): array
     {
-        return [
-            'Content-Type' => 'text/plain; charset=utf-8',
-        ];
+        return $this->origin->headers();
     }
 
     #[Override]
     public function info(): CurlInfo
     {
-        return new CurlInfo([
-            'http_code' => 500,
-        ]);
+        return new WithInfoOverride($this->origin, ['http_code' => 500])->info();
     }
 }

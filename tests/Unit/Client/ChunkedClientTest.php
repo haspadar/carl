@@ -22,11 +22,11 @@ final class ChunkedClientTest extends TestCase
     use AssertsHttpResponse;
 
     #[Test]
-    public function returnsOutcomeWhenSingleRequestDelegated(): void
+    public function returnsOutcomeWhenSingleRequestGiven(): void
     {
         $client = new ChunkedClient(
             new FakeClient(new AlwaysSuccessful(201, 'X')),
-            2,
+            2
         );
 
         $outcome = $client->outcome(new GetRequest('http://example.test/ok'));
@@ -39,7 +39,7 @@ final class ChunkedClientTest extends TestCase
     }
 
     #[Test]
-    public function returnsOutcomesWhenChunkingByTwo(): void
+    public function returnsOutcomesWhenChunkSizeIsTwo(): void
     {
         $client = new ChunkedClient(
             new FakeClient(new FakeStatus()),
@@ -54,7 +54,7 @@ final class ChunkedClientTest extends TestCase
             new GetRequest('http://localhost/204'),
         ]);
 
-        $this->assertCount(5, $outcomes);
+        $this->assertCount(5, $outcomes, 'Must return outcomes for each request');
         $this->assertStatusCode($outcomes[0]->response(), 201);
         $this->assertStatusCode($outcomes[1]->response(), 404);
         $this->assertStatusCode($outcomes[2]->response(), 302);
@@ -63,23 +63,13 @@ final class ChunkedClientTest extends TestCase
     }
 
     #[Test]
-    public function returnsEmptyWhenNoRequests(): void
-    {
-        $client = new ChunkedClient(new FakeClient(new AlwaysSuccessful()), 3);
-
-        $this->assertSame([], $client->outcomes([]), 'Must return empty array for empty input');
-    }
-
-    #[Test]
-    public function returnsEmptyArrayForEmptyInput(): void
+    public function returnsEmptyArrayWhenNoRequests(): void
     {
         $client = new ChunkedClient(
             new FakeClient(new AlwaysSuccessful()),
             3
         );
 
-        $result = $client->outcomes([]);
-
-        $this->assertSame([], $result, 'Must return empty array for empty input');
+        $this->assertSame([], $client->outcomes([]), 'Must return empty array for empty input');
     }
 }

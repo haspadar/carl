@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 final class RedirectCountTest extends TestCase
 {
     #[Test]
-    public function returnsRedirectCount(): void
+    public function returnsRedirectCountWhenPresent(): void
     {
         $response = new RedirectCount(
             new CurlResponse(
@@ -30,12 +30,12 @@ final class RedirectCountTest extends TestCase
         $this->assertSame(
             2,
             $response->count(),
-            'RedirectCount must return the redirect_count value from CurlInfo'
+            'Must return redirect_count value from CurlInfo when present',
         );
     }
 
     #[Test]
-    public function returnsZeroIfMissing(): void
+    public function returnsZeroWhenMissing(): void
     {
         $response = new RedirectCount(
             new CurlResponse(
@@ -48,7 +48,58 @@ final class RedirectCountTest extends TestCase
         $this->assertSame(
             0,
             $response->count(),
-            'RedirectCount must return 0 when redirect_count is missing'
+            'Must return 0 when redirect_count key is missing',
+        );
+    }
+
+    #[Test]
+    public function proxiesBodyFromOrigin(): void
+    {
+        $response = new RedirectCount(
+            new CurlResponse('body-value', [], new CurlInfo([])),
+        );
+
+        $this->assertSame(
+            'body-value',
+            $response->body(),
+            'Must proxy body() from origin response',
+        );
+    }
+
+    #[Test]
+    public function proxiesHeadersFromOrigin(): void
+    {
+        $response = new RedirectCount(
+            new CurlResponse(
+                'irrelevant',
+                ['X-Test' => 'yes'],
+                new CurlInfo([]),
+            ),
+        );
+
+        $this->assertSame(
+            ['X-Test' => 'yes'],
+            $response->headers(),
+            'Must proxy headers() from origin response',
+        );
+    }
+
+    #[Test]
+    public function proxiesInfoFromOrigin(): void
+    {
+        $info = new CurlInfo(['redirect_count' => 1]);
+        $response = new RedirectCount(
+            new CurlResponse(
+                'irrelevant',
+                [],
+                $info,
+            ),
+        );
+
+        $this->assertSame(
+            $info,
+            $response->info(),
+            'Must proxy info() from origin response',
         );
     }
 }

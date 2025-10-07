@@ -10,6 +10,7 @@ namespace Carl\Tests\Unit\Response;
 
 use Carl\Response\CurlInfo;
 use Carl\Response\CurlResponse;
+use Carl\Response\Fake\FixedResponse;
 use Carl\Response\Fake\SuccessResponse;
 use Carl\Response\JsonResponse;
 use JsonException;
@@ -23,7 +24,9 @@ final class JsonResponseTest extends TestCase
     {
         $this->assertSame(
             ['a' => 1, 'b' => ['c' => 2]],
-            new JsonResponse(new SuccessResponse('{"a":1,"b":{"c":2}}'))->decoded(),
+            new JsonResponse(
+                new SuccessResponse(new FixedResponse(200, '{"a":1,"b":{"c":2}}'))
+            )->decoded(),
             'Must decode valid JSON into associative array',
         );
     }
@@ -33,7 +36,9 @@ final class JsonResponseTest extends TestCase
     {
         $this->expectException(JsonException::class);
 
-        new JsonResponse(new SuccessResponse('"str"'))->decoded();
+        new JsonResponse(
+            new SuccessResponse(new FixedResponse(200, '"str"'))
+        )->decoded();
     }
 
     #[Test]
@@ -41,7 +46,9 @@ final class JsonResponseTest extends TestCase
     {
         $this->assertSame(
             '{"k":42}',
-            new JsonResponse(new SuccessResponse('{"k":42}'))->body(),
+            new JsonResponse(
+                new SuccessResponse(new FixedResponse(200, '{"k":42}'))
+            )->body(),
             'Must proxy body() from origin',
         );
     }
@@ -51,7 +58,9 @@ final class JsonResponseTest extends TestCase
     {
         $this->assertSame(
             [1, 2, 3],
-            new JsonResponse(new SuccessResponse('[1,2,3]'))->decoded(),
+            new JsonResponse(
+                new SuccessResponse(new FixedResponse(200, '[1,2,3]'))
+            )->decoded(),
             'Must accept array root',
         );
     }
@@ -60,7 +69,10 @@ final class JsonResponseTest extends TestCase
     public function throwsJsonExceptionOnMalformedJson(): void
     {
         $this->expectException(JsonException::class);
-        new JsonResponse(new SuccessResponse('{"a": '))->decoded();
+
+        new JsonResponse(
+            new SuccessResponse(new FixedResponse(200, '{"a": '))
+        )->decoded();
     }
 
     #[Test]

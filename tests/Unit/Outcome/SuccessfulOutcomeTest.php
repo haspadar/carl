@@ -10,6 +10,7 @@ namespace Carl\Tests\Unit\Outcome;
 
 use Carl\Outcome\SuccessfulOutcome;
 use Carl\Request\GetRequest;
+use Carl\Response\Fake\FixedResponse;
 use Carl\Response\Fake\SuccessResponse;
 use Carl\Tests\Unit\Reaction\Fake\FakeSuccess;
 use PHPUnit\Framework\Attributes\Test;
@@ -18,9 +19,9 @@ use PHPUnit\Framework\TestCase;
 final class SuccessfulOutcomeTest extends TestCase
 {
     #[Test]
-    public function returnsResponse(): void
+    public function returnsResponseWhenWrapped(): void
     {
-        $response = new SuccessResponse('ok');
+        $response = new SuccessResponse(new FixedResponse(200, 'ok'));
         $outcome = new SuccessfulOutcome(
             new GetRequest('http://localhost/'),
             $response
@@ -30,43 +31,38 @@ final class SuccessfulOutcomeTest extends TestCase
     }
 
     #[Test]
-    public function reactsOnSuccess(): void
+    public function callsOnSuccessReactionWhenReacted(): void
     {
         $reaction = new FakeSuccess();
         $outcome = new SuccessfulOutcome(
             new GetRequest('http://localhost/'),
-            new SuccessResponse('ok')
+            new SuccessResponse(new FixedResponse(200, 'ok'))
         );
 
         $outcome->react($reaction);
 
-        $this->assertSame(
-            1,
-            $reaction->total(),
-            'Must call onSuccess on given reaction'
-        );
+        $this->assertSame(1, $reaction->total(), 'Must call onSuccess on given reaction');
     }
 
     #[Test]
-    public function returnsRequest(): void
+    public function returnsOriginalRequestWhenCalled(): void
     {
         $request = new GetRequest('http://localhost/');
-        $outcome = new SuccessfulOutcome($request, new SuccessResponse('ok'));
-
-        $this->assertSame(
+        $outcome = new SuccessfulOutcome(
             $request,
-            $outcome->request(),
-            'SuccessfulOutcome::request must return the original request'
+            new SuccessResponse(new FixedResponse(200, 'ok'))
         );
+
+        $this->assertSame($request, $outcome->request(), 'Must return the original request');
     }
 
     #[Test]
-    public function isAlwaysSuccessful(): void
+    public function isSuccessfulAlwaysReturnsTrue(): void
     {
         $this->assertTrue(
             new SuccessfulOutcome(
                 new GetRequest('http://localhost/'),
-                new SuccessResponse('ok')
+                new SuccessResponse(new FixedResponse(200, 'ok'))
             )->isSuccessful(),
             'SuccessfulOutcome must always be successful'
         );

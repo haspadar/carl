@@ -29,4 +29,49 @@ final class WithRequestUrlTest extends TestCase
             'Should inject URL from Request into CurlInfo'
         );
     }
+
+    #[Test]
+    public function usesDefaultUrlWhenMissingInRequest(): void
+    {
+        $response = new WithRequestUrl(
+            new CurlResponse('irrelevant', [], new CurlInfo([])),
+            new GetRequest('')
+        );
+
+        $this->assertSame(
+            'http://localhost/fake',
+            $response->info()->value('url'),
+            'Must use default URL when request provides no CURLOPT_URL'
+        );
+    }
+
+    #[Test]
+    public function replacesExistingUrlInInfo(): void
+    {
+        $response = new WithRequestUrl(
+            new CurlResponse('irrelevant', [], new CurlInfo(['url' => 'old'])),
+            new GetRequest('https://example.org/test')
+        );
+
+        $this->assertSame(
+            'https://example.org/test',
+            $response->info()->value('url'),
+            'Must replace existing url from origin CurlInfo'
+        );
+    }
+
+    #[Test]
+    public function preservesHttpCodeFromOrigin(): void
+    {
+        $response = new WithRequestUrl(
+            new CurlResponse('irrelevant', [], new CurlInfo(['http_code' => 200])),
+            new GetRequest('https://example.org/test')
+        );
+
+        $this->assertSame(
+            '200',
+            $response->info()->value('http_code'),
+            'Must preserve existing http_code value'
+        );
+    }
 }

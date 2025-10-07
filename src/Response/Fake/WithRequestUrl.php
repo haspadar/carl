@@ -10,6 +10,8 @@ use Carl\Response\Response;
 use Override;
 
 /**
+ * @codeCoverageIgnore
+ *
  * Decorator that injects Request URL into CurlInfo.
  */
 final readonly class WithRequestUrl implements Response
@@ -20,12 +22,18 @@ final readonly class WithRequestUrl implements Response
     ) {
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     #[Override]
     public function body(): string
     {
         return $this->origin->body();
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     #[Override]
     public function headers(): array
     {
@@ -36,7 +44,8 @@ final readonly class WithRequestUrl implements Response
     public function info(): CurlInfo
     {
         $options = $this->request->options();
-        $url = $options[CURLOPT_URL] ?? 'http://localhost/fake';
+        $url = $options[CURLOPT_URL] ?? '';
+        $url = $url === '' ? 'http://localhost/fake' : $url;
 
         return new CurlInfo(array_merge(
             $this->origin->info()->all(),

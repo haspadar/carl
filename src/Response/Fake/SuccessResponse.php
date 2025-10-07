@@ -15,33 +15,29 @@ use Override;
 /**
  * @codeCoverageIgnore
  *
- * Fake HTTP response that always represents success (200).
+ * Fake HTTP response representing a successful result (HTTP 200).
  */
 final readonly class SuccessResponse implements Response
 {
-    public function __construct(private string $message = 'OK')
+    public function __construct(private Response $origin)
     {
     }
 
     #[Override]
     public function body(): string
     {
-        return $this->message;
+        return $this->origin->body();
     }
 
     #[Override]
     public function headers(): array
     {
-        return [
-            'Content-Type' => 'text/plain; charset=utf-8',
-        ];
+        return $this->origin->headers();
     }
 
     #[Override]
     public function info(): CurlInfo
     {
-        return new CurlInfo([
-            'http_code' => 200,
-        ]);
+        return new WithInfoOverride($this->origin, ['http_code' => 200])->info();
     }
 }
