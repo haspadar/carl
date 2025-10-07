@@ -19,7 +19,7 @@ use Override;
  */
 final readonly class UnauthorizedResponse implements Response
 {
-    public function __construct(private Response $origin)
+    public function __construct(private Response $origin = new FixedResponse(401, 'Unauthorized'))
     {
     }
 
@@ -41,6 +41,6 @@ final readonly class UnauthorizedResponse implements Response
     #[Override]
     public function info(): CurlInfo
     {
-        return new WithInfoOverride($this->origin, ['http_code' => 401])->info();
+        return $this->origin->info();
     }
 }

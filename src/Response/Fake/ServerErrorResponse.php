@@ -15,7 +15,7 @@ use Override;
  */
 final readonly class ServerErrorResponse implements Response
 {
-    public function __construct(private Response $origin)
+    public function __construct(private Response $origin = new FixedResponse(500, 'Internal Server Error'))
     {
     }
 
@@ -34,6 +34,6 @@ final readonly class ServerErrorResponse implements Response
     #[Override]
     public function info(): CurlInfo
     {
-        return new WithInfoOverride($this->origin, ['http_code' => 500])->info();
+        return $this->origin->info();
     }
 }

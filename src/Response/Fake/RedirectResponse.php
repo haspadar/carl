@@ -21,8 +21,8 @@ use Override;
 final readonly class RedirectResponse implements Response
 {
     public function __construct(
-        private Response $origin,
-        private string $location,
+        private Response $origin = new FixedResponse(302, 'Found'),
+        private string $location = '/',
     ) {
     }
 
@@ -44,9 +44,6 @@ final readonly class RedirectResponse implements Response
     #[Override]
     public function info(): CurlInfo
     {
-        return new WithInfoOverride(
-            $this->origin,
-            ['http_code' => 302, 'redirect_url' => $this->location]
-        )->info();
+        return $this->origin->info();
     }
 }
