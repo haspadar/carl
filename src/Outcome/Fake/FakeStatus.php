@@ -12,7 +12,7 @@ use Carl\Outcome\Outcome;
 use Carl\Outcome\SuccessfulOutcome;
 use Carl\Request\Request;
 use Carl\Response\Fake\FixedResponse;
-use Carl\Response\Fake\WithInfoOverride;
+use Carl\Response\Fake\WithRequestUrl;
 
 use function is_string;
 
@@ -54,9 +54,9 @@ final readonly class FakeStatus implements FakeOutcomes
 
         return new SuccessfulOutcome(
             $request,
-            new WithInfoOverride(
+            new WithRequestUrl(
                 new FixedResponse($code, 'ok'),
-                ['http_code' => $code, 'url' => $url]
+                $request
             )
         );
     }

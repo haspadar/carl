@@ -78,7 +78,7 @@ final readonly class FixedResponse implements Response
             'size_upload' => 0,
             'speed_download' => 0,
             'speed_upload' => 0,
-            'url' => 'http://localhost/fake', // заменяется через WithRequestUrl
+            'url' => 'http://localhost/fake',
             'primary_ip' => '127.0.0.1',
             'content_type' => 'text/plain; charset=utf-8',
             'redirect_url' => '',

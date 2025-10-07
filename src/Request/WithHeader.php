@@ -15,6 +15,8 @@ use Override;
  *
  * Ensures the header appears only once in `CURLOPT_HTTPHEADER` by removing
  * any existing headers with the same name (case-insensitive).
+ * Strips CR and LF characters from both header name and value
+ * to prevent header injection.
  *
  * Decorates another {@see Request}.
  */
@@ -55,7 +57,10 @@ final readonly class WithHeader implements Request
             }
         }
 
-        $headers[] = $this->name . ': ' . $this->value;
+        $sanitizedName = str_replace(["\r", "\n"], '', $this->name);
+        $sanitizedValue = str_replace(["\r", "\n"], '', $this->value);
+
+        $headers[] = $sanitizedName . ': ' . $sanitizedValue;
         $options[CURLOPT_HTTPHEADER] = $headers;
 
         return $options;

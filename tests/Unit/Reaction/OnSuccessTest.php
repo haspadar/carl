@@ -28,7 +28,7 @@ final class OnSuccessTest extends TestCase
             new FixedResponse(200, 'ok')
         );
 
-        $this->assertSame(1, $called, 'Must call callback when http_code is 2xx');
+        $this->assertSame(1, $called, 'Must call callback on success');
     }
 
     #[Test]

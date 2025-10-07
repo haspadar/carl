@@ -72,4 +72,20 @@ final class WithHeaderTest extends TestCase
             'Must preserve unrelated headers'
         );
     }
+
+    #[Test]
+    public function stripsCrLfFromHeaderNameAndValue(): void
+    {
+        $request = new WithHeader(
+            new GetRequest('http://localhost/'),
+            "X-Bad\r\nHeader",
+            "Value\r\nInjection"
+        );
+
+        $this->assertSame(
+            ['X-BadHeader: ValueInjection'],
+            $request->options()[CURLOPT_HTTPHEADER],
+            'Must strip CR/LF from header name and value'
+        );
+    }
 }

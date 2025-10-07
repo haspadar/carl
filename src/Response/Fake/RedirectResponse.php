@@ -35,17 +35,18 @@ final readonly class RedirectResponse implements Response
     #[Override]
     public function headers(): array
     {
-        return new WithHeaderOverride($this->origin, [
-            'Location' => $this->location,
-        ])->headers();
+        return new WithHeaderOverride(
+            $this->origin,
+            ['Location' => $this->location]
+        )->headers();
     }
 
     #[Override]
     public function info(): CurlInfo
     {
-        return new WithInfoOverride($this->origin, [
-            'http_code' => 302,
-            'redirect_url' => $this->location,
-        ])->info();
+        return new WithInfoOverride(
+            $this->origin,
+            ['http_code' => 302, 'redirect_url' => $this->location]
+        )->info();
     }
 }
