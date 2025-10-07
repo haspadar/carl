@@ -19,7 +19,7 @@ use Override;
  */
 final readonly class SuccessResponse implements Response
 {
-    public function __construct(private Response $origin)
+    public function __construct(private Response $origin = new FixedResponse(200, 'OK'))
     {
     }
 
@@ -38,6 +38,6 @@ final readonly class SuccessResponse implements Response
     #[Override]
     public function info(): CurlInfo
     {
-        return new WithInfoOverride($this->origin, ['http_code' => 200])->info();
+        return $this->origin->info();
     }
 }

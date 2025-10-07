@@ -20,7 +20,7 @@ use Override;
  */
 final readonly class ClientErrorResponse implements Response
 {
-    public function __construct(private Response $origin)
+    public function __construct(private Response $origin = new FixedResponse(400, 'Bad Request'))
     {
     }
 
@@ -39,6 +39,6 @@ final readonly class ClientErrorResponse implements Response
     #[Override]
     public function info(): CurlInfo
     {
-        return new WithInfoOverride($this->origin, ['http_code' => 400])->info();
+        return $this->origin->info();
     }
 }

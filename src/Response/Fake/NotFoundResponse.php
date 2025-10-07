@@ -20,7 +20,7 @@ use Override;
  */
 final readonly class NotFoundResponse implements Response
 {
-    public function __construct(private Response $origin)
+    public function __construct(private Response $origin = new FixedResponse(404, 'Not Found'))
     {
     }
 
@@ -39,6 +39,6 @@ final readonly class NotFoundResponse implements Response
     #[Override]
     public function info(): CurlInfo
     {
-        return new WithInfoOverride($this->origin, ['http_code' => 404])->info();
+        return $this->origin->info();
     }
 }
